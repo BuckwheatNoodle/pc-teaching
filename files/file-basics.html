@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ファイル操作 きほん — PC きほん道場</title>
+<meta name="description" content="Windows 11 でのファイル・フォルダの操作方法を学ぼう。整理整頓の基本から拡張子の知識まで！">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --file-orange: #ff9800;
+  --file-amber: #ffb74d;
+  --correct: #2ecc71;
+  --text-muted: rgba(240,240,255,0.55);
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #2a1a0a, #1a1a2e);
+  min-height: 100vh; color: #f0f0ff;
+}
+.outer { max-width: 900px; margin: 0 auto; padding: 24px 18px 80px; }
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 28px; }
+.logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(11px, 2.4vw, 17px);
+  background: linear-gradient(90deg, #ff9800, #ffb74d, #fff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; display: inline-block; margin-bottom: 6px;
+}
+.sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+.home-link {
+  display: inline-block; margin-top: 8px;
+  color: var(--accent2); font-size: 12px; font-weight: 700;
+  text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+}
+.home-link:hover { opacity: 1; }
+
+/* ── TOC ── */
+.toc {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 28px;
+  backdrop-filter: blur(10px);
+}
+.toc-title { font-size: 14px; font-weight: 900; margin-bottom: 10px; color: var(--file-amber); }
+.toc-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.toc-list a {
+  font-size: 13px; font-weight: 700; color: rgba(240,240,255,0.7);
+  text-decoration: none; padding: 4px 12px; border-radius: 8px;
+  border: 1px solid transparent; transition: all 0.2s;
+}
+.toc-list a:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+
+/* ── SECTION ── */
+.section {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 18px; padding: 28px 26px; margin-bottom: 20px;
+  backdrop-filter: blur(10px); scroll-margin-top: 20px;
+}
+.section-num {
+  font-size: 11px; font-weight: 900; color: var(--file-amber);
+  letter-spacing: 1.5px; margin-bottom: 4px;
+}
+.section-title {
+  font-size: 22px; font-weight: 900; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-body {
+  font-size: 14px; line-height: 2.1; color: rgba(240,240,255,0.85);
+}
+.section-body h3 {
+  font-size: 16px; font-weight: 900; margin: 24px 0 10px;
+  padding-left: 12px; border-left: 4px solid var(--file-orange); color: #fff;
+}
+.section-body h3:first-child { margin-top: 0; }
+.section-body code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(255,152,0,0.12); border: 1px solid rgba(255,152,0,0.25);
+  border-radius: 5px; padding: 1px 7px; font-size: 13px;
+  color: var(--file-amber); font-weight: 700;
+}
+.section-body ul, .section-body ol { padding-left: 1.5em; margin: 8px 0; }
+.section-body li { margin-bottom: 4px; }
+
+/* Point / Warn */
+.point {
+  background: rgba(255,152,0,0.1); border-left: 4px solid var(--file-orange);
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+.warn {
+  background: rgba(255,107,107,0.08); border-left: 4px solid #ff6b6b;
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.step {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 16px 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #e65100, var(--file-orange));
+  color: #fff; font-size: 14px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-content { flex: 1; font-size: 13px; line-height: 1.9; }
+.step-content strong { color: var(--file-amber); }
+
+/* Concept cards */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 14px 0; }
+.concept-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.concept-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.concept-name { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.concept-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+/* Fake explorer */
+.explorer {
+  background: #fff; border-radius: 12px; overflow: hidden;
+  margin: 16px 0; border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  color: #333;
+}
+.explorer-titlebar {
+  background: #f0f0f0; padding: 8px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+}
+.explorer-title { font-size: 12px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 6px; }
+.explorer-dots { display: flex; gap: 6px; }
+.explorer-dots span { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #ccc; }
+.explorer-toolbar {
+  background: #fafafa; padding: 6px 12px; border-bottom: 1px solid #eee;
+  font-size: 11px; color: #888; display: flex; gap: 12px;
+}
+.explorer-toolbar span { cursor: default; padding: 2px 6px; border-radius: 4px; }
+.explorer-toolbar span:hover { background: #eee; }
+.explorer-path-bar {
+  background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px;
+  margin: 8px 12px; padding: 5px 10px; font-size: 12px; color: #555;
+  font-weight: 700; display: flex; align-items: center; gap: 4px;
+}
+.explorer-content { padding: 8px 12px 12px; }
+.explorer-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 4px;
+}
+.explorer-item {
+  text-align: center; padding: 8px 4px; border-radius: 6px;
+  cursor: default; transition: background 0.15s;
+}
+.explorer-item:hover { background: #e8f0fe; }
+.explorer-item.selected { background: #cce5ff; border: 1px solid #80bdff; }
+.explorer-item .ei-icon { font-size: 28px; display: block; margin-bottom: 2px; }
+.explorer-item .ei-name { font-size: 10px; color: #333; font-weight: 600; word-break: break-all; line-height: 1.3; }
+.explorer-list { display: flex; flex-direction: column; gap: 2px; }
+.explorer-list-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 8px; border-radius: 6px; font-size: 12px;
+  transition: background 0.15s;
+}
+.explorer-list-item:hover { background: #e8f0fe; }
+.explorer-list-item .eli-icon { font-size: 18px; flex-shrink: 0; }
+.explorer-list-item .eli-name { flex: 1; font-weight: 600; color: #333; }
+.explorer-list-item .eli-date { color: #999; font-size: 11px; }
+.explorer-list-item .eli-size { color: #999; font-size: 11px; min-width: 60px; text-align: right; }
+
+/* kbd */
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #3a3a5c 0%, #1e1e3a 100%);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-bottom: 3px solid rgba(0,0,0,0.5);
+  border-radius: 6px; color: #fff;
+  font-size: 11px; font-weight: 800;
+  padding: 2px 8px; min-width: 28px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 4px rgba(0,0,0,0.4);
+  white-space: nowrap; font-family: 'Fira Code', monospace;
+}
+
+/* Extension table */
+.ext-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+.ext-table th {
+  text-align: left; padding: 8px 12px;
+  background: rgba(255,152,0,0.12); color: var(--file-amber);
+  font-weight: 800; font-size: 12px;
+  border-bottom: 2px solid rgba(255,152,0,0.2);
+}
+.ext-table td {
+  padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  vertical-align: top;
+}
+.ext-table td:first-child {
+  font-family: 'Fira Code', monospace; color: var(--file-amber);
+  font-weight: 700; white-space: nowrap;
+}
+.ext-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+/* Try-it */
+.try-it {
+  background: rgba(46,204,113,0.08); border: 1.5px solid rgba(46,204,113,0.25);
+  border-radius: 14px; padding: 18px 20px; margin: 16px 0;
+}
+.try-it-label {
+  font-size: 11px; font-weight: 900; color: var(--correct);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+}
+.try-it-body { font-size: 13px; line-height: 1.9; }
+
+/* Compare */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+@media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+.compare-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 16px;
+}
+.compare-card h4 {
+  font-size: 14px; font-weight: 900; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.compare-card p { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+
+/* Shortcut badge row */
+.shortcut-row {
+  display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0;
+}
+.shortcut-badge {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700;
+}
+.shortcut-badge .sb-keys { display: flex; align-items: center; gap: 3px; }
+.shortcut-badge .sb-label { color: var(--text-muted); }
+
+/* Nav */
+.nav-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 32px; padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.nav-btn {
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 14px; font-weight: 800;
+  padding: 10px 24px; cursor: pointer; transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,106,245,0.4); }
+.nav-btn.secondary {
+  background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15);
+}
+.nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
+</style>
+</head>
+<body>
+<div class="outer">
+
+  <div class="header">
+    <div class="logo">📁 FILE DOJO</div>
+    <div class="sub">ファイルとフォルダの操作をマスターしよう！</div>
+    <a class="home-link" href="../index.html">← トップページに戻る</a>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">📖 もくじ</div>
+    <ul class="toc-list">
+      <li><a href="#what">① ファイルとフォルダ</a></li>
+      <li><a href="#explorer">② エクスプローラー</a></li>
+      <li><a href="#create">③ 作成・名前変更</a></li>
+      <li><a href="#copymove">④ コピー・移動・削除</a></li>
+      <li><a href="#extension">⑤ 拡張子を知ろう</a></li>
+      <li><a href="#path">⑥ パスを理解しよう</a></li>
+      <li><a href="#organize">⑦ 整理術</a></li>
+      <li><a href="#zip">⑧ 圧縮と展開</a></li>
+      <li><a href="#shortcut">⑨ ショートカット集</a></li>
+      <li><a href="#trouble">⑩ トラブル対処法</a></li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 1 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="what">
+    <div class="section-num">SECTION 01</div>
+    <div class="section-title">📄 ファイルとフォルダってなに？</div>
+    <div class="section-body">
+      <p>パソコンの中にあるデータは、すべて<b>ファイル</b>として保存されています。</p>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>📄 ファイル</h4>
+          <p>
+            データそのもの。写真、文書、音楽、動画、プログラム… 全部ファイル。<br>
+            現実世界の「紙」や「写真」にあたる。
+          </p>
+        </div>
+        <div class="compare-card">
+          <h4>📁 フォルダ</h4>
+          <p>
+            ファイルを整理するための「入れ物」。<br>
+            フォルダの中にフォルダも入れられる。<br>
+            現実世界の「引き出し」や「本棚」にあたる。
+          </p>
+        </div>
+      </div>
+
+      <h3>現実世界でたとえると</h3>
+      <div class="explorer">
+        <div class="explorer-titlebar">
+          <div class="explorer-title">📖 パソコンの中身のイメージ</div>
+        </div>
+        <div class="explorer-content" style="font-size:13px;line-height:2;color:#333;padding:16px;">
+          🏠 <b>C:\Users\あなた\</b>（自分の部屋）<br>
+          　├── 📁 <b>Desktop</b>（机の上）← すぐ使うものを置く<br>
+          　├── 📁 <b>Documents</b>（書類の棚）← レポートやメモ<br>
+          　├── 📁 <b>Downloads</b>（郵便受け）← ダウンロードしたもの<br>
+          　├── 📁 <b>Pictures</b>（写真アルバム）<br>
+          　├── 📁 <b>Music</b>（CDラック）<br>
+          　└── 📁 <b>Videos</b>（DVDの棚）
+        </div>
+      </div>
+
+      <div class="point">
+        💡 パソコンを使いこなすには、この<b>ファイルとフォルダの関係</b>を理解することが一番大事！<br>
+        「自分のデータがどこにあるか」を常に把握しておこう。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 2 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="explorer">
+    <div class="section-num">SECTION 02</div>
+    <div class="section-title">🗂️ エクスプローラーを使いこなそう</div>
+    <div class="section-body">
+      <p><b>エクスプローラー</b>は、ファイルやフォルダを管理するための Windows の基本アプリです。</p>
+
+      <h3>エクスプローラーの開き方</h3>
+      <div class="shortcut-row">
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Win</span> + <span class="kbd">E</span></div>
+          <div class="sb-label">最速！おすすめ</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys">タスクバーの📁アイコン</div>
+          <div class="sb-label">クリックで開く</div>
+        </div>
+      </div>
+
+      <h3>エクスプローラーの画面構成</h3>
+      <div class="explorer">
+        <div class="explorer-titlebar">
+          <div class="explorer-title">📁 エクスプローラー</div>
+          <div class="explorer-dots"><span></span><span></span><span></span></div>
+        </div>
+        <div class="explorer-toolbar">
+          <span>📋 コピー</span>
+          <span>✂️ 切り取り</span>
+          <span>📌 貼り付け</span>
+          <span>✏️ 名前変更</span>
+          <span>🗑️ 削除</span>
+          <span>📂 新規フォルダ</span>
+        </div>
+        <div class="explorer-path-bar">📍 PC &gt; ドキュメント &gt; 学校</div>
+        <div class="explorer-content">
+          <div class="explorer-grid">
+            <div class="explorer-item"><span class="ei-icon">📁</span><div class="ei-name">数学</div></div>
+            <div class="explorer-item"><span class="ei-icon">📁</span><div class="ei-name">英語</div></div>
+            <div class="explorer-item"><span class="ei-icon">📁</span><div class="ei-name">理科</div></div>
+            <div class="explorer-item"><span class="ei-icon">📝</span><div class="ei-name">時間割.txt</div></div>
+            <div class="explorer-item"><span class="ei-icon">📊</span><div class="ei-name">成績表.xlsx</div></div>
+            <div class="explorer-item"><span class="ei-icon">📄</span><div class="ei-name">レポート.docx</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">↑</div>
+          <div class="step-content">
+            <strong>ツールバー</strong> — コピー・切り取り・貼り付けなどの操作ボタン
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">→</div>
+          <div class="step-content">
+            <strong>アドレスバー</strong> — 今いる場所（パス）を表示。クリックして直接入力もできる
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">⬇</div>
+          <div class="step-content">
+            <strong>ファイル一覧</strong> — フォルダやファイルが表示される。ダブルクリックで開く
+          </div>
+        </div>
+      </div>
+
+      <h3>表示方法を変えてみよう</h3>
+      <p>エクスプローラー右上の「表示」メニューで、一覧の見た目を変えられます。</p>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🔲</span>
+          <div class="concept-name">大アイコン</div>
+          <div class="concept-desc">写真のサムネイルが見やすい</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📋</span>
+          <div class="concept-name">詳細</div>
+          <div class="concept-desc">日付・サイズが見えて便利</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⬜</span>
+          <div class="concept-name">一覧</div>
+          <div class="concept-desc">たくさんのファイルを確認</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 ファイルが多いフォルダでは<b>「詳細」表示</b>がおすすめ。名前・日時・サイズで並べ替えもできるよ！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 3 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="create">
+    <div class="section-num">SECTION 03</div>
+    <div class="section-title">✨ 作成・名前変更</div>
+    <div class="section-body">
+
+      <h3>新しいフォルダを作る</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            フォルダを作りたい場所で<strong>空白部分を右クリック</strong>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            「<strong>新規作成</strong>」→「<strong>フォルダー</strong>」を選ぶ
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            名前を入力して <span class="kbd">Enter</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="shortcut-row">
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">N</span></div>
+          <div class="sb-label">新しいフォルダ（ショートカット）</div>
+        </div>
+      </div>
+
+      <h3>新しいファイルを作る</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            空白部分を<strong>右クリック</strong>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            「<strong>新規作成</strong>」→ 作りたい種類を選ぶ（テキスト文書、Wordなど）
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            名前を入力して <span class="kbd">Enter</span>
+          </div>
+        </div>
+      </div>
+
+      <h3>名前を変更する</h3>
+      <p>ファイルやフォルダの名前を変える方法はいくつかあります：</p>
+      <ul>
+        <li>ファイルを選択 → <span class="kbd">F2</span> キー（おすすめ！）</li>
+        <li>ファイルを<b>右クリック</b> → 「名前の変更」</li>
+        <li>ファイル名を<b>ゆっくり2回クリック</b>（ダブルクリックではなく）</li>
+      </ul>
+
+      <div class="warn">
+        ⚠️ 名前を変えるときに<b>拡張子（.txt, .jpg など）を消さないように注意！</b><br>
+        拡張子を消すとファイルが開けなくなることがあります。（拡張子については後で詳しく説明）
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 やってみよう</div>
+        <div class="try-it-body">
+          ① デスクトップで <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">N</span> で新しいフォルダを作る<br>
+          ② 名前を「練習フォルダ」にする<br>
+          ③ その中に右クリック → 「新規作成」→「テキスト文書」でファイルを作る<br>
+          ④ <span class="kbd">F2</span> で名前を「メモ.txt」に変更
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 4 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="copymove">
+    <div class="section-num">SECTION 04</div>
+    <div class="section-title">📋 コピー・移動・削除</div>
+    <div class="section-body">
+
+      <h3>コピー & 貼り付け</h3>
+      <p>ファイルを別の場所にコピーする方法：</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            コピーしたいファイルを選択して <span class="kbd">Ctrl</span> + <span class="kbd">C</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            コピー先のフォルダを開いて <span class="kbd">Ctrl</span> + <span class="kbd">V</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 元のファイルは<b>そのまま残る</b>。同じファイルが2つになるイメージ！
+      </div>
+
+      <h3>切り取り & 貼り付け（移動）</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            移動したいファイルを選択して <span class="kbd">Ctrl</span> + <span class="kbd">X</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            移動先のフォルダを開いて <span class="kbd">Ctrl</span> + <span class="kbd">V</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 元の場所からは<b>消える</b>。引っ越しのイメージ！
+      </div>
+
+      <h3>ドラッグ & ドロップ</h3>
+      <p>マウスでファイルを掴んで移動する方法もあります：</p>
+      <ul>
+        <li><b>同じドライブ内</b>でドラッグ → 「移動」になる</li>
+        <li><b>別のドライブ</b>にドラッグ → 「コピー」になる</li>
+        <li><span class="kbd">Ctrl</span> を押しながらドラッグ → 強制的に「コピー」</li>
+        <li><span class="kbd">Shift</span> を押しながらドラッグ → 強制的に「移動」</li>
+      </ul>
+
+      <h3>削除</h3>
+      <ul>
+        <li><span class="kbd">Delete</span> キー → <b>ゴミ箱へ移動</b>（復元できる）</li>
+        <li><span class="kbd">Shift</span> + <span class="kbd">Delete</span> → <b>完全に削除</b>（復元できない！）</li>
+      </ul>
+
+      <div class="warn">
+        ⚠️ <span class="kbd">Shift</span> + <span class="kbd">Delete</span> は本当に消えます！大事なファイルには絶対使わないこと。<br>
+        普通の <span class="kbd">Delete</span> なら、ゴミ箱から元に戻せるので安心。
+      </div>
+
+      <h3>複数のファイルを選ぶ方法</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">☝️</span>
+          <div class="concept-name">Ctrl + クリック</div>
+          <div class="concept-desc">バラバラに1つずつ追加選択</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📏</span>
+          <div class="concept-name">Shift + クリック</div>
+          <div class="concept-desc">最初〜最後まで一括選択</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">☑️</span>
+          <div class="concept-name">Ctrl + A</div>
+          <div class="concept-desc">全部選択</div>
+        </div>
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 やってみよう</div>
+        <div class="try-it-body">
+          ① さっき作った「練習フォルダ」の中にテキストファイルを3つ作る<br>
+          ② <span class="kbd">Ctrl</span> + クリックで2つだけ選択<br>
+          ③ <span class="kbd">Ctrl</span> + <span class="kbd">C</span> でコピー<br>
+          ④ デスクトップに戻って <span class="kbd">Ctrl</span> + <span class="kbd">V</span> で貼り付け<br>
+          ⑤ 貼り付けたファイルを選んで <span class="kbd">Delete</span> でゴミ箱へ
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 5 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="extension">
+    <div class="section-num">SECTION 05</div>
+    <div class="section-title">🏷️ 拡張子を知ろう</div>
+    <div class="section-body">
+      <p>
+        ファイル名の最後にある <code>.txt</code> や <code>.jpg</code> が<b>拡張子</b>。<br>
+        これは「このファイルは何のデータか」をパソコンに教える<b>ラベル</b>のようなものです。
+      </p>
+
+      <div class="explorer">
+        <div class="explorer-titlebar">
+          <div class="explorer-title">📁 拡張子の見え方</div>
+        </div>
+        <div class="explorer-content">
+          <div class="explorer-list">
+            <div class="explorer-list-item">
+              <span class="eli-icon">📝</span>
+              <span class="eli-name">レポート<b>.txt</b></span>
+              <span class="eli-size">2 KB</span>
+              <span class="eli-date">テキスト文書</span>
+            </div>
+            <div class="explorer-list-item">
+              <span class="eli-icon">🖼️</span>
+              <span class="eli-name">写真<b>.jpg</b></span>
+              <span class="eli-size">3.2 MB</span>
+              <span class="eli-date">JPEG画像</span>
+            </div>
+            <div class="explorer-list-item">
+              <span class="eli-icon">📄</span>
+              <span class="eli-name">宿題<b>.docx</b></span>
+              <span class="eli-size">45 KB</span>
+              <span class="eli-date">Word文書</span>
+            </div>
+            <div class="explorer-list-item">
+              <span class="eli-icon">🐍</span>
+              <span class="eli-name">hello<b>.py</b></span>
+              <span class="eli-size">1 KB</span>
+              <span class="eli-date">Pythonファイル</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>よく使う拡張子一覧</h3>
+
+      <table class="ext-table">
+        <tr><th>拡張子</th><th>種類</th><th>用途</th></tr>
+        <tr><td>.txt</td><td>テキスト</td><td>メモや設定ファイル。一番シンプル</td></tr>
+        <tr><td>.docx</td><td>Word文書</td><td>レポートや文書。装飾や図も入る</td></tr>
+        <tr><td>.xlsx</td><td>Excel</td><td>表計算。成績管理やグラフ</td></tr>
+        <tr><td>.pptx</td><td>PowerPoint</td><td>プレゼンテーション・スライド</td></tr>
+        <tr><td>.pdf</td><td>PDF文書</td><td>誰でも同じ見た目で読める文書</td></tr>
+      </table>
+
+      <table class="ext-table">
+        <tr><th>拡張子</th><th>種類</th><th>用途</th></tr>
+        <tr><td>.jpg / .jpeg</td><td>画像</td><td>写真に使われる。ファイルが軽い</td></tr>
+        <tr><td>.png</td><td>画像</td><td>イラストやスクショ。透明も使える</td></tr>
+        <tr><td>.gif</td><td>画像</td><td>動くアニメーション画像</td></tr>
+        <tr><td>.mp3</td><td>音声</td><td>音楽ファイル</td></tr>
+        <tr><td>.mp4</td><td>動画</td><td>動画ファイル。YouTubeもこれ</td></tr>
+      </table>
+
+      <table class="ext-table">
+        <tr><th>拡張子</th><th>種類</th><th>用途</th></tr>
+        <tr><td>.py</td><td>Python</td><td>Python のプログラム</td></tr>
+        <tr><td>.html</td><td>Web</td><td>ウェブページ</td></tr>
+        <tr><td>.zip</td><td>圧縮</td><td>ファイルをまとめて圧縮したもの</td></tr>
+        <tr><td>.exe</td><td>実行</td><td>アプリケーション本体</td></tr>
+      </table>
+
+      <h3>拡張子を表示する設定（重要！）</h3>
+      <p>Windows の初期設定では拡張子が<b>隠されている</b>ことがあります。<br>必ず表示するように設定しましょう。</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            エクスプローラーを開く（<span class="kbd">Win</span> + <span class="kbd">E</span>）
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            上のメニューから「<strong>表示</strong>」をクリック
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            「<strong>表示</strong>」→「<strong>ファイル名拡張子</strong>」にチェックを入れる
+          </div>
+        </div>
+      </div>
+
+      <div class="warn">
+        ⚠️ <b>拡張子の表示は必ずONにしよう！</b><br>
+        拡張子が見えないと「写真だと思って開いたら実はウイルス（.exe）だった」という危険があります。<br>
+        プログラミングでも拡張子を間違えるとファイルが正しく動きません。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 6 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="path">
+    <div class="section-num">SECTION 06</div>
+    <div class="section-title">🗺️ パスを理解しよう</div>
+    <div class="section-body">
+      <p>
+        <b>パス（Path）</b>とは、ファイルやフォルダの「住所」のこと。<br>
+        パソコンの中のどこにデータがあるかを正確に示します。
+      </p>
+
+      <h3>パスの読み方</h3>
+      <div class="explorer">
+        <div class="explorer-titlebar">
+          <div class="explorer-title">📍 パスの構造</div>
+        </div>
+        <div class="explorer-content" style="font-size:14px;line-height:2.2;color:#333;padding:16px;font-family:'Fira Code',monospace;">
+          <b style="color:#e65100;">C:\</b><b style="color:#1565c0;">Users\</b><b style="color:#2e7d32;">あなた\</b><b style="color:#6a1b9a;">Documents\</b><b style="color:#c62828;">レポート.docx</b>
+          <div style="font-family:'M PLUS Rounded 1c',sans-serif;font-size:12px;color:#888;margin-top:8px;line-height:1.8;">
+            <span style="color:#e65100;">■</span> Cドライブ（パソコン本体）<br>
+            <span style="color:#1565c0;">■</span> ユーザーフォルダ<br>
+            <span style="color:#2e7d32;">■</span> あなたのフォルダ<br>
+            <span style="color:#6a1b9a;">■</span> ドキュメントフォルダ<br>
+            <span style="color:#c62828;">■</span> ファイル本体
+          </div>
+        </div>
+      </div>
+
+      <h3>絶対パスと相対パス</h3>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>🏠 絶対パス</h4>
+          <p>
+            一番上（C:\）からの完全な住所。<br>
+            <code>C:\Users\あなた\Documents\レポート.docx</code><br>
+            「東京都渋谷区○○町1-2-3」のようなもの。どこにいても場所がわかる。
+          </p>
+        </div>
+        <div class="compare-card">
+          <h4>📍 相対パス</h4>
+          <p>
+            今いる場所からの道順。<br>
+            <code>Documents\レポート.docx</code><br>
+            「この道をまっすぐ→右」のようなもの。今いる場所によって変わる。
+          </p>
+        </div>
+      </div>
+
+      <h3>パスを確認する方法</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            エクスプローラーの<strong>アドレスバー</strong>をクリックするとパスが表示される
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            ファイルを<strong>右クリック</strong>→「<strong>パスのコピー</strong>」で完全なパスをコピーできる
+          </div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 パスの理解はプログラミングで<b>超重要</b>。<br>
+        「ファイルが見つからない」系のエラーは、ほとんどの場合パスの間違いが原因！<br>
+        PowerShell の <code>cd</code> や Python の <code>open()</code> でもパスを使うよ。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 7 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="organize">
+    <div class="section-num">SECTION 07</div>
+    <div class="section-title">🧹 ファイル整理術</div>
+    <div class="section-body">
+      <p>ファイルが増えてくると、あちこちに散らばってカオスになりがち。最初からルールを決めておこう！</p>
+
+      <h3>整理の基本ルール</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>デスクトップにファイルを溜めない</strong><br>
+            デスクトップは「作業台」。作業が終わったらドキュメントに移動しよう。
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>フォルダで分類する</strong><br>
+            「学校」「プログラミング」「写真」など、種類ごとにフォルダを作ろう。
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>わかりやすい名前をつける</strong><br>
+            ×「無題」「新しいフォルダー (2)」<br>
+            ○「2025_数学レポート」「夏休み_写真」
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>ダウンロードフォルダを定期的にお掃除</strong><br>
+            ダウンロードフォルダは放っておくと大量のファイルが溜まります。
+          </div>
+        </div>
+      </div>
+
+      <h3>おすすめのフォルダ構成</h3>
+      <div class="explorer">
+        <div class="explorer-titlebar">
+          <div class="explorer-title">📁 ドキュメント — おすすめ構成</div>
+        </div>
+        <div class="explorer-content" style="font-size:13px;line-height:2;color:#333;padding:16px;">
+          📁 <b>ドキュメント</b><br>
+          　├── 📁 <b>学校</b><br>
+          　│　　├── 📁 数学<br>
+          　│　　├── 📁 英語<br>
+          　│　　└── 📁 理科<br>
+          　├── 📁 <b>プログラミング</b><br>
+          　│　　├── 📁 python-practice<br>
+          　│　　└── 📁 web-practice<br>
+          　├── 📁 <b>写真</b><br>
+          　│　　├── 📁 2025-04_旅行<br>
+          　│　　└── 📁 2025-03_卒業式<br>
+          　└── 📁 <b>その他</b>
+        </div>
+      </div>
+
+      <h3>ファイル名のつけ方のコツ</h3>
+      <ul>
+        <li><b>日付を先頭に</b> → <code>2025-04-01_レポート.docx</code>（自動で日付順に並ぶ！）</li>
+        <li><b>使えない文字に注意</b> → <code>\ / : * ? " &lt; &gt; |</code> は使えない</li>
+        <li><b>スペースの代わりにハイフンかアンダースコア</b> → <code>my-report</code> や <code>my_report</code></li>
+        <li><b>バージョンをつける</b> → <code>レポート_v1.docx</code> <code>レポート_v2.docx</code></li>
+      </ul>
+
+      <div class="point">
+        💡 プログラミングの世界では<b>フォルダ名・ファイル名は英語（半角英数字）</b>が基本。<br>
+        日本語だとエラーの原因になることがあるので、プログラミング用フォルダは英語で名前をつけよう！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 8 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="zip">
+    <div class="section-num">SECTION 08</div>
+    <div class="section-title">📦 圧縮と展開（ZIP）</div>
+    <div class="section-body">
+      <p>
+        複数のファイルをまとめて1つにしたり、ファイルサイズを小さくするのが<b>圧縮</b>。<br>
+        メールで送るときや、ネットからダウンロードしたファイルでよく使います。
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>📦 圧縮</h4>
+          <p>
+            複数のファイルを1つの .zip ファイルにまとめる。<br>
+            「段ボールに荷物を詰める」イメージ。
+          </p>
+        </div>
+        <div class="compare-card">
+          <h4>📂 展開（解凍）</h4>
+          <p>
+            .zip ファイルから元のファイルを取り出す。<br>
+            「段ボールを開けて中身を出す」イメージ。
+          </p>
+        </div>
+      </div>
+
+      <h3>圧縮する方法</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            まとめたいファイルを<b>すべて選択</b>する
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            選んだファイルを<b>右クリック</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            「<strong>ZIPファイルに圧縮する</strong>」を選ぶ
+          </div>
+        </div>
+      </div>
+
+      <h3>展開（解凍）する方法</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            .zip ファイルを<b>右クリック</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            「<strong>すべて展開</strong>」を選ぶ
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            展開先を選んで「展開」をクリック
+          </div>
+        </div>
+      </div>
+
+      <div class="warn">
+        ⚠️ <b>ZIP の中身を直接編集しないこと！</b><br>
+        ZIP をダブルクリックすると中身が見えますが、これは「覗いている」だけ。<br>
+        編集したいなら必ず「すべて展開」してからにしよう。展開せずに編集すると変更が消えることがあります。
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 やってみよう</div>
+        <div class="try-it-body">
+          ① 「練習フォルダ」の中にファイルを2〜3個作る<br>
+          ② 全部選んで右クリック → 「ZIPファイルに圧縮する」<br>
+          ③ 作られた .zip ファイルを別の場所に移動<br>
+          ④ 右クリック → 「すべて展開」で中身を取り出す
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 9 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="shortcut">
+    <div class="section-num">SECTION 09</div>
+    <div class="section-title">⚡ エクスプローラーのショートカット集</div>
+    <div class="section-body">
+      <p>これを覚えるとファイル操作が圧倒的に速くなる！</p>
+
+      <h3>基本操作</h3>
+      <div class="shortcut-row">
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+<span class="kbd">C</span></div>
+          <div class="sb-label">コピー</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+<span class="kbd">X</span></div>
+          <div class="sb-label">切り取り</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+<span class="kbd">V</span></div>
+          <div class="sb-label">貼り付け</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+<span class="kbd">Z</span></div>
+          <div class="sb-label">元に戻す</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Delete</span></div>
+          <div class="sb-label">ゴミ箱へ</div>
+        </div>
+      </div>
+
+      <h3>選択</h3>
+      <div class="shortcut-row">
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+<span class="kbd">A</span></div>
+          <div class="sb-label">すべて選択</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+クリック</div>
+          <div class="sb-label">1つずつ追加選択</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Shift</span>+クリック</div>
+          <div class="sb-label">範囲選択</div>
+        </div>
+      </div>
+
+      <h3>フォルダ操作</h3>
+      <div class="shortcut-row">
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Win</span>+<span class="kbd">E</span></div>
+          <div class="sb-label">エクスプローラーを開く</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Alt</span>+<span class="kbd">←</span></div>
+          <div class="sb-label">前のフォルダに戻る</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Alt</span>+<span class="kbd">↑</span></div>
+          <div class="sb-label">一つ上のフォルダへ</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">N</span></div>
+          <div class="sb-label">新しいフォルダ</div>
+        </div>
+      </div>
+
+      <h3>その他</h3>
+      <div class="shortcut-row">
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">F2</span></div>
+          <div class="sb-label">名前変更</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Ctrl</span>+<span class="kbd">F</span></div>
+          <div class="sb-label">ファイルを検索</div>
+        </div>
+        <div class="shortcut-badge">
+          <div class="sb-keys"><span class="kbd">Alt</span>+<span class="kbd">Enter</span></div>
+          <div class="sb-label">プロパティ（詳細情報）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 10 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="trouble">
+    <div class="section-num">SECTION 10</div>
+    <div class="section-title">🔧 トラブル対処法</div>
+    <div class="section-body">
+      <p>よくあるファイル操作のトラブルと対処法をまとめました。</p>
+
+      <h3>「ファイルが見つからない！」</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">🔍</div>
+          <div class="step-content">
+            <strong>エクスプローラーの検索機能を使おう</strong><br>
+            エクスプローラー右上の検索バーにファイル名を入力。<br>
+            <span class="kbd">Win</span> + <span class="kbd">S</span> の Windows 検索でも探せるよ。
+          </div>
+        </div>
+      </div>
+
+      <h3>「間違えてファイルを消しちゃった！」</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">♻️</div>
+          <div class="step-content">
+            <strong>ゴミ箱を確認しよう</strong><br>
+            デスクトップの「ゴミ箱」を開いて、ファイルを右クリック → 「元に戻す」。<br>
+            <span class="kbd">Ctrl</span> + <span class="kbd">Z</span>（元に戻す）でも復元できることがあるよ。
+          </div>
+        </div>
+      </div>
+
+      <h3>「ファイルが開けない！」</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">🏷️</div>
+          <div class="step-content">
+            <strong>拡張子を確認しよう</strong><br>
+            ・拡張子が消えていないか？ → 名前を変更して拡張子を付け直す<br>
+            ・対応するアプリがインストールされているか？ → 右クリック → 「プログラムから開く」
+          </div>
+        </div>
+      </div>
+
+      <h3>「このファイルは使用中です」と出る</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">🔒</div>
+          <div class="step-content">
+            <strong>そのファイルを開いているアプリを閉じよう</strong><br>
+            Word で開いているドキュメントは、Word を閉じないと移動・削除できない。<br>
+            どのアプリが使っているかわからないときは、一度パソコンを再起動してみよう。
+          </div>
+        </div>
+      </div>
+
+      <h3>「アクセスが拒否されました」と出る</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">🛡️</div>
+          <div class="step-content">
+            <strong>Windows のシステムファイルは触れない</strong><br>
+            <code>C:\Windows</code> や <code>C:\Program Files</code> の中は、Windows が使う大事なファイル。<br>
+            これらは消したり変更したりしないように保護されています。触らないようにしよう！
+          </div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 <b>困ったときの3ステップ：</b><br>
+        ① まず <span class="kbd">Ctrl</span> + <span class="kbd">Z</span>（元に戻す）を試す<br>
+        ② ゴミ箱を確認する<br>
+        ③ それでもダメなら、大人に相談しよう！
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-bottom">
+    <a class="nav-btn secondary" href="../index.html">← トップページ</a>
+  </div>
+
+</div>
+</body>
+</html>
