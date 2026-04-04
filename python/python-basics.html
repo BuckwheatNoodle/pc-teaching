@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python きほん道場</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://skulpt.org/js/skulpt.min.js"></script>
+<script src="https://skulpt.org/js/skulpt-stdlib.js"></script>
+<style>
+:root {
+  --outer-bg: #1a1a2e;
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --python-blue: #306998;
+  --python-yellow: #ffd43b;
+  --win-blue: #0078d4;
+  --text-muted: rgba(240,240,255,0.55);
+  --correct: #2ecc71;
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+  --editor-bg: #1e1e2e;
+  --editor-line: #2a2a3e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #1a2a4a, #1a1a2e);
+  min-height: 100vh;
+  color: #f0f0ff;
+  overflow-x: hidden;
+}
+
+.outer { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 20px; }
+.logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(12px, 2.5vw, 18px);
+  background: linear-gradient(90deg, #306998, #ffd43b, #50e6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+.home-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent2);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.home-link:hover { opacity: 1; }
+
+/* ── MAIN LAYOUT ── */
+.main-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 800px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .sidebar { order: -1; }
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 16px;
+}
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.lesson-list { display: flex; flex-direction: column; gap: 4px; }
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(240,240,255,0.6);
+  transition: all 0.2s;
+  border: 1.5px solid transparent;
+}
+.lesson-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.lesson-item.active {
+  background: rgba(124,106,245,0.2);
+  border-color: rgba(124,106,245,0.5);
+  color: #fff;
+}
+.lesson-item.done { color: var(--correct); }
+.lesson-check {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2);
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.lesson-item.done .lesson-check { background: var(--correct); border-color: var(--correct); }
+.lesson-item.active .lesson-check { border-color: var(--accent); }
+
+/* Progress */
+.progress-mini { margin-top: 14px; }
+.progress-mini-label { font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 6px; }
+.progress-mini-bar { background: rgba(255,255,255,0.1); border-radius: 50px; height: 6px; overflow: hidden; }
+.progress-mini-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--python-blue), var(--python-yellow));
+  border-radius: 50px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+
+/* ── CONTENT AREA ── */
+.content-area { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── LESSON CARD ── */
+.lesson-card {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+}
+.lesson-num {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--python-yellow);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.lesson-title {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lesson-body {
+  font-size: 14px;
+  line-height: 2;
+  color: rgba(240,240,255,0.8);
+}
+.lesson-body code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(255,215,59,0.12);
+  border: 1px solid rgba(255,215,59,0.25);
+  border-radius: 5px;
+  padding: 1px 7px;
+  font-size: 13px;
+  color: var(--python-yellow);
+  font-weight: 700;
+}
+.lesson-body .point-box {
+  background: rgba(48,105,152,0.15);
+  border-left: 4px solid var(--python-blue);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.lesson-body .point-box::before { content: '💡 '; }
+
+/* ── EDITOR ── */
+.editor-wrap {
+  background: var(--editor-bg);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.editor-topbar {
+  background: rgba(0,0,0,0.3);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.editor-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(240,240,255,0.5);
+}
+.editor-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+.editor-filename { margin-left: 4px; }
+
+.editor-btns { display: flex; gap: 8px; }
+.run-btn {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.run-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(40,167,69,0.4); }
+.reset-code-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  color: rgba(240,240,255,0.5);
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.reset-code-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
+
+textarea.code-input {
+  width: 100%;
+  min-height: 140px;
+  background: var(--editor-bg);
+  border: none;
+  color: #e0e0ff;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  padding: 16px;
+  resize: vertical;
+  outline: none;
+  tab-size: 4;
+}
+textarea.code-input::placeholder { color: rgba(240,240,255,0.2); }
+
+/* ── OUTPUT ── */
+.output-wrap {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.2);
+}
+.output-label {
+  padding: 8px 14px 0;
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(240,240,255,0.35);
+  letter-spacing: 1px;
+}
+.output-box {
+  padding: 10px 14px 14px;
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #a0ffa0;
+  white-space: pre-wrap;
+  min-height: 36px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.output-box.error { color: #ff6b6b; }
+
+/* ── CHALLENGE ── */
+.challenge-card {
+  background: rgba(255,215,59,0.06);
+  border: 1.5px solid rgba(255,215,59,0.2);
+  border-radius: 14px;
+  padding: 20px;
+}
+.challenge-label {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--python-yellow);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.challenge-text {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+.challenge-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.challenge-hint code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(255,215,59,0.1);
+  border-radius: 4px;
+  padding: 0 5px;
+  color: var(--python-yellow);
+  font-size: 12px;
+}
+
+/* ── RESULT BANNER ── */
+.result-banner {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.result-banner.success {
+  display: flex;
+  background: rgba(46,204,113,0.15);
+  border: 1.5px solid rgba(46,204,113,0.4);
+  color: var(--correct);
+}
+.result-banner.fail {
+  display: flex;
+  background: rgba(255,107,107,0.1);
+  border: 1.5px solid rgba(255,107,107,0.3);
+  color: #ff6b6b;
+}
+.result-banner .result-icon { font-size: 24px; }
+.next-btn {
+  margin-left: auto;
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.next-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,106,245,0.4); }
+
+/* ── COMPLETE ── */
+.complete-screen { text-align: center; padding: 48px 24px; }
+.complete-emoji { font-size: 80px; display: block; margin-bottom: 16px; animation: bounce 1s ease infinite; }
+@keyframes bounce { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-12px); } }
+.complete-title { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+.complete-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; line-height: 1.7; }
+.restart-btn {
+  background: linear-gradient(135deg, var(--python-blue), #4a8abf);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 15px; font-weight: 800;
+  padding: 12px 36px; cursor: pointer; transition: all 0.2s;
+}
+.restart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(48,105,152,0.4); }
+
+/* ── LOADING ── */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,12,41,0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  transition: opacity 0.4s;
+}
+.loading-overlay.hidden { opacity: 0; pointer-events: none; }
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top-color: var(--python-yellow);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; font-weight: 800; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">🐍 Python エンジンを準備中...</div>
+</div>
+
+<div class="outer">
+
+  <div class="header">
+    <div class="logo">🐍 PYTHON DOJO</div>
+    <div class="sub">Python きほん道場 — コードを書いて動かしてみよう！</div>
+    <a class="home-link" href="../index.html">← トップページに戻る</a>
+  </div>
+
+  <div class="main-layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-title">📚 レッスン一覧</div>
+      <div class="lesson-list" id="lesson-list"></div>
+      <div class="progress-mini">
+        <div class="progress-mini-label" id="progress-label">0 / 0 クリア</div>
+        <div class="progress-mini-bar">
+          <div class="progress-mini-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-area" id="content-area"></div>
+
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────
+// LESSON DATA
+// ──────────────────────────────────────
+const lessons = [
+  {
+    id: 'print',
+    icon: '👋',
+    title: 'はじめての print()',
+    body: `
+      プログラミングの第一歩は、画面に文字を表示すること！<br>
+      Pythonでは <code>print()</code> を使って文字を表示します。
+      <div class="point-box">
+        文字を表示するときは <code>print("ここに文字")</code> と書きます。<br>
+        文字は <code>"</code>（ダブルクォーテーション）で囲むのがルール！
+      </div>
+    `,
+    code: 'print("Hello, World!")',
+    challenge: '画面に <code>こんにちは！</code> と表示してみよう！',
+    hint: '<code>print("こんにちは！")</code> と書いてみよう',
+    check: output => output.trim() === 'こんにちは！',
+  },
+  {
+    id: 'variable',
+    icon: '📦',
+    title: '変数をつかおう',
+    body: `
+      <b>変数</b>は、データを入れておく「箱」のようなもの。<br>
+      名前をつけて、後から使い回すことができます。
+      <div class="point-box">
+        <code>name = "太郎"</code> で変数 name に「太郎」を入れられる。<br>
+        <code>print(name)</code> で中身を表示できるよ！
+      </div>
+    `,
+    code: 'name = "太郎"\nprint(name)',
+    challenge: '変数 <code>animal</code> に好きな動物の名前を入れて表示しよう！',
+    hint: '<code>animal = "ねこ"</code> のように書いて、<code>print(animal)</code> で表示！',
+    check: (output, code) => {
+      return code.includes('animal') && code.includes('print') && output.trim().length > 0;
+    },
+  },
+  {
+    id: 'calc',
+    icon: '🔢',
+    title: '計算してみよう',
+    body: `
+      Pythonは計算がとくい！電卓みたいに使えます。
+      <div class="point-box">
+        <code>+</code> 足す　<code>-</code> 引く　<code>*</code> かける　<code>/</code> わる<br>
+        <code>**</code> で累乗（2の3乗 → <code>2 ** 3</code> → 8）もできる！
+      </div>
+    `,
+    code: 'print(10 + 3)\nprint(10 - 3)\nprint(10 * 3)\nprint(10 / 3)',
+    challenge: '<code>7 * 8</code> の答えを <code>kotae</code> という変数に入れて表示しよう！',
+    hint: '<code>kotae = 7 * 8</code> と書いて <code>print(kotae)</code> で表示！',
+    check: output => output.trim() === '56',
+  },
+  {
+    id: 'string',
+    icon: '🔤',
+    title: '文字列であそぼう',
+    body: `
+      文字列（文字の並び）は <code>+</code> でつなげることができます。
+      <div class="point-box">
+        <code>"こん" + "にちは"</code> → <code>"こんにちは"</code><br>
+        <code>f"名前は{name}です"</code> のように f文字列 を使うと変数を埋め込める！
+      </div>
+    `,
+    code: 'first = "Python"\nsecond = "楽しい"\nprint(first + "は" + second + "！")',
+    challenge: '変数 <code>name</code> に自分の名前を入れて、<code>私の名前は〇〇です</code> と表示しよう！（〇〇は名前）',
+    hint: '<code>name = "太郎"</code> として、<code>print("私の名前は" + name + "です")</code> のように書こう！',
+    check: (output, code) => {
+      return code.includes('name') && output.trim().startsWith('私の名前は') && output.trim().endsWith('です');
+    },
+  },
+  {
+    id: 'if',
+    icon: '🔀',
+    title: 'もし〜なら（if文）',
+    body: `
+      プログラムに「判断」させることができます。<br>
+      <b>if文</b> は「もし〜なら、これをやる」という命令です。
+      <div class="point-box">
+        <code>if</code> の後に条件、<code>:</code> をつけて、<br>
+        次の行を <b>スペース4つ</b> で下げる（インデント）のがルール！<br>
+        <code>else:</code> で「そうでなければ」も書ける！
+      </div>
+    `,
+    code: 'age = 14\n\nif age >= 18:\n    print("大人です")\nelse:\n    print("子どもです")',
+    challenge: '変数 <code>score</code> に <code>85</code> を入れて、80以上なら <code>合格！</code>、そうでなければ <code>不合格...</code> と表示しよう！',
+    hint: '<code>if score >= 80:</code> の後にインデント（スペース4つ）で <code>print("合格！")</code> と書こう！',
+    check: output => output.trim() === '合格！',
+  },
+  {
+    id: 'for',
+    icon: '🔁',
+    title: 'くり返し（forループ）',
+    body: `
+      同じことを何回もやりたいとき、<b>for文</b> が使えます。
+      <div class="point-box">
+        <code>for i in range(5):</code> で 0〜4 の5回くり返し！<br>
+        <code>range(1, 6)</code> なら 1〜5 になるよ。<br>
+        if文と同じく、中身はスペース4つで下げよう！
+      </div>
+    `,
+    code: 'for i in range(5):\n    print(i, "回目のループ！")',
+    challenge: '<code>1</code> から <code>5</code> までの数字を1行ずつ表示しよう！',
+    hint: '<code>for i in range(1, 6):</code> と書いて <code>print(i)</code> を中に！',
+    check: output => output.trim() === '1\n2\n3\n4\n5',
+  },
+  {
+    id: 'list',
+    icon: '📝',
+    title: 'リストを使おう',
+    body: `
+      <b>リスト</b>は、複数のデータをまとめて入れる「棚」のようなもの。
+      <div class="point-box">
+        <code>fruits = ["りんご", "バナナ", "みかん"]</code> のように <code>[ ]</code> で囲む。<br>
+        <code>for</code> と組み合わせると、中身を順番に取り出せるよ！
+      </div>
+    `,
+    code: 'fruits = ["りんご", "バナナ", "みかん"]\n\nfor fruit in fruits:\n    print(fruit + "が好き！")',
+    challenge: '好きな食べ物を3つリストに入れて、<code>for</code> を使って全部表示しよう！',
+    hint: '<code>foods = ["カレー", "ラーメン", "すし"]</code> のようにリストを作って、<code>for food in foods:</code> でループ！',
+    check: (output, code) => {
+      return code.includes('[') && code.includes('for') && output.trim().split('\n').length >= 3;
+    },
+  },
+  {
+    id: 'function',
+    icon: '⚙️',
+    title: '関数をつくろう',
+    body: `
+      <b>関数</b>は、何度も使いたい処理をまとめたもの。<br>
+      自分だけのオリジナル命令を作れます！
+      <div class="point-box">
+        <code>def あいさつ(name):</code> で関数を定義。<br>
+        <code>あいさつ("太郎")</code> で呼び出して使えるよ！<br>
+        関数の中身もスペース4つで下げよう。
+      </div>
+    `,
+    code: 'def greet(name):\n    print(name + "さん、こんにちは！")\n\ngreet("太郎")\ngreet("花子")',
+    challenge: '2つの数を足して結果を表示する関数 <code>tasu</code> を作ろう！<code>tasu(3, 5)</code> で <code>8</code> と表示されればOK！',
+    hint: '<code>def tasu(a, b):</code> と書いて、中で <code>print(a + b)</code> しよう！',
+    check: output => output.trim().split('\n').some(line => line.trim() === '8'),
+  },
+];
+
+// ──────────────────────────────────────
+// STATE
+// ──────────────────────────────────────
+const state = {
+  currentLesson: 0,
+  cleared: new Set(),
+};
+
+// ──────────────────────────────────────
+// SKULPT SETUP
+// ──────────────────────────────────────
+let skulptReady = false;
+
+function initSkulpt() {
+  try {
+    Sk.configure({
+      output: text => { Sk.__output += text; },
+      read: x => {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined) {
+          throw "File not found: '" + x + "'";
+        }
+        return Sk.builtinFiles["files"][x];
+      },
+    });
+    skulptReady = true;
+  } catch(e) {
+    console.error('Skulpt init error:', e);
+  }
+}
+
+function runPython(code) {
+  return new Promise((resolve, reject) => {
+    Sk.__output = '';
+    try {
+      Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, code, true))
+        .then(() => resolve(Sk.__output))
+        .catch(err => reject(err.toString()));
+    } catch(e) {
+      reject(e.toString());
+    }
+  });
+}
+
+// ──────────────────────────────────────
+// RENDER
+// ──────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById('lesson-list');
+  list.innerHTML = lessons.map((l, i) => {
+    const done = state.cleared.has(i);
+    const active = state.currentLesson === i;
+    let cls = 'lesson-item';
+    if (done) cls += ' done';
+    if (active) cls += ' active';
+    return `
+      <div class="${cls}" onclick="goToLesson(${i})">
+        <div class="lesson-check">${done ? '✓' : i + 1}</div>
+        <span>${l.icon} ${l.title}</span>
+      </div>
+    `;
+  }).join('');
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = lessons.length;
+  const done = state.cleared.size;
+  document.getElementById('progress-label').textContent = `${done} / ${total} クリア`;
+  document.getElementById('progress-fill').style.width = `${(done / total) * 100}%`;
+}
+
+function renderLesson() {
+  const i = state.currentLesson;
+  const l = lessons[i];
+  const area = document.getElementById('content-area');
+
+  area.innerHTML = `
+    <!-- Lesson explanation -->
+    <div class="lesson-card">
+      <div class="lesson-num">LESSON ${i + 1} / ${lessons.length}</div>
+      <div class="lesson-title">${l.icon} ${l.title}</div>
+      <div class="lesson-body">${l.body}</div>
+    </div>
+
+    <!-- Editor -->
+    <div class="editor-wrap">
+      <div class="editor-topbar">
+        <div class="editor-topbar-left">
+          <span class="editor-dot dot-r"></span>
+          <span class="editor-dot dot-y"></span>
+          <span class="editor-dot dot-g"></span>
+          <span class="editor-filename">lesson${i + 1}.py</span>
+        </div>
+        <div class="editor-btns">
+          <button class="reset-code-btn" onclick="resetCode()">↻ リセット</button>
+          <button class="run-btn" onclick="runCode()">▶ 実行する</button>
+        </div>
+      </div>
+      <textarea class="code-input" id="code-input" spellcheck="false" placeholder="ここにPythonコードを書こう...">${escHtml(l.code)}</textarea>
+      <div class="output-wrap">
+        <div class="output-label">出力</div>
+        <div class="output-box" id="output-box">ここに実行結果が表示されるよ</div>
+      </div>
+    </div>
+
+    <!-- Challenge -->
+    <div class="challenge-card">
+      <div class="challenge-label">🎯 チャレンジ</div>
+      <div class="challenge-text">${l.challenge}</div>
+      <div class="challenge-hint">💡 ヒント: ${l.hint}</div>
+    </div>
+
+    <!-- Result banner -->
+    <div class="result-banner" id="result-banner"></div>
+  `;
+
+  // Tab key support
+  const textarea = document.getElementById('code-input');
+  textarea.addEventListener('keydown', handleTab);
+
+  renderSidebar();
+}
+
+function handleTab(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '    ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 4;
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ──────────────────────────────────────
+// ACTIONS
+// ──────────────────────────────────────
+async function runCode() {
+  if (!skulptReady) return;
+
+  const code = document.getElementById('code-input').value;
+  const outputBox = document.getElementById('output-box');
+  const banner = document.getElementById('result-banner');
+
+  outputBox.className = 'output-box';
+  banner.className = 'result-banner';
+  banner.style.display = 'none';
+
+  try {
+    const output = await runPython(code);
+    outputBox.textContent = output || '（出力なし）';
+
+    // Check challenge
+    const lesson = lessons[state.currentLesson];
+    const passed = lesson.check(output, code);
+
+    if (passed) {
+      state.cleared.add(state.currentLesson);
+      const isLast = state.currentLesson === lessons.length - 1;
+      banner.className = 'result-banner success';
+      banner.innerHTML = `
+        <span class="result-icon">🎉</span>
+        <span>チャレンジクリア！すごい！</span>
+        ${isLast
+          ? `<button class="next-btn" onclick="showComplete()">🏆 結果を見る</button>`
+          : `<button class="next-btn" onclick="goToLesson(${state.currentLesson + 1})">次のレッスンへ →</button>`
+        }
+      `;
+      renderSidebar();
+    }
+  } catch(err) {
+    outputBox.className = 'output-box error';
+    // Translate common errors
+    let msg = err;
+    if (err.includes('SyntaxError')) msg = '⚠️ 文法エラー！書き方を確認してみよう\n\n' + err;
+    else if (err.includes('NameError')) msg = '⚠️ 名前エラー！変数名や関数名が間違ってないか確認しよう\n\n' + err;
+    else if (err.includes('TypeError')) msg = '⚠️ 型エラー！データの種類が合っていないかも\n\n' + err;
+    else if (err.includes('IndentationError')) msg = '⚠️ インデントエラー！スペース4つで下げよう\n\n' + err;
+    else msg = '⚠️ エラーが出たよ！コードを見直してみよう\n\n' + err;
+    outputBox.textContent = msg;
+
+    banner.className = 'result-banner fail';
+    banner.innerHTML = `<span class="result-icon">💪</span><span>エラーが出たけど大丈夫！直してもう一度やってみよう！</span>`;
+  }
+}
+
+function resetCode() {
+  const lesson = lessons[state.currentLesson];
+  document.getElementById('code-input').value = lesson.code;
+  document.getElementById('output-box').textContent = 'ここに実行結果が表示されるよ';
+  document.getElementById('output-box').className = 'output-box';
+  const banner = document.getElementById('result-banner');
+  banner.className = 'result-banner';
+  banner.style.display = 'none';
+}
+
+function goToLesson(i) {
+  if (i < 0 || i >= lessons.length) return;
+  state.currentLesson = i;
+  renderLesson();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showComplete() {
+  document.getElementById('content-area').innerHTML = `
+    <div class="lesson-card">
+      <div class="complete-screen">
+        <span class="complete-emoji">🏆</span>
+        <div class="complete-title">全レッスンクリア！</div>
+        <div class="complete-sub">
+          Python の基本を全部マスターしたよ！🎉<br>
+          print、変数、計算、文字列、if文、for文、リスト、関数...<br>
+          これだけ覚えれば、いろんなプログラムが作れる！
+        </div>
+        <button class="restart-btn" onclick="restartAll()">🔄 最初からやり直す</button>
+      </div>
+    </div>
+  `;
+  renderSidebar();
+}
+
+function restartAll() {
+  state.cleared.clear();
+  state.currentLesson = 0;
+  renderLesson();
+}
+
+// ──────────────────────────────────────
+// INIT
+// ──────────────────────────────────────
+function init() {
+  initSkulpt();
+  renderLesson();
+
+  // Hide loading
+  const loading = document.getElementById('loading');
+  loading.classList.add('hidden');
+  setTimeout(() => loading.remove(), 500);
+}
+
+// Wait for Skulpt to load
+if (typeof Sk !== 'undefined') {
+  init();
+} else {
+  window.addEventListener('load', init);
+}
+</script>
+</body>
+</html>
