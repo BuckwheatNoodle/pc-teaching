@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowerShell 入門 — PC きほん道場</title>
+<meta name="description" content="Windows 11 の PowerShell で、コマンド操作（CLI）の基本を学ぼう！">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --ps-blue: #012456;
+  --ps-light: #2d7dd2;
+  --correct: #2ecc71;
+  --text-muted: rgba(240,240,255,0.55);
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0a0a20, #012456, #0f1a3a);
+  min-height: 100vh; color: #f0f0ff;
+}
+.outer { max-width: 900px; margin: 0 auto; padding: 24px 18px 80px; }
+
+/* ── HEADER ��─ */
+.header { text-align: center; margin-bottom: 28px; }
+.logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(11px, 2.4vw, 17px);
+  background: linear-gradient(90deg, #2d7dd2, #50e6ff, #fff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; display: inline-block; margin-bottom: 6px;
+}
+.sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+.home-link {
+  display: inline-block; margin-top: 8px;
+  color: var(--accent2); font-size: 12px; font-weight: 700;
+  text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+}
+.home-link:hover { opacity: 1; }
+
+/* ── TOC ── */
+.toc {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 28px;
+  backdrop-filter: blur(10px);
+}
+.toc-title { font-size: 14px; font-weight: 900; margin-bottom: 10px; color: var(--accent2); }
+.toc-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.toc-list a {
+  font-size: 13px; font-weight: 700; color: rgba(240,240,255,0.7);
+  text-decoration: none; padding: 4px 12px; border-radius: 8px;
+  border: 1px solid transparent; transition: all 0.2s;
+}
+.toc-list a:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+
+/* ── SECTION ── */
+.section {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 18px; padding: 28px 26px; margin-bottom: 20px;
+  backdrop-filter: blur(10px); scroll-margin-top: 20px;
+}
+.section-num {
+  font-size: 11px; font-weight: 900; color: var(--accent2);
+  letter-spacing: 1.5px; margin-bottom: 4px;
+}
+.section-title {
+  font-size: 22px; font-weight: 900; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-body {
+  font-size: 14px; line-height: 2.1; color: rgba(240,240,255,0.85);
+}
+.section-body h3 {
+  font-size: 16px; font-weight: 900; margin: 24px 0 10px;
+  padding-left: 12px; border-left: 4px solid var(--accent2); color: #fff;
+}
+.section-body h3:first-child { margin-top: 0; }
+.section-body code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(80,230,255,0.1); border: 1px solid rgba(80,230,255,0.2);
+  border-radius: 5px; padding: 1px 7px; font-size: 13px;
+  color: var(--accent2); font-weight: 700;
+}
+.section-body ul, .section-body ol { padding-left: 1.5em; margin: 8px 0; }
+.section-body li { margin-bottom: 4px; }
+
+/* Point / Warn */
+.point {
+  background: rgba(45,125,210,0.12); border-left: 4px solid var(--ps-light);
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+.warn {
+  background: rgba(255,107,107,0.08); border-left: 4px solid #ff6b6b;
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.step {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 16px 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--ps-blue), var(--ps-light));
+  color: #fff; font-size: 14px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-content { flex: 1; font-size: 13px; line-height: 1.9; }
+.step-content strong { color: var(--accent2); }
+
+/* Terminal */
+.terminal {
+  background: #012456; border-radius: 10px; overflow: hidden;
+  margin: 14px 0; border: 1px solid rgba(80,230,255,0.15);
+}
+.terminal-bar {
+  background: #001b3d; padding: 6px 12px;
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5);
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid rgba(80,230,255,0.08);
+}
+.terminal-body {
+  padding: 14px 16px; font-family: 'Fira Code', monospace;
+  font-size: 13px; line-height: 1.8; color: #ccc; white-space: pre-wrap;
+}
+.terminal-body .prompt { color: #ffff00; }
+.terminal-body .cmd { color: #50e6ff; }
+.terminal-body .out { color: #cccccc; }
+.terminal-body .comment { color: #555; }
+.terminal-body .highlight { color: #ffd43b; font-weight: 700; }
+.terminal-body .success { color: #2ecc71; }
+.terminal-body .err { color: #ff6b6b; }
+
+/* Concept cards */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 14px 0; }
+.concept-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.concept-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.concept-name { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.concept-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+/* Command ref table */
+.cmd-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+.cmd-table th {
+  text-align: left; padding: 8px 12px;
+  background: rgba(45,125,210,0.15); color: var(--accent2);
+  font-weight: 800; font-size: 12px; letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(80,230,255,0.2);
+}
+.cmd-table td {
+  padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  vertical-align: top;
+}
+.cmd-table td:first-child {
+  font-family: 'Fira Code', monospace; color: var(--accent2);
+  font-weight: 700; white-space: nowrap;
+}
+.cmd-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+/* Try-it prompt */
+.try-it {
+  background: rgba(46,204,113,0.08); border: 1.5px solid rgba(46,204,113,0.25);
+  border-radius: 14px; padding: 18px 20px; margin: 16px 0;
+}
+.try-it-label {
+  font-size: 11px; font-weight: 900; color: var(--correct);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+}
+.try-it-body { font-size: 13px; line-height: 1.9; }
+.try-it-body code {
+  background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.25);
+  color: var(--correct);
+}
+
+/* Keyboard shortcut badges */
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #3a3a5c 0%, #1e1e3a 100%);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-bottom: 3px solid rgba(0,0,0,0.5);
+  border-radius: 6px; color: #fff;
+  font-size: 11px; font-weight: 800;
+  padding: 2px 8px; min-width: 28px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 4px rgba(0,0,0,0.4);
+  white-space: nowrap; font-family: 'Fira Code', monospace;
+}
+
+/* Nav */
+.nav-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 32px; padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.nav-btn {
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 14px; font-weight: 800;
+  padding: 10px 24px; cursor: pointer; transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,106,245,0.4); }
+.nav-btn.secondary {
+  background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15);
+}
+.nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
+</style>
+</head>
+<body>
+<div class="outer">
+
+  <div class="header">
+    <div class="logo">⬛ POWERSHELL DOJO</div>
+    <div class="sub">コマンドでパソコンを操作しよう！</div>
+    <a class="home-link" href="../index.html">← トップページに戻る</a>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">📖 もくじ</div>
+    <ul class="toc-list">
+      <li><a href="#what">① CLIってなに？</a></li>
+      <li><a href="#open">② PowerShellを開こう</a></li>
+      <li><a href="#first">③ はじめてのコマンド</a></li>
+      <li><a href="#navigate">④ フォルダを移動しよう</a></li>
+      <li><a href="#files">⑤ ファイル・フォルダ操作</a></li>
+      <li><a href="#view">⑥ ファイルの中身を見る</a></li>
+      <li><a href="#tips">⑦ 便利テクニック</a></li>
+      <li><a href="#pipe">⑧ パイプとフィルタ</a></li>
+      <li><a href="#practice">⑨ 実践チャレンジ</a></li>
+      <li><a href="#ref">⑩ コマンド早見表</a></li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 1: CLIとは -->
+  <!-- ═══════��══════════════════════════════ -->
+  <div class="section" id="what">
+    <div class="section-num">SECTION 01</div>
+    <div class="section-title">⬛ CLIってなに？</div>
+    <div class="section-body">
+      ふだんパソコンを使うとき、マウスでアイコンをクリックして操作するよね。<br>
+      これを <b>GUI（ジーユーアイ）</b>= グラフィカル・ユーザー・インターフェース と言います。
+
+      <p>一方、<b>CLI（シーエルアイ）</b>= コマンドライン・インターフェース は、<b>文字（コマンド）を打って</b>パソコンを操作する方法です。</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🖱️</span>
+          <div class="concept-name">GUI</div>
+          <div class="concept-desc">マウスでクリックして操作<br>見た目でわかりやすい</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⌨️</span>
+          <div class="concept-name">CLI</div>
+          <div class="concept-desc">キーボードでコマンドを打つ<br>速くて正確、自動化もできる</div>
+        </div>
+      </div>
+
+      <h3>なぜ CLI を学ぶの？</h3>
+      <ul>
+        <li><b>プログラミングに必須</b> — Python の実行、Git の操作、サーバー管理…全部 CLI</li>
+        <li><b>速い</b> — マウスでポチポチするより、コマンド1行の方が圧倒的に速い場面がある</li>
+        <li><b>自動化できる</b> — 同じ操作を100回やるなら、コマンドを書けば一瞬</li>
+        <li><b>かっこいい</b> — 映画のハッカーみたいでテンション上がる！</li>
+      </ul>
+
+      <h3>PowerShell ってなに？</h3>
+      <p>
+        <b>PowerShell</b> は Windows に最初から入っている CLI ツール。<br>
+        古い「コマンドプロンプト」の進化版で、もっと多くのことができます。
+      </p>
+
+      <div class="point">
+        💡 Mac には「ターミナル」、Linux には「Bash」がある。PowerShell は Windows 版の CLI と覚えよう���
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 2: 開き�� -->
+  <!-- ════════════��═════════════════════════ -->
+  <div class="section" id="open">
+    <div class="section-num">SECTION 02</div>
+    <div class="section-title">🚀 PowerShell を��こう</div>
+    <div class="section-body">
+      Windows 11 で PowerShell を開く方法はいくつかあります。
+
+      <h3>方法① スタートメニューから（おすすめ）</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <span class="kbd">Win</span> + <span class="kbd">S</span> で検索を開く
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>「powershell」</strong>と入力
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            「Windows PowerShell」をクリックして起動！
+          </div>
+        </div>
+      </div>
+
+      <h3>方法② 右クリックメニューから</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            スタートボタン（⊞）を<b>右クリック</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            「<strong>ターミナル</strong>」をクリック（Windows 11 では PowerShell が開きます）
+          </div>
+        </div>
+      </div>
+
+      <h3>方法③ ショートカットキー（最速）</h3>
+      <p>
+        <span class="kbd">Win</span> + <span class="kbd">R</span> → <code>powershell</code> と入力 → <span class="kbd">Enter</span>
+      </p>
+
+      <h3>開くとこんな画面が出る</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ Windows PowerShell</div>
+        <div class="terminal-body"><span class="out">Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+新機能と改善のために最新の PowerShell をインストールしてください!
+https://aka.ms/PSWindows</span>
+
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="comment">← ここにコマンドを打つ！</span></div>
+      </div>
+
+      <div class="point">
+        💡 <code>PS C:\Users\あなた&gt;</code> の部分を<b>「プロンプト」</b>と言います。「入力待ちですよ」という意味。<br>
+        <code>C:\Users\あなた</code> は今いる場所（フォルダ）を表していま���。
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════��═════════════════════ -->
+  <!-- SECTION 3: はじめてのコマンド -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="first">
+    <div class="section-num">SECTION 03</div>
+    <div class="section-title">✨ はじめてのコマンド</div>
+    <div class="section-body">
+      <p>さっそくコマンドを打ってみよう！</p>
+
+      <h3>今いる場所を確認する — pwd</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">pwd</span>
+
+<span class="out">Path
+----
+C:\Users\あなた</span>
+
+<span class="comment"># pwd = Print Working Directory（今の作業ディレクトリを表示）</span></div>
+      </div>
+
+      <h3>フォルダの中身を見る — ls</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">ls</span>
+
+<span class="out">    ディレクトリ: C:\Users\あなた
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        2025/04/01    10:00                Desktop
+d-----        2025/04/01    10:00                Documents
+d-----        2025/04/01    10:00                Downloads
+d-----        2025/04/01    10:00                Music
+d-----        2025/04/01    10:00                Pictures</span></div>
+      </div>
+
+      <div class="point">
+        💡 <code>d-----</code> の <b>d</b> は「ディレクトリ（フォルダ）」を意味するよ。ファイルには <code>-a----</code> のように表示されます。
+      </div>
+
+      <h3>画面に文字を表示する — Write-Output</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">Write-Output "こんにちは、PowerShell！"</span>
+<span class="out">こんにちは、PowerShell！</span>
+
+<span class="comment"># 短く echo と書いてもOK</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">echo "Hello!"</span>
+<span class="out">Hello!</span></div>
+      </div>
+
+      <h3>画面をきれいにする — cls / clear</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">cls</span>
+<span class="comment"># 画面がきれいになる！ clear でもOK</span></div>
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 やってみよう</div>
+        <div class="try-it-body">
+          PowerShell を開いて、以下を順番に打ってみよう：<br>
+          ① <code>pwd</code> で今いる場所を確認<br>
+          ② <code>ls</code> でフォルダの中身を見る<br>
+          ③ <code>echo "はじめてのコマンド！"</code> で文字を表示
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════��═══════════════════ -->
+  <!-- SECTION 4: フォルダ移動 -->
+  <!-- ═══════��══════════════════════════════ -->
+  <div class="section" id="navigate">
+    <div class="section-num">SECTION 04</div>
+    <div class="section-title">📂 ���ォルダを移動しよう</div>
+    <div class="section-body">
+      <p>
+        GUI ではフォルダをダブルクリックして開くよね。<br>
+        CLI では <code>cd</code>（Change Directory）コマンドで移動します。
+      </p>
+
+      <h3>フォルダに入る — cd フォルダ名</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">cd Desktop</span>
+<span class="prompt">PS C:\Users\あなた\Desktop&gt;</span> <span class="comment">← デスクトップに移動した！</span>
+
+<span class="prompt">PS C:\Users\あなた\Desktop&gt;</span> <span class="cmd">ls</span>
+<span class="out">    ディレクトリ: C:\Users\あなた\Desktop
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        2025/04/01    10:00          12345 レポート.docx
+-a----        2025/04/01    10:00           5678 写真.jpg</span></div>
+      </div>
+
+      <h3>一つ上のフォルダに戻る — cd ..</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users\あ��た\Desktop&gt;</span> <span class="cmd">cd ..</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="comment">← 一つ上に戻った！</span>
+
+<span class="comment"># さらに上に戻る</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">cd ..</span>
+<span class="prompt">PS C:\Users&gt;</span></div>
+      </div>
+
+      <h3>ホームフォルダに一発で戻る — cd ~</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users&gt;</span> <span class="cmd">cd ~</span>
+<span class="prompt">PS C:\Users\あな���&gt;</span> <span class="comment">← ホームに戻った！</span></div>
+      </div>
+
+      <h3>フルパスで直接移動</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># どこにいても一発でジャンプ</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">cd C:\Users\あなた\Documents</span>
+<span class="prompt">PS C:\Users\あなた\Documents&gt;</span></div>
+      </div>
+
+      <div class="point">
+        💡 <b>パス（Path）のルール：</b><br>
+        ・<code>\</code>（バックスラッシュ）でフォルダを区切る<br>
+        ・<code>.</code> = 今いるフォルダ<br>
+        ・<code>..</code> = 一つ上のフォルダ<br>
+        ・<code>~</code> = ホームフォルダ（C:\Users\あなた）
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 やってみよう</div>
+        <div class="try-it-body">
+          ① <code>cd Desktop</code> でデスクトップに移動<br>
+          ② <code>ls</code> で中身を確認<br>
+          ③ <code>cd ..</code> で戻る<br>
+          ④ <code>cd Documents</code> でドキュメントに移動<br>
+          ⑤ <code>cd ~</code> でホームに戻る
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 5: ファイル・フォルダ操作 -->
+  <!-- ═══���════════════════���═════════════════ -->
+  <div class="section" id="files">
+    <div class="section-num">SECTION 05</div>
+    <div class="section-title">📁 ファイル・フォルダ操作</div>
+    <div class="section-body">
+      <p>GUI ではマウスで右クリック → 「新しいフォルダ」としていた操作を、コマンドでやってみよう。</p>
+
+      <h3>フォルダを作る — mkdir</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS C:\Users\あなた\Desktop&gt;</span> <span class="cmd">mkdir test-folder</span>
+<span class="out">    ディレクトリ: C:\Users\あなた\Desktop
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        2025/04/04    15:30                test-folder</span>
+
+<span class="comment"># フォルダの中にさらにフォルダも一気に作れる</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">mkdir test-folder\sub1\sub2</span></div>
+      </div>
+
+      <h3>ファイルを作る — New-Item</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># 空のファイルを作る</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">New-Item hello.txt</span>
+
+<span class="comment"># 中身を書いてファイルを作る</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">"こんにちは！" | Out-File memo.txt</span></div>
+      </div>
+
+      <h3>コピー — Copy-Item (cp)</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># ファイルをコピー</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">cp hello.txt hello-backup.txt</span>
+
+<span class="comment"># フォルダごとコピー（-Recurse が必要）</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">cp test-folder test-folder-backup -Recurse</span></div>
+      </div>
+
+      <h3>移動・名前変更 — Move-Item (mv)</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># ファイルを別のフォルダに移動</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">mv hello.txt test-folder\</span>
+
+<span class="comment"># ファイル名を変更（移動先の名前を変えるだ��）</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">mv memo.txt メモ.txt</span></div>
+      </div>
+
+      <h3>削除 — Remove-Item (rm)</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># ファイルを削除</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">rm hello-backup.txt</span>
+
+<span class="comment"># フォルダを中身ごと削除（-Recurse をつける）</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">rm test-folder-backup -Recurse</span></div>
+      </div>
+
+      <div class="warn">
+        ⚠️ <b>rm で消したファイルはゴミ箱に入りません！</b><br>
+        完全に消えてしまうので、削除するときは慎重に。<br>
+        大事なファイルは事前にバックアップを取ろう。
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 やってみよう</div>
+        <div class="try-it-body">
+          デスクトップで以下を試してみよう（最後にお掃除も忘れずに！）：<br>
+          ① <code>mkdir practice</code> でフォルダ作成<br>
+          ② <code>cd practice</code> で中に入る<br>
+          ③ <code>"Hello!" | Out-File test.txt</code> でファイル作成<br>
+          ④ <code>ls</code> で確認<br>
+          ⑤ <code>cp test.txt test2.txt</code> でコピー<br>
+          ⑥ <code>cd ..</code> で戻って <code>rm practice -Recurse</code> でお掃除
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════��══════════════════ -->
+  <!-- SECTION 6: ファイルの中身を見る -->
+  <!-- ═══════��═══════════════���══════════════ -->
+  <div class="section" id="view">
+    <div class="section-num">SECTION 06</div>
+    <div class="section-title">👀 ファイルの中身を見���</div>
+    <div class="section-body">
+      <p>テキストファイルの中身をわざわざメモ帳で開かなくても、コマンドで見ることができます。</p>
+
+      <h3>全部表示 — cat (Get-Content)</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">cat memo.txt</span>
+<span class="out">今日やること：
+1. 数学の宿題
+2. 英語の単語テスト
+3. プログラミングの練習</span></div>
+      </div>
+
+      <h3>最初の数行だけ — Get-Content -Head</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># 最初の3行だけ表示</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">Get-Content memo.txt -Head 3</span>
+<span class="out">今日やること：
+1. 数学の宿題
+2. 英語の単語テスト</span></div>
+      </div>
+
+      <h3>最後の数行だけ — Get-Content -Tail</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># 最後の2行だけ表示</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">Get-Content memo.txt -Tail 2</span>
+<span class="out">2. 英語の単語テスト
+3. プログラミングの練習</span></div>
+      </div>
+
+      <h3>文字を検索する — Select-String</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># ファイルの中から「英語」を含む行を探す</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">Select-String "英語" memo.txt</span>
+<span class="out">memo.txt:3:2. 英語の単語テスト</span>
+
+<span class="comment"># フォルダ内の全 .txt ファイルから検索</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">Select-String "TODO" *.txt</span></div>
+      </div>
+
+      <div class="point">
+        💡 <code>Select-String</code> は GUI で言えば Ctrl+F（検索）のようなもの。<br>
+        ただし、<b>複数ファイルを一括検索</b>できるのが CLI の強み！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 7: 便利テクニック -->
+  <!-- ════════════════════════════════════��═ -->
+  <div class="section" id="tips">
+    <div class="section-num">SECTION 07</div>
+    <div class="section-title">⚡ 便利テクニッ���</div>
+    <div class="section-body">
+      <p>CLI を使いこなすための必須テクニックを紹介！</p>
+
+      <h3>Tab 補完 — 最重要テクニック！</h3>
+      <p>フォルダ名やファイル名を全部打つ必要はありません。<b>途中まで打って <span class="kbd">Tab</span> を押す</b>と自動で補完されます！</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># 「Doc」まで打って Tab を押すと…</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">cd Doc</span><span class="highlight">[Tab]</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">cd .\Documents\</span> <span class="success">← 自動で補完された！</span>
+
+<span class="comment"># 候補が複数あるときは Tab を何度か押すと切り替わる</span></div>
+      </div>
+
+      <div class="warn">
+        ⚠️ Tab 補完を使わずに長いパスを手打ちするのはミスの元！<br>
+        <b>CLI 上級者ほど Tab を多用します。</b>どんどん使おう。
+      </div>
+
+      <h3>履歴 — 上下キー</h3>
+      <p><span class="kbd">↑</span> <span class="kbd">��</span> キーで過去に打ったコマンドを呼び出せます。同じコマンドを何度も打つ必要なし！</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">�� PowerShell</div>
+        <div class="terminal-body"><span class="comment"># 過去のコマンド一覧を見る</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">Get-History</span>
+<span class="out">  Id   CommandLine
+  --   -----------
+   1   pwd
+   2   ls
+   3   cd Desktop
+   4   mkdir test-folder</span></div>
+      </div>
+
+      <h3>コマンドの中断 — Ctrl + C</h3>
+      <p>実行中のコマンドを止めたいとき、<span class="kbd">Ctrl</span> + <span class="kbd">C</span> で強制停止できます。</p>
+
+      <h3>コマンドのヘルプ — Get-Help</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># コマンドの使い方を調べる</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">Get-Help Get-ChildItem</span>
+
+<span class="comment"># 短く使い方の例だけ見る</span>
+<span class="prompt">PS C:\Users\あなた&gt;</span> <span class="cmd">Get-Help Get-ChildItem -Examples</span></div>
+      </div>
+
+      <div class="point">
+        💡 <b>覚えるコツ：</b>全コマンドを暗記する必要はない！<br>
+        <code>Tab</code> で補完、<code>↑↓</code> で履歴、困ったら <code>Get-Help</code>。<br>
+        この3つだけで十分やっていけ��！
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════��══════════════════════ -->
+  <!-- SECTION 8: パイプ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="pipe">
+    <div class="section-num">SECTION 08</div>
+    <div class="section-title">🔗 パイプと��ィルタ</div>
+    <div class="section-body">
+      <p>CLI の真の力は、<b>コマンドをつなげる</b>ことにあります。</p>
+
+      <h3>パイプ <code>|</code> とは？</h3>
+      <p>
+        あるコマンドの出力を、別のコマンドの入力として渡す仕組みです。<br>
+        水道管（パイプ）のように、データが流れていくイメージ。
+      </p>
+
+      <div class="terminal">
+        <div class="terminal-bar">📖 パイプのイメージ</div>
+        <div class="terminal-body"><span class="highlight">コマンドA  |  コマンドB  |  コマンドC</span>
+   ↓             ↓             ↓
+ データを出す → 加工する → さらに加工する</div>
+      </div>
+
+      <h3>実際に使ってみよう</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># ls の結果から .txt ファイルだけ表示</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">ls | Where-Object { $_.Name -like "*.txt" }</span>
+
+<span class="comment"># ファイルを更新日時の新しい順に並べる</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">ls | Sort-Object LastWriteTime -Descending</span>
+
+<span class="comment"># ファイルの数を数える</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">ls | Measure-Object</span>
+<span class="out">Count    : 12</span>
+
+<span class="comment"># ファイル名だけ表示</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">ls | Select-Object Name</span></div>
+      </div>
+
+      <h3>出力をファイルに保存</h3>
+      <div class="terminal">
+        <div class="terminal-bar">⬛ PowerShell</div>
+        <div class="terminal-body"><span class="comment"># 結果をファイルに書き出す</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">ls | Out-File filelist.txt</span>
+
+<span class="comment"># > でも同じことができる（ショートカット）</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">ls > filelist.txt</span>
+
+<span class="comment"># >> で追記（上書きせず末尾に追加）</span>
+<span class="prompt">PS ...\Desktop&gt;</span> <span class="cmd">echo "追加のメモ" >> memo.txt</span></div>
+      </div>
+
+      <div class="point">
+        💡 パイプは CLI 最大の武器！<br>
+        小さなコマンドを組み合わせて、複雑な操作を1行で実現できる。<br>
+        まるでレゴブロックを組み立てるような感覚！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 9: 実践チャレンジ -->
+  <!-- ══��═══════════════════════════════════ -->
+  <div class="section" id="practice">
+    <div class="section-num">SECTION 09</div>
+    <div class="section-title">🏆 実践チャレンジ</div>
+    <div class="section-body">
+      <p>ここまで学んだことを使って、チャレンジしてみよう！<br>PowerShell を開いて、実際に手を動かして挑戦してね。</p>
+
+      <h3>チャレンジ 1: フォルダ整理</h3>
+      <div class="try-it">
+        <div class="try-it-label">📋 ミッション</div>
+        <div class="try-it-body">
+          デスクトップに以下のフォルダ構造を作ろう：<br><br>
+          <code>my-project\</code><br>
+          　├── <code>src\</code>（ソースコード用）<br>
+          　├── <code>docs\</code>（ドキュメント用）<br>
+          　└── <code>data\</code>（データ用）
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">💡 ヒント（自分で考えてからクリック）</div>
+        <div class="terminal-body"><span class="comment"># 答え:</span>
+<span class="cmd">cd ~/Desktop</span>
+<span class="cmd">mkdir my-project</span>
+<span class="cmd">cd my-project</span>
+<span class="cmd">mkdir src, docs, data</span>
+<span class="cmd">ls</span></div>
+      </div>
+
+      <h3>チャレンジ 2: ファイル操作</h3>
+      <div class="try-it">
+        <div class="try-it-label">📋 ミ���ション</div>
+        <div class="try-it-body">
+          ① <code>src</code> フォルダに <code>hello.py</code> を作り、中に <code>print("Hello!")</code> と書く<br>
+          ② <code>cat</code> で中身を確認<br>
+          ③ <code>hello.py</code> を <code>docs</code> フォルダにもコピー
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">💡 ヒン��</div>
+        <div class="terminal-body"><span class="cmd">cd src</span>
+<span class="cmd">'print("Hello!")' | Out-File hello.py -Encoding utf8</span>
+<span class="cmd">cat hello.py</span>
+<span class="cmd">cp hello.py ..\docs\</span>
+<span class="cmd">ls ..\docs\</span></div>
+      </div>
+
+      <h3>��ャレンジ 3: Python を CLI で実行</h3>
+      <div class="try-it">
+        <div class="try-it-label">📋 ミッション</div>
+        <div class="try-it-body">
+          Python入門で環境構築が済んでいれば、さっき作った <code>hello.py</code> を PowerShell から実行してみよう！
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">💡 ヒント</div>
+        <div class="terminal-body"><span class="prompt">PS ...\src&gt;</span> <span class="cmd">python hello.py</span>
+<span class="out">Hello!</span>
+<span class="success">← おめでとう！CLI から Python を実行できた！</span></div>
+      </div>
+
+      <div class="point">
+        💡 <b>これが CLI の真の使い方！</b><br>
+        フォルダ作成 → ファイル作成 → プログラム実行 まで、マウスに一切触れずに完結した。<br>
+        この流れがプログラミングの日常になるよ！
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════���══════════════════ -->
+  <!-- SECTION 10: コマンド早見表 -->
+  <!-- ═══════���══════════════════════════════ -->
+  <div class="section" id="ref">
+    <div class="section-num">SECTION 10</div>
+    <div class="section-title">📋 コマンド早見表</div>
+    <div class="section-body">
+      <p>よく使うコマンドをまとめました。困ったときに見返そ��！</p>
+
+      <h3>場所の確認・移動</h3>
+      <table class="cmd-table">
+        <tr><th>コマンド</th><th>やること</th><th>使用例</th></tr>
+        <tr><td>pwd</td><td>今いる場所を表示</td><td>pwd</td></tr>
+        <tr><td>ls</td><td>フォルダの中身を表示</td><td>ls / ls -la</td></tr>
+        <tr><td>cd</td><td>フォルダを移動</td><td>cd Desktop / cd .. / cd ~</td></tr>
+      </table>
+
+      <h3>ファイル・フォルダの操作</h3>
+      <table class="cmd-table">
+        <tr><th>コマンド</th><th>やること</th><th>使用例</th></tr>
+        <tr><td>mkdir</td><td>フォルダを作る</td><td>mkdir my-folder</td></tr>
+        <tr><td>New-Item</td><td>ファイルを作る</td><td>New-Item test.txt</td></tr>
+        <tr><td>cp</td><td>コピー</td><td>cp a.txt b.txt</td></tr>
+        <tr><td>mv</td><td>移動 / 名前変更</td><td>mv old.txt new.txt</td></tr>
+        <tr><td>rm</td><td>削除</td><td>rm file.txt</td></tr>
+      </table>
+
+      <h3>ファイルの中身</h3>
+      <table class="cmd-table">
+        <tr><th>コマンド</th><th>やること</th><th>使用例</th></tr>
+        <tr><td>cat</td><td>ファイルの中身を全部表示</td><td>cat memo.txt</td></tr>
+        <tr><td>Get-Content -Head N</td><td>最初のN行を表示</td><td>Get-Content log.txt -Head 5</td></tr>
+        <tr><td>Get-Content -Tail N</td><td>最後のN行を表示</td><td>Get-Content log.txt -Tail 5</td></tr>
+        <tr><td>Select-String</td><td>文字列を検索</td><td>Select-String "error" *.log</td></tr>
+      </table>
+
+      <h3>パイプ・出力</h3>
+      <table class="cmd-table">
+        <tr><th>記号・コマンド</th><th>やること</th><th>使用例</th></tr>
+        <tr><td>|</td><td>コマンドをつなげる</td><td>ls | Sort-Object Name</td></tr>
+        <tr><td>Where-Object</td><td>条件でフィルタ</td><td>ls | Where-Object { $_.Length -gt 1000 }</td></tr>
+        <tr><td>Sort-Object</td><td>並べ替え</td><td>ls | Sort-Object LastWriteTime</td></tr>
+        <tr><td>Measure-Object</td><td>数える</td><td>ls | Measure-Object</td></tr>
+        <tr><td>> / >></td><td>ファイルに出力 / 追記</td><td>ls > list.txt</td></tr>
+      </table>
+
+      <h3>便利テク</h3>
+      <table class="cmd-table">
+        <tr><th>操作</th><th>やること</th></tr>
+        <tr><td><span class="kbd">Tab</span></td><td>コマンド・パスを自動補完</td></tr>
+        <tr><td><span class="kbd">↑</span> <span class="kbd">↓</span></td><td>過去のコマンドを呼び出す</td></tr>
+        <tr><td><span class="kbd">Ctrl</span> + <span class="kbd">C</span></td><td>実行中のコマンドを中断</td></tr>
+        <tr><td>cls / clear</td><td>画面をきれいにする</td></tr>
+        <tr><td>Get-Help コマンド名</td><td>コマンドのヘルプを表示</td></tr>
+        <tr><td>Get-History</td><td>コマンド履歴を表示</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-bottom">
+    <a class="nav-btn secondary" href="../index.html">← トップページ</a>
+  </div>
+
+</div>
+</body>
+</html>
