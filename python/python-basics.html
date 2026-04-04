@@ -3,394 +3,220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Python きほん道場</title>
+<title>Python 入門ガイド — PC きほん道場</title>
+<meta name="description" content="Windows 11 で Python をインストールして、プログラミングの基礎を学ぼう！">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://skulpt.org/js/skulpt.min.js"></script>
 <script src="https://skulpt.org/js/skulpt-stdlib.js"></script>
 <style>
 :root {
-  --outer-bg: #1a1a2e;
   --accent: #7c6af5;
   --accent2: #50e6ff;
   --python-blue: #306998;
   --python-yellow: #ffd43b;
-  --win-blue: #0078d4;
-  --text-muted: rgba(240,240,255,0.55);
   --correct: #2ecc71;
+  --text-muted: rgba(240,240,255,0.55);
   --panel-bg: rgba(255,255,255,0.06);
   --panel-border: rgba(255,255,255,0.12);
   --editor-bg: #1e1e2e;
-  --editor-line: #2a2a3e;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
   background: linear-gradient(135deg, #0f0c29, #1a2a4a, #1a1a2e);
   min-height: 100vh;
   color: #f0f0ff;
-  overflow-x: hidden;
 }
-
-.outer { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+.outer { max-width: 900px; margin: 0 auto; padding: 24px 18px 80px; }
 
 /* ── HEADER ── */
-.header { text-align: center; margin-bottom: 20px; }
+.header { text-align: center; margin-bottom: 28px; }
 .logo {
   font-family: 'Press Start 2P', monospace;
   font-size: clamp(12px, 2.5vw, 18px);
   background: linear-gradient(90deg, #306998, #ffd43b, #50e6ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  display: inline-block;
-  margin-bottom: 6px;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; display: inline-block; margin-bottom: 6px;
 }
 .sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
 .home-link {
-  display: inline-block;
-  margin-top: 8px;
-  color: var(--accent2);
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  display: inline-block; margin-top: 8px;
+  color: var(--accent2); font-size: 12px; font-weight: 700;
+  text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
 }
 .home-link:hover { opacity: 1; }
 
-/* ── MAIN LAYOUT ── */
-.main-layout {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 16px;
-  align-items: start;
-}
-@media (max-width: 800px) {
-  .main-layout { grid-template-columns: 1fr; }
-  .sidebar { order: -1; }
-}
-
-/* ── SIDEBAR ── */
-.sidebar {
-  background: var(--panel-bg);
-  border: 1.5px solid var(--panel-border);
-  border-radius: 16px;
-  padding: 16px;
+/* ── TOC ── */
+.toc {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 28px;
   backdrop-filter: blur(10px);
-  position: sticky;
-  top: 16px;
 }
-.sidebar-title {
-  font-size: 11px;
-  font-weight: 900;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
+.toc-title { font-size: 14px; font-weight: 900; margin-bottom: 10px; color: var(--python-yellow); }
+.toc-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.toc-list a {
+  font-size: 13px; font-weight: 700; color: rgba(240,240,255,0.7);
+  text-decoration: none; padding: 4px 12px; border-radius: 8px;
+  border: 1px solid transparent; transition: all 0.2s;
 }
-.lesson-list { display: flex; flex-direction: column; gap: 4px; }
-.lesson-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(240,240,255,0.6);
-  transition: all 0.2s;
-  border: 1.5px solid transparent;
+.toc-list a:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+
+/* ── SECTION ── */
+.section {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 18px; padding: 28px 26px; margin-bottom: 20px;
+  backdrop-filter: blur(10px); scroll-margin-top: 20px;
 }
-.lesson-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
-.lesson-item.active {
-  background: rgba(124,106,245,0.2);
-  border-color: rgba(124,106,245,0.5);
+.section-num {
+  font-size: 11px; font-weight: 900; color: var(--python-yellow);
+  letter-spacing: 1.5px; margin-bottom: 4px;
+}
+.section-title {
+  font-size: 22px; font-weight: 900; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-body {
+  font-size: 14px; line-height: 2.1; color: rgba(240,240,255,0.85);
+}
+.section-body h3 {
+  font-size: 16px; font-weight: 900; margin: 24px 0 10px;
+  padding-left: 12px; border-left: 4px solid var(--python-yellow);
   color: #fff;
 }
-.lesson-item.done { color: var(--correct); }
-.lesson-check {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.2);
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.section-body h3:first-child { margin-top: 0; }
+.section-body code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(255,215,59,0.12); border: 1px solid rgba(255,215,59,0.25);
+  border-radius: 5px; padding: 1px 7px; font-size: 13px;
+  color: var(--python-yellow); font-weight: 700;
+}
+.section-body ul, .section-body ol {
+  padding-left: 1.5em; margin: 8px 0;
+}
+.section-body li { margin-bottom: 4px; }
+
+/* Point box */
+.point {
+  background: rgba(48,105,152,0.15); border-left: 4px solid var(--python-blue);
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+
+/* Warning box */
+.warn {
+  background: rgba(255,107,107,0.08); border-left: 4px solid #ff6b6b;
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+
+/* Step cards */
+.steps { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.step {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 16px 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--python-blue), #4a8abf);
+  color: #fff; font-size: 14px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.lesson-item.done .lesson-check { background: var(--correct); border-color: var(--correct); }
-.lesson-item.active .lesson-check { border-color: var(--accent); }
+.step-content { flex: 1; font-size: 13px; line-height: 1.9; }
+.step-content strong { color: var(--python-yellow); }
 
-/* Progress */
-.progress-mini { margin-top: 14px; }
-.progress-mini-label { font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 6px; }
-.progress-mini-bar { background: rgba(255,255,255,0.1); border-radius: 50px; height: 6px; overflow: hidden; }
-.progress-mini-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--python-blue), var(--python-yellow));
-  border-radius: 50px;
-  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-  width: 0%;
+/* Terminal mockup */
+.terminal {
+  background: #0c0c0c; border-radius: 10px; overflow: hidden;
+  margin: 14px 0; border: 1px solid rgba(255,255,255,0.1);
+}
+.terminal-bar {
+  background: #1e1e1e; padding: 6px 12px;
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.4);
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.terminal-body {
+  padding: 14px 16px; font-family: 'Fira Code', monospace;
+  font-size: 13px; line-height: 1.8; color: #ccc;
+  white-space: pre-wrap;
+}
+.terminal-body .cmd { color: #50e6ff; }
+.terminal-body .out { color: #a0ffa0; }
+.terminal-body .comment { color: #666; }
+.terminal-body .highlight { color: var(--python-yellow); font-weight: 700; }
+
+/* Screenshot placeholder */
+.screenshot {
+  background: rgba(255,255,255,0.04); border: 2px dashed rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 28px; text-align: center;
+  margin: 14px 0; color: var(--text-muted); font-size: 13px; font-weight: 700;
 }
 
-/* ── CONTENT AREA ── */
-.content-area { display: flex; flex-direction: column; gap: 16px; }
+/* Concept card */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 14px 0; }
+.concept-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.concept-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.concept-name { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.concept-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
 
-/* ── LESSON CARD ── */
-.lesson-card {
-  background: var(--panel-bg);
-  border: 1.5px solid var(--panel-border);
-  border-radius: 18px;
-  padding: 24px;
-  backdrop-filter: blur(10px);
-}
-.lesson-num {
-  font-size: 11px;
-  font-weight: 900;
-  color: var(--python-yellow);
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
-.lesson-title {
-  font-size: 22px;
-  font-weight: 900;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.lesson-body {
-  font-size: 14px;
-  line-height: 2;
-  color: rgba(240,240,255,0.8);
-}
-.lesson-body code {
-  font-family: 'Fira Code', monospace;
-  background: rgba(255,215,59,0.12);
-  border: 1px solid rgba(255,215,59,0.25);
-  border-radius: 5px;
-  padding: 1px 7px;
-  font-size: 13px;
-  color: var(--python-yellow);
-  font-weight: 700;
-}
-.lesson-body .point-box {
-  background: rgba(48,105,152,0.15);
-  border-left: 4px solid var(--python-blue);
-  border-radius: 0 10px 10px 0;
-  padding: 12px 16px;
-  margin: 12px 0;
-  font-size: 13px;
-  line-height: 1.8;
-}
-.lesson-body .point-box::before { content: '💡 '; }
-
-/* ── EDITOR ── */
+/* ── INTERACTIVE EDITOR ── */
 .editor-wrap {
   background: var(--editor-bg);
   border: 1.5px solid rgba(255,255,255,0.1);
-  border-radius: 14px;
-  overflow: hidden;
+  border-radius: 14px; overflow: hidden; margin: 16px 0;
 }
 .editor-topbar {
-  background: rgba(0,0,0,0.3);
-  padding: 8px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  background: rgba(0,0,0,0.3); padding: 8px 14px;
+  display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .editor-topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 800;
-  color: rgba(240,240,255,0.5);
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 800; color: rgba(240,240,255,0.5);
 }
 .editor-dot { width: 10px; height: 10px; border-radius: 50%; }
-.dot-r { background: #ff5f57; }
-.dot-y { background: #febc2e; }
-.dot-g { background: #28c840; }
-.editor-filename { margin-left: 4px; }
-
-.editor-btns { display: flex; gap: 8px; }
+.dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
 .run-btn {
   background: linear-gradient(135deg, #28a745, #20c997);
-  border: none;
-  border-radius: 8px;
-  color: #fff;
+  border: none; border-radius: 8px; color: #fff;
   font-family: 'M PLUS Rounded 1c', sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  padding: 6px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  font-size: 12px; font-weight: 800; padding: 6px 18px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
 }
 .run-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(40,167,69,0.4); }
-.reset-code-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 8px;
-  color: rgba(240,240,255,0.5);
-  font-family: 'M PLUS Rounded 1c', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.reset-code-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
-
 textarea.code-input {
-  width: 100%;
-  min-height: 140px;
-  background: var(--editor-bg);
-  border: none;
-  color: #e0e0ff;
-  font-family: 'Fira Code', monospace;
-  font-size: 14px;
-  line-height: 1.8;
-  padding: 16px;
-  resize: vertical;
-  outline: none;
-  tab-size: 4;
+  width: 100%; min-height: 100px; background: var(--editor-bg);
+  border: none; color: #e0e0ff;
+  font-family: 'Fira Code', monospace; font-size: 14px; line-height: 1.8;
+  padding: 14px 16px; resize: vertical; outline: none; tab-size: 4;
 }
-textarea.code-input::placeholder { color: rgba(240,240,255,0.2); }
-
-/* ── OUTPUT ── */
 .output-wrap {
   border-top: 1px solid rgba(255,255,255,0.06);
   background: rgba(0,0,0,0.2);
 }
 .output-label {
-  padding: 8px 14px 0;
-  font-size: 11px;
-  font-weight: 800;
-  color: rgba(240,240,255,0.35);
-  letter-spacing: 1px;
+  padding: 6px 14px 0; font-size: 11px; font-weight: 800;
+  color: rgba(240,240,255,0.35); letter-spacing: 1px;
 }
 .output-box {
-  padding: 10px 14px 14px;
-  font-family: 'Fira Code', monospace;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #a0ffa0;
-  white-space: pre-wrap;
-  min-height: 36px;
-  max-height: 200px;
-  overflow-y: auto;
+  padding: 8px 14px 12px; font-family: 'Fira Code', monospace;
+  font-size: 13px; line-height: 1.7; color: #a0ffa0;
+  white-space: pre-wrap; min-height: 28px; max-height: 200px; overflow-y: auto;
 }
 .output-box.error { color: #ff6b6b; }
-
-/* ── CHALLENGE ── */
-.challenge-card {
-  background: rgba(255,215,59,0.06);
-  border: 1.5px solid rgba(255,215,59,0.2);
-  border-radius: 14px;
-  padding: 20px;
-}
-.challenge-label {
-  font-size: 11px;
-  font-weight: 900;
-  color: var(--python-yellow);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.challenge-text {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.8;
-  margin-bottom: 10px;
-}
-.challenge-hint {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-.challenge-hint code {
-  font-family: 'Fira Code', monospace;
-  background: rgba(255,215,59,0.1);
-  border-radius: 4px;
-  padding: 0 5px;
-  color: var(--python-yellow);
-  font-size: 12px;
-}
-
-/* ── RESULT BANNER ── */
-.result-banner {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 800;
-  animation: popIn 0.3s ease;
-}
-@keyframes popIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
-}
-.result-banner.success {
-  display: flex;
-  background: rgba(46,204,113,0.15);
-  border: 1.5px solid rgba(46,204,113,0.4);
-  color: var(--correct);
-}
-.result-banner.fail {
-  display: flex;
-  background: rgba(255,107,107,0.1);
-  border: 1.5px solid rgba(255,107,107,0.3);
-  color: #ff6b6b;
-}
-.result-banner .result-icon { font-size: 24px; }
-.next-btn {
-  margin-left: auto;
-  background: linear-gradient(135deg, var(--accent), #5a4fcf);
-  border: none;
-  border-radius: 50px;
-  color: #fff;
-  font-family: 'M PLUS Rounded 1c', sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-  padding: 8px 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.next-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,106,245,0.4); }
-
-/* ── COMPLETE ── */
-.complete-screen { text-align: center; padding: 48px 24px; }
-.complete-emoji { font-size: 80px; display: block; margin-bottom: 16px; animation: bounce 1s ease infinite; }
-@keyframes bounce { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-12px); } }
-.complete-title { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
-.complete-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; line-height: 1.7; }
-.restart-btn {
-  background: linear-gradient(135deg, var(--python-blue), #4a8abf);
-  border: none; border-radius: 50px; color: #fff;
-  font-family: 'M PLUS Rounded 1c', sans-serif;
-  font-size: 15px; font-weight: 800;
-  padding: 12px 36px; cursor: pointer; transition: all 0.2s;
-}
-.restart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(48,105,152,0.4); }
 
 /* ── LOADING ── */
 .loading-overlay {
   position: fixed; inset: 0;
   background: rgba(15,12,41,0.95);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 500;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 500;
   transition: opacity 0.4s;
 }
 .loading-overlay.hidden { opacity: 0; pointer-events: none; }
@@ -398,17 +224,35 @@ textarea.code-input::placeholder { color: rgba(240,240,255,0.2); }
   width: 48px; height: 48px;
   border: 4px solid rgba(255,255,255,0.1);
   border-top-color: var(--python-yellow);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 16px;
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { font-size: 14px; font-weight: 800; color: var(--text-muted); }
+
+/* ── NAV BUTTONS ── */
+.nav-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 32px; padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.nav-btn {
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 14px; font-weight: 800;
+  padding: 10px 24px; cursor: pointer; transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,106,245,0.4); }
+.nav-btn.secondary {
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.15);
+}
+.nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div class="loading-overlay" id="loading">
   <div class="loading-spinner"></div>
   <div class="loading-text">🐍 Python エンジンを準備中...</div>
@@ -418,303 +262,902 @@ textarea.code-input::placeholder { color: rgba(240,240,255,0.2); }
 
   <div class="header">
     <div class="logo">🐍 PYTHON DOJO</div>
-    <div class="sub">Python きほん道場 — コードを書いて動かしてみよう！</div>
+    <div class="sub">Windows 11 で Python をはじめよう！</div>
     <a class="home-link" href="../index.html">← トップページに戻る</a>
   </div>
 
-  <div class="main-layout">
+  <!-- ── TABLE OF CONTENTS ── -->
+  <div class="toc">
+    <div class="toc-title">📖 もくじ</div>
+    <ul class="toc-list">
+      <li><a href="#what">① Pythonってなに？</a></li>
+      <li><a href="#install">② インストールしよう</a></li>
+      <li><a href="#setup">③ 環境をととのえよう</a></li>
+      <li><a href="#first">④ はじめてのプログラム</a></li>
+      <li><a href="#concepts">⑤ プログラミングの基礎</a></li>
+      <li><a href="#variables">⑥ 変数とデータ型</a></li>
+      <li><a href="#calc">⑦ 計算と演算子</a></li>
+      <li><a href="#if">⑧ 条件分岐（if文）</a></li>
+      <li><a href="#loop">⑨ くり返し（ループ）</a></li>
+      <li><a href="#list">⑩ リスト</a></li>
+      <li><a href="#function">⑪ 関数</a></li>
+      <li><a href="#next">⑫ 次のステップ</a></li>
+    </ul>
+  </div>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="sidebar-title">📚 レッスン一覧</div>
-      <div class="lesson-list" id="lesson-list"></div>
-      <div class="progress-mini">
-        <div class="progress-mini-label" id="progress-label">0 / 0 クリア</div>
-        <div class="progress-mini-bar">
-          <div class="progress-mini-fill" id="progress-fill"></div>
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 1: Pythonとは -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="what">
+    <div class="section-num">SECTION 01</div>
+    <div class="section-title">🐍 Pythonってなに？</div>
+    <div class="section-body">
+      <b>Python（パイソン）</b>は、世界で一番人気のあるプログラミング言語のひとつ。<br>
+      名前はニシキヘビ🐍ではなく、イギリスのコメディ番組「モンティ・パイソン」が由来です。
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">📖</span>
+          <div class="concept-name">読みやすい</div>
+          <div class="concept-desc">英語に近い文法で、初心者でもわかりやすい</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🌍</span>
+          <div class="concept-name">なんでもできる</div>
+          <div class="concept-desc">Web・AI・ゲーム・データ分析など用途が幅広い</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🤝</span>
+          <div class="concept-name">みんな使ってる</div>
+          <div class="concept-desc">Google, YouTube, Instagram なども Python を活用</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🆓</span>
+          <div class="concept-name">無料で使える</div>
+          <div class="concept-desc">ダウンロードもインストールも完全無料！</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 「プログラミングをはじめたいけど、何からやればいい？」という人には Python がおすすめ。読みやすくて、少ないコードで色々なことができるよ！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 2: インストール -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="install">
+    <div class="section-num">SECTION 02</div>
+    <div class="section-title">💻 インストールしよう</div>
+    <div class="section-body">
+      Windows 11 に Python をインストールする手順を説明します。
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Python 公式サイトにアクセス</strong><br>
+            ブラウザで <code>python.org</code> を開きます。<br>
+            上のメニューから「Downloads」をクリックすると、Windows用のダウンロードボタンが表示されます。
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>「Download Python 3.x.x」ボタンをクリック</strong><br>
+            大きな黄色いボタンが表示されるので、それをクリック。<br>
+            インストーラー（<code>.exe</code> ファイル）がダウンロードされます。
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>インストーラーを実行</strong><br>
+            ダウンロードしたファイルをダブルクリックして開きます。
+            <div class="warn">
+              ⚠️ <b>超重要！</b>インストーラー画面の下にある<br>
+              <b>「Add python.exe to PATH」にチェックを入れる！</b><br>
+              これを忘れると、後からコマンドで Python が使えなくなります。
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>「Install Now」をクリック</strong><br>
+            推奨設定のままで大丈夫です。インストールが始まるので少し待ちましょう。
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong>「Setup was successful」と出たら完了！</strong><br>
+            「Close」を押してインストーラーを閉じましょう。
+          </div>
+        </div>
+      </div>
+
+      <h3>インストールできたか確認しよう</h3>
+
+      <p>
+        キーボードで <code>Win + R</code> を押して「ファイル名を指定して実行」を開き、<br>
+        <code>cmd</code> と入力して Enter。黒い画面（コマンドプロンプト）が開きます。
+      </p>
+
+      <div class="terminal">
+        <div class="terminal-bar">💻 コマンドプロンプト</div>
+        <div class="terminal-body"><span class="cmd">C:\Users\あなた&gt; python --version</span>
+<span class="out">Python 3.12.4</span>
+
+<span class="comment">↑ バージョン番号が出たら成功！</span></div>
+      </div>
+
+      <div class="warn">
+        ⚠️ <code>'python' は認識されていません</code> と出た場合は、ステップ3で PATH にチェックを入れ忘れた可能性があります。もう一度インストーラーを実行して「Modify」→「Add to PATH」を有効にしましょう。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 3: 環境をととのえよう -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="setup">
+    <div class="section-num">SECTION 03</div>
+    <div class="section-title">⚙️ 環境をととのえよう</div>
+    <div class="section-body">
+      Python はインストールしただけで使えますが、コードを書く道具（<b>エディタ</b>）を用意するとずっと楽になります。
+
+      <h3>Python を使う3つの方法</h3>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">⬛</span>
+          <div class="concept-name">コマンドプロンプト</div>
+          <div class="concept-desc">黒い画面に直接コマンドを打つ方法。ちょっとした確認に便利</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🐚</span>
+          <div class="concept-name">IDLE</div>
+          <div class="concept-desc">Python に最初からついてくるエディタ。すぐ使える！</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">💙</span>
+          <div class="concept-name">VS Code</div>
+          <div class="concept-desc">プロも使う高機能エディタ。本格的にやるならこれ</div>
+        </div>
+      </div>
+
+      <h3>まずは IDLE を使おう（最もかんたん）</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>スタートメニューで「IDLE」と検索</strong><br>
+            <code>Win + S</code> を押して「IDLE」と入力すると、<b>IDLE (Python 3.x)</b> が出てきます。
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>クリックして起動</strong><br>
+            白い画面が開いて <code>&gt;&gt;&gt;</code> と表示されたら準備OK！<br>
+            ここに Python のコードを直接打てます。
+          </div>
+        </div>
+      </div>
+
+      <h3>もっと本格的にやりたい人は VS Code</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            ブラウザで <code>code.visualstudio.com</code> を開いてダウンロード・インストール
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            VS Code を開いたら、左のアイコンから<b>拡張機能</b>（四角が4つのマーク）を開いて<br>
+            「<strong>Python</strong>」と検索 → Microsoft 公式の Python 拡張機能をインストール
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            新しいファイルを作って <code>.py</code> で保存 → 右上の ▶ ボタンで実行できる！
+          </div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 最初は IDLE で十分！慣れてきたら VS Code に移行すると、コードの補完やエラー表示が便利で効率がぐんと上がるよ。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 4: はじめてのプログラム -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="first">
+    <div class="section-num">SECTION 04</div>
+    <div class="section-title">🚀 はじめてのプログラム</div>
+    <div class="section-body">
+      いよいよ Python を動かしてみよう！
+
+      <h3>方法①：IDLE で直接入力</h3>
+      <p>IDLE を開くと <code>&gt;&gt;&gt;</code> が表示されます。ここに直接コードを打ってみよう。</p>
+      <div class="terminal">
+        <div class="terminal-bar">🐚 IDLE Shell</div>
+        <div class="terminal-body"><span class="cmd">&gt;&gt;&gt; print("Hello, World!")</span>
+<span class="out">Hello, World!</span>
+
+<span class="cmd">&gt;&gt;&gt; print("こんにちは！")</span>
+<span class="out">こんにちは！</span>
+
+<span class="cmd">&gt;&gt;&gt; 1 + 1</span>
+<span class="out">2</span></div>
+      </div>
+
+      <h3>方法②：ファイルに書いて実行</h3>
+      <p>プログラムが長くなると、ファイルに保存して実行するのが基本です。</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            IDLE で <code>File</code> → <code>New File</code> を選ぶと、新しい画面が開きます
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            コードを書いて <code>Ctrl + S</code> で保存（例: <code>hello.py</code>）
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <code>F5</code>キー を押すか、<code>Run</code> → <code>Run Module</code> で実行！
+          </div>
+        </div>
+      </div>
+
+      <h3>方法③：コマンドプロンプトから実行</h3>
+      <div class="terminal">
+        <div class="terminal-bar">💻 コマンドプロンプト</div>
+        <div class="terminal-body"><span class="comment"># デスクトップに hello.py を保存した場合</span>
+<span class="cmd">C:\Users\あなた&gt; cd Desktop</span>
+<span class="cmd">C:\Users\あなた\Desktop&gt; python hello.py</span>
+<span class="out">Hello, World!</span></div>
+      </div>
+
+      <h3>🔽 このページでも試せるよ！</h3>
+      <p>下のエディタにコードを入力して「▶ 実行する」を押してみよう！</p>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>hello.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false">print("Hello, World!")
+print("はじめてのPython！")</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
         </div>
       </div>
     </div>
-
-    <!-- CONTENT -->
-    <div class="content-area" id="content-area"></div>
-
   </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 5: プログラミングの基礎概念 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="concepts">
+    <div class="section-num">SECTION 05</div>
+    <div class="section-title">🧠 プログラミングの基礎概念</div>
+    <div class="section-body">
+      コードを書く前に、プログラミングの考え方を理解しておこう。<br>
+      難しそうに見えるけど、実は日常生活でやっていることと同じです。
+
+      <h3>プログラムとは「手順書」</h3>
+      <p>
+        たとえばカップラーメンを作る手順：
+      </p>
+      <ol>
+        <li>フタを開ける</li>
+        <li>お湯を入れる</li>
+        <li>3分待つ</li>
+        <li>食べる</li>
+      </ol>
+      <p>
+        プログラムもこれと同じ！<b>コンピュータにやってほしいことを、順番に書いていく</b>だけです。
+      </p>
+
+      <div class="point">
+        💡 コンピュータは人間と違って「空気を読む」ことができません。だから<b>正確に、細かく</b>指示を書く必要があるよ。
+      </div>
+
+      <h3>プログラミングの3つの基本構造</h3>
+      <p>どんなに複雑なプログラムも、この3つの組み合わせでできています：</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">➡️</span>
+          <div class="concept-name">順次（じゅんじ）</div>
+          <div class="concept-desc">上から順番に実行する。<br>基本中の基本！</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🔀</span>
+          <div class="concept-name">分岐（ぶんき）</div>
+          <div class="concept-desc">条件によって処理を変える。<br>「もし〜なら」</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🔁</span>
+          <div class="concept-name">反復（はんぷく）</div>
+          <div class="concept-desc">同じことを繰り返す。<br>「〜回くり返す」</div>
+        </div>
+      </div>
+
+      <p>日常の例で考えてみると：</p>
+      <div class="terminal">
+        <div class="terminal-bar">📖 日常生活のプログラム</div>
+        <div class="terminal-body"><span class="highlight">【順次】朝の準備</span>
+  起きる → 顔を洗う → 着替える → 朝ごはん
+
+<span class="highlight">【分岐】天気で判断</span>
+  もし 雨なら → 傘を持つ
+  そうでなければ → そのまま出発
+
+<span class="highlight">【反復】宿題</span>
+  問題が残っている間 → 1問解く をくり返す</div>
+      </div>
+
+      <h3>その他の重要な考え方</h3>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">📦</span>
+          <div class="concept-name">変数</div>
+          <div class="concept-desc">データに名前をつけて保存する箱</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🏷️</span>
+          <div class="concept-name">データ型</div>
+          <div class="concept-desc">数字・文字など、データの種類</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⚙️</span>
+          <div class="concept-name">関数</div>
+          <div class="concept-desc">まとめた処理に名前をつけて再利用</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🐛</span>
+          <div class="concept-name">デバッグ</div>
+          <div class="concept-desc">バグ（間違い）を見つけて直すこと</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 これから先のセクションで、これらの概念を Python のコードで実際に体験していくよ！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 6: 変数とデータ型 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="variables">
+    <div class="section-num">SECTION 06</div>
+    <div class="section-title">📦 変数とデータ型</div>
+    <div class="section-body">
+      <h3>変数ってなに？</h3>
+      <p>
+        <b>変数</b>は、データを入れておく<b>名前つきの箱</b>。<br>
+        <code>=</code> を使ってデータを入れます（「代入」と言います）。
+      </p>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>variables.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false">name = "太郎"
+age = 14
+height = 165.5
+
+print("名前:", name)
+print("年齢:", age)
+print("身長:", height)</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <h3>データ型とは？</h3>
+      <p>変数に入れるデータには<b>種類（型）</b>があります。</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">📖 主なデータ型</div>
+        <div class="terminal-body"><span class="highlight">文字列（str）</span>    "こんにちは"  "Python"  "123"
+  → 文字の並び。<span class="comment">ダブルクォーテーションで囲む</span>
+
+<span class="highlight">整数（int）</span>      42   -10   0   2025
+  → 小数点のない数字
+
+<span class="highlight">小数（float）</span>    3.14   -0.5   165.5
+  → 小数点のある数字
+
+<span class="highlight">真偽値（bool）</span>   True   False
+  → 「はい」か「いいえ」の2択</div>
+      </div>
+
+      <div class="point">
+        💡 <b>数字の "123" と数値の 123 は違う！</b><br>
+        <code>"123"</code> は文字列（足し算すると結合される → <code>"123" + "456"</code> → <code>"123456"</code>）<br>
+        <code>123</code> は整数（足し算すると計算される → <code>123 + 456</code> → <code>579</code>）
+      </div>
+
+      <h3>変数の名前のルール</h3>
+      <ul>
+        <li>英字・数字・アンダースコア（<code>_</code>）が使える</li>
+        <li>数字で始めてはダメ（<code>1name</code> はNG、<code>name1</code> はOK）</li>
+        <li>予約語（<code>if</code>, <code>for</code> など Python が使う単語）は使えない</li>
+        <li>わかりやすい名前をつけよう！（<code>x</code> より <code>score</code> の方がわかりやすい）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 7: 計算と演算子 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="calc">
+    <div class="section-num">SECTION 07</div>
+    <div class="section-title">🔢 計算と演算子</div>
+    <div class="section-body">
+      <p>Python は電卓のように計算ができます。</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">📖 算術演算子</div>
+        <div class="terminal-body"><span class="highlight">+</span>   足し算      10 + 3   → 13
+<span class="highlight">-</span>   引き算      10 - 3   → 7
+<span class="highlight">*</span>   かけ算      10 * 3   → 30
+<span class="highlight">/</span>   わり算      10 / 3   → 3.333...
+<span class="highlight">//</span>  切り捨て    10 // 3  → 3
+<span class="highlight">%</span>   あまり      10 % 3   → 1
+<span class="highlight">**</span>  累乗        2 ** 10  → 1024</div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>calc.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false"># 買い物の計算
+apple = 150
+banana = 100
+count = 3
+
+total = (apple + banana) * count
+print("合計金額:", total, "円")
+
+# あまりの計算
+print("10個のチョコを3人で分けると…")
+print("1人あたり:", 10 // 3, "個")
+print("あまり:", 10 % 3, "個")</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <h3>文字列の足し算</h3>
+      <p>
+        <code>+</code> は文字列どうしを<b>つなげる</b>ときにも使えます。<br>
+        数字と文字列は直接つなげられないので、<code>str()</code> で変換する必要があります。
+      </p>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>strings.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false"># 文字列の結合
+greeting = "こんにちは、" + "太郎" + "さん！"
+print(greeting)
+
+# 数字を文字列に変換してつなげる
+age = 14
+message = "私は" + str(age) + "歳です"
+print(message)</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 8: 条件分岐 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="if">
+    <div class="section-num">SECTION 08</div>
+    <div class="section-title">🔀 条件分岐（if文）</div>
+    <div class="section-body">
+      <p>
+        プログラムに<b>「判断」</b>させることができます。<br>
+        「もし〜なら、〇〇する。そうでなければ、△△する。」という命令です。
+      </p>
+
+      <div class="terminal">
+        <div class="terminal-bar">📖 if文の書き方</div>
+        <div class="terminal-body"><span class="highlight">if 条件:</span>
+    条件が正しいとき実行される処理
+<span class="highlight">elif 別の条件:</span>        <span class="comment">← 何個でも追加できる</span>
+    別の条件が正しいとき
+<span class="highlight">else:</span>
+    どれも正しくないとき</div>
+      </div>
+
+      <div class="warn">
+        ⚠️ <b>インデント（字下げ）が超重要！</b><br>
+        if の中の処理は<b>スペース4つ</b>で下げます。これがないとエラーになります。<br>
+        Python はインデントで「どこまでが if の中か」を判断しています。
+      </div>
+
+      <h3>比較演算子</h3>
+      <div class="terminal">
+        <div class="terminal-bar">📖 条件に使える記号</div>
+        <div class="terminal-body"><span class="highlight">==</span>   等しい         age == 14
+<span class="highlight">!=</span>   等しくない     age != 20
+<span class="highlight">&gt;</span>    より大きい     score > 80
+<span class="highlight">&lt;</span>    より小さい     score < 50
+<span class="highlight">&gt;=</span>   以上           score >= 80
+<span class="highlight">&lt;=</span>   以下           score <= 100</div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>if_example.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false"># テストの点数で判定
+score = 75
+
+if score >= 90:
+    print("すごい！ランクS！")
+elif score >= 70:
+    print("いいね！ランクA！")
+elif score >= 50:
+    print("まずまず。ランクB")
+else:
+    print("もうちょっと頑張ろう！ランクC")
+
+# 数字を変えて試してみよう！</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 <code>score</code> の値を変えて、何度も実行してみよう！条件が変わると結果も変わるのが実感できるよ。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 9: ループ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="loop">
+    <div class="section-num">SECTION 09</div>
+    <div class="section-title">🔁 くり返し（ループ）</div>
+    <div class="section-body">
+      <p>同じことを何回もやりたいとき、1行ずつ書くのは大変。ループを使えば一気にできます！</p>
+
+      <h3>for文（回数が決まっているとき）</h3>
+      <div class="terminal">
+        <div class="terminal-bar">📖 for文の書き方</div>
+        <div class="terminal-body"><span class="highlight">for 変数 in range(回数):</span>
+    くり返す処理
+
+<span class="comment"># range(5)     → 0, 1, 2, 3, 4 の5回</span>
+<span class="comment"># range(1, 6)  → 1, 2, 3, 4, 5</span>
+<span class="comment"># range(0, 10, 2) → 0, 2, 4, 6, 8（2ずつ）</span></div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>for_loop.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false"># 1から10まで足してみよう
+total = 0
+for i in range(1, 11):
+    total = total + i
+    print(str(i) + " まで足すと " + str(total))
+
+print("合計: " + str(total))</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <h3>while文（条件が続く間くり返す）</h3>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>while_loop.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false"># HPが0になるまで攻撃！
+hp = 50
+turn = 1
+
+while hp > 0:
+    damage = 15
+    hp = hp - damage
+    if hp < 0:
+        hp = 0
+    print("ターン" + str(turn) + ": " + str(damage) + "ダメージ！ 残りHP: " + str(hp))
+    turn = turn + 1
+
+print("たおした！")</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <div class="warn">
+        ⚠️ <b>while文は無限ループに注意！</b><br>
+        条件がいつまでもTrueだと永遠に止まりません。<br>
+        必ず「いつか条件がFalseになる」ようにコードを書こう。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 10: リスト -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="list">
+    <div class="section-num">SECTION 10</div>
+    <div class="section-title">📝 リスト</div>
+    <div class="section-body">
+      <p>複数のデータをまとめて管理したいとき、<b>リスト</b>を使います。</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">📖 リストの基本</div>
+        <div class="terminal-body"><span class="highlight">作り方:</span>  fruits = ["りんご", "バナナ", "みかん"]
+<span class="highlight">取り出し:</span> fruits[0]  → "りんご"  <span class="comment"># 0番目から始まる！</span>
+<span class="highlight">追加:</span>    fruits.append("ぶどう")
+<span class="highlight">個数:</span>    len(fruits)  → 4
+<span class="highlight">削除:</span>    fruits.remove("バナナ")</div>
+      </div>
+
+      <div class="point">
+        💡 <b>番号は0から始まる！</b>これはプログラミング全般のルール。<br>
+        1番目ではなく「0番目」が最初の要素です。最初はちょっと混乱するけど、すぐ慣れるよ！
+      </div>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>list_example.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false"># クラスのテスト結果
+scores = [85, 72, 90, 68, 95, 78]
+
+print("人数: " + str(len(scores)) + "人")
+print("最高点: " + str(max(scores)))
+print("最低点: " + str(min(scores)))
+
+# 全員の点数を表示
+for i in range(len(scores)):
+    mark = ""
+    if scores[i] >= 90:
+        mark = " ★"
+    print(str(i + 1) + "番: " + str(scores[i]) + "点" + mark)</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 11: 関数 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="function">
+    <div class="section-num">SECTION 11</div>
+    <div class="section-title">⚙️ 関数</div>
+    <div class="section-body">
+      <p>
+        同じ処理を何度も使いたいとき、<b>関数</b>にまとめると便利です。<br>
+        「自分だけのオリジナル命令」を作るようなものです。
+      </p>
+
+      <div class="terminal">
+        <div class="terminal-bar">📖 関数の書き方</div>
+        <div class="terminal-body"><span class="highlight">def 関数名(引数):</span>
+    処理
+    <span class="highlight">return 戻り値</span>    <span class="comment">← 結果を返す（省略可）</span>
+
+<span class="comment"># 使い方</span>
+結果 = 関数名(値)</div>
+      </div>
+
+      <p>
+        <code>def</code> は「define（定義する）」の略。<br>
+        <b>引数（ひきすう）</b>は関数に渡すデータ、<b>戻り値（もどりち）</b>は関数が返すデータです。
+      </p>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>function.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false"># あいさつ関数（戻り値なし）
+def greet(name):
+    print(name + "さん、こんにちは！")
+
+greet("太郎")
+greet("花子")
+
+# 計算する関数（戻り値あり）
+def calculate_bmi(weight, height_cm):
+    height_m = height_cm / 100
+    bmi = weight / (height_m * height_m)
+    return bmi
+
+result = calculate_bmi(55, 165)
+print("BMI: " + str(round(result, 1)))</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 <b>関数のメリット：</b><br>
+        ・同じコードを何度も書かなくていい（<b>再利用</b>）<br>
+        ・処理に名前がつくのでコードが読みやすくなる（<b>可読性</b>）<br>
+        ・修正するとき1か所直せば全部に反映される（<b>保守性</b>）
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 12: 次のステップ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="next">
+    <div class="section-num">SECTION 12</div>
+    <div class="section-title">🎯 次のステップ</div>
+    <div class="section-body">
+      <p>ここまでの内容を理解できたら、Python の基礎はバッチリ！</p>
+
+      <h3>もっと学びたい人へ</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🎮</span>
+          <div class="concept-name">ゲームを作る</div>
+          <div class="concept-desc">pygame を使って簡単なゲームに挑戦！</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🌐</span>
+          <div class="concept-name">Webスクレイピング</div>
+          <div class="concept-desc">Webサイトから情報を自動収集！</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📊</span>
+          <div class="concept-name">データ分析</div>
+          <div class="concept-desc">データをグラフにして分析！</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🤖</span>
+          <div class="concept-name">AI・機械学習</div>
+          <div class="concept-desc">人工知能の世界に挑戦！</div>
+        </div>
+      </div>
+
+      <h3>上達のコツ</h3>
+      <ol>
+        <li><b>とにかく書いて動かす</b> — 読むだけじゃなく手を動かそう</li>
+        <li><b>エラーを恐れない</b> — エラーは「ここが違うよ」という親切なメッセージ</li>
+        <li><b>少しずつ改造する</b> — サンプルコードの数字や文字を変えてみよう</li>
+        <li><b>自分で考えて作る</b> — 小さくてもオリジナルのプログラムを作ってみよう</li>
+      </ol>
+
+      <div class="point">
+        💡 プログラミングは「覚える」ものじゃなく「慣れる」もの。<br>
+        楽しみながらたくさんコードを書いていこう！
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-bottom">
+    <a class="nav-btn secondary" href="../index.html">← トップページ</a>
+  </div>
+
 </div>
 
 <script>
 // ──────────────────────────────────────
-// LESSON DATA
+// SKULPT
 // ──────────────────────────────────────
-const lessons = [
-  {
-    id: 'print',
-    icon: '👋',
-    title: 'はじめての print()',
-    body: `
-      プログラミングの第一歩は、画面に文字を表示すること！<br>
-      Pythonでは <code>print()</code> を使って文字を表示します。
-      <div class="point-box">
-        文字を表示するときは <code>print("ここに文字")</code> と書きます。<br>
-        文字は <code>"</code>（ダブルクォーテーション）で囲むのがルール！
-      </div>
-    `,
-    code: 'print("Hello, World!")',
-    challenge: '画面に <code>こんにちは！</code> と表示してみよう！',
-    hint: '<code>print("こんにちは！")</code> と書いてみよう',
-    check: output => output.trim() === 'こんにちは！',
-  },
-  {
-    id: 'variable',
-    icon: '📦',
-    title: '変数をつかおう',
-    body: `
-      <b>変数</b>は、データを入れておく「箱」のようなもの。<br>
-      名前をつけて、後から使い回すことができます。
-      <div class="point-box">
-        <code>name = "太郎"</code> で変数 name に「太郎」を入れられる。<br>
-        <code>print(name)</code> で中身を表示できるよ！
-      </div>
-    `,
-    code: 'name = "太郎"\nprint(name)',
-    challenge: '変数 <code>animal</code> に好きな動物の名前を入れて表示しよう！',
-    hint: '<code>animal = "ねこ"</code> のように書いて、<code>print(animal)</code> で表示！',
-    check: (output, code) => {
-      return code.includes('animal') && code.includes('print') && output.trim().length > 0;
-    },
-  },
-  {
-    id: 'calc',
-    icon: '🔢',
-    title: '計算してみよう',
-    body: `
-      Pythonは計算がとくい！電卓みたいに使えます。
-      <div class="point-box">
-        <code>+</code> 足す　<code>-</code> 引く　<code>*</code> かける　<code>/</code> わる<br>
-        <code>**</code> で累乗（2の3乗 → <code>2 ** 3</code> → 8）もできる！
-      </div>
-    `,
-    code: 'print(10 + 3)\nprint(10 - 3)\nprint(10 * 3)\nprint(10 / 3)',
-    challenge: '<code>7 * 8</code> の答えを <code>kotae</code> という変数に入れて表示しよう！',
-    hint: '<code>kotae = 7 * 8</code> と書いて <code>print(kotae)</code> で表示！',
-    check: output => output.trim() === '56',
-  },
-  {
-    id: 'string',
-    icon: '🔤',
-    title: '文字列であそぼう',
-    body: `
-      文字列（文字の並び）は <code>+</code> でつなげることができます。
-      <div class="point-box">
-        <code>"こん" + "にちは"</code> → <code>"こんにちは"</code><br>
-        <code>f"名前は{name}です"</code> のように f文字列 を使うと変数を埋め込める！
-      </div>
-    `,
-    code: 'first = "Python"\nsecond = "楽しい"\nprint(first + "は" + second + "！")',
-    challenge: '変数 <code>name</code> に自分の名前を入れて、<code>私の名前は〇〇です</code> と表示しよう！（〇〇は名前）',
-    hint: '<code>name = "太郎"</code> として、<code>print("私の名前は" + name + "です")</code> のように書こう！',
-    check: (output, code) => {
-      return code.includes('name') && output.trim().startsWith('私の名前は') && output.trim().endsWith('です');
-    },
-  },
-  {
-    id: 'if',
-    icon: '🔀',
-    title: 'もし〜なら（if文）',
-    body: `
-      プログラムに「判断」させることができます。<br>
-      <b>if文</b> は「もし〜なら、これをやる」という命令です。
-      <div class="point-box">
-        <code>if</code> の後に条件、<code>:</code> をつけて、<br>
-        次の行を <b>スペース4つ</b> で下げる（インデント）のがルール！<br>
-        <code>else:</code> で「そうでなければ」も書ける！
-      </div>
-    `,
-    code: 'age = 14\n\nif age >= 18:\n    print("大人です")\nelse:\n    print("子どもです")',
-    challenge: '変数 <code>score</code> に <code>85</code> を入れて、80以上なら <code>合格！</code>、そうでなければ <code>不合格...</code> と表示しよう！',
-    hint: '<code>if score >= 80:</code> の後にインデント（スペース4つ）で <code>print("合格！")</code> と書こう！',
-    check: output => output.trim() === '合格！',
-  },
-  {
-    id: 'for',
-    icon: '🔁',
-    title: 'くり返し（forループ）',
-    body: `
-      同じことを何回もやりたいとき、<b>for文</b> が使えます。
-      <div class="point-box">
-        <code>for i in range(5):</code> で 0〜4 の5回くり返し！<br>
-        <code>range(1, 6)</code> なら 1〜5 になるよ。<br>
-        if文と同じく、中身はスペース4つで下げよう！
-      </div>
-    `,
-    code: 'for i in range(5):\n    print(i, "回目のループ！")',
-    challenge: '<code>1</code> から <code>5</code> までの数字を1行ずつ表示しよう！',
-    hint: '<code>for i in range(1, 6):</code> と書いて <code>print(i)</code> を中に！',
-    check: output => output.trim() === '1\n2\n3\n4\n5',
-  },
-  {
-    id: 'list',
-    icon: '📝',
-    title: 'リストを使おう',
-    body: `
-      <b>リスト</b>は、複数のデータをまとめて入れる「棚」のようなもの。
-      <div class="point-box">
-        <code>fruits = ["りんご", "バナナ", "みかん"]</code> のように <code>[ ]</code> で囲む。<br>
-        <code>for</code> と組み合わせると、中身を順番に取り出せるよ！
-      </div>
-    `,
-    code: 'fruits = ["りんご", "バナナ", "みかん"]\n\nfor fruit in fruits:\n    print(fruit + "が好き！")',
-    challenge: '好きな食べ物を3つリストに入れて、<code>for</code> を使って全部表示しよう！',
-    hint: '<code>foods = ["カレー", "ラーメン", "すし"]</code> のようにリストを作って、<code>for food in foods:</code> でループ！',
-    check: (output, code) => {
-      return code.includes('[') && code.includes('for') && output.trim().split('\n').length >= 3;
-    },
-  },
-  {
-    id: 'function',
-    icon: '⚙️',
-    title: '関数をつくろう',
-    body: `
-      <b>関数</b>は、何度も使いたい処理をまとめたもの。<br>
-      自分だけのオリジナル命令を作れます！
-      <div class="point-box">
-        <code>def あいさつ(name):</code> で関数を定義。<br>
-        <code>あいさつ("太郎")</code> で呼び出して使えるよ！<br>
-        関数の中身もスペース4つで下げよう。
-      </div>
-    `,
-    code: 'def greet(name):\n    print(name + "さん、こんにちは！")\n\ngreet("太郎")\ngreet("花子")',
-    challenge: '2つの数を足して結果を表示する関数 <code>tasu</code> を作ろう！<code>tasu(3, 5)</code> で <code>8</code> と表示されればOK！',
-    hint: '<code>def tasu(a, b):</code> と書いて、中で <code>print(a + b)</code> しよう！',
-    check: output => output.trim().split('\n').some(line => line.trim() === '8'),
-  },
-];
-
-// ──────────────────────────────────────
-// STATE
-// ──────────────────────────────────────
-const state = {
-  currentLesson: 0,
-  cleared: new Set(),
-};
-
-// ──────────────────────────────────────
-// SKULPT SETUP
-// ──────────────────────────────────────
-let skulptReady = false;
-
 function initSkulpt() {
-  try {
-    Sk.configure({
-      output: text => { Sk.__output += text; },
-      read: x => {
-        if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined) {
-          throw "File not found: '" + x + "'";
-        }
-        return Sk.builtinFiles["files"][x];
-      },
-    });
-    skulptReady = true;
-  } catch(e) {
-    console.error('Skulpt init error:', e);
-  }
-}
-
-function runPython(code) {
-  return new Promise((resolve, reject) => {
-    Sk.__output = '';
-    try {
-      Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, code, true))
-        .then(() => resolve(Sk.__output))
-        .catch(err => reject(err.toString()));
-    } catch(e) {
-      reject(e.toString());
-    }
+  Sk.configure({
+    output: text => { Sk.__output += text; },
+    read: x => {
+      if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+        throw "File not found: '" + x + "'";
+      return Sk.builtinFiles["files"][x];
+    },
   });
 }
 
-// ──────────────────────────────────────
-// RENDER
-// ──────────────────────────────────────
-function renderSidebar() {
-  const list = document.getElementById('lesson-list');
-  list.innerHTML = lessons.map((l, i) => {
-    const done = state.cleared.has(i);
-    const active = state.currentLesson === i;
-    let cls = 'lesson-item';
-    if (done) cls += ' done';
-    if (active) cls += ' active';
-    return `
-      <div class="${cls}" onclick="goToLesson(${i})">
-        <div class="lesson-check">${done ? '✓' : i + 1}</div>
-        <span>${l.icon} ${l.title}</span>
-      </div>
-    `;
-  }).join('');
-  updateProgress();
+function runEditor(btn) {
+  const wrap = btn.closest('.editor-wrap');
+  const code = wrap.querySelector('.code-input').value;
+  const outputBox = wrap.querySelector('.output-box');
+
+  Sk.__output = '';
+  outputBox.className = 'output-box';
+
+  Sk.misceval.asyncToPromise(() =>
+    Sk.importMainWithBody("<stdin>", false, code, true)
+  ).then(() => {
+    outputBox.textContent = Sk.__output || '（出力なし）';
+  }).catch(err => {
+    outputBox.className = 'output-box error';
+    let msg = err.toString();
+    if (msg.includes('SyntaxError')) msg = '⚠️ 文法エラー！書き方を確認してみよう\n\n' + msg;
+    else if (msg.includes('NameError')) msg = '⚠️ 名前エラー！変数名や関数名が間違ってないか確認しよう\n\n' + msg;
+    else if (msg.includes('TypeError')) msg = '⚠️ 型エラー！データの種類が合っていないかも\n\n' + msg;
+    else if (msg.includes('IndentationError')) msg = '⚠️ インデントエラー！スペース4つで下げよう\n\n' + msg;
+    else msg = '⚠️ エラーが出たよ！コードを見直してみよう\n\n' + msg;
+    outputBox.textContent = msg;
+  });
 }
 
-function updateProgress() {
-  const total = lessons.length;
-  const done = state.cleared.size;
-  document.getElementById('progress-label').textContent = `${done} / ${total} クリア`;
-  document.getElementById('progress-fill').style.width = `${(done / total) * 100}%`;
-}
-
-function renderLesson() {
-  const i = state.currentLesson;
-  const l = lessons[i];
-  const area = document.getElementById('content-area');
-
-  area.innerHTML = `
-    <!-- Lesson explanation -->
-    <div class="lesson-card">
-      <div class="lesson-num">LESSON ${i + 1} / ${lessons.length}</div>
-      <div class="lesson-title">${l.icon} ${l.title}</div>
-      <div class="lesson-body">${l.body}</div>
-    </div>
-
-    <!-- Editor -->
-    <div class="editor-wrap">
-      <div class="editor-topbar">
-        <div class="editor-topbar-left">
-          <span class="editor-dot dot-r"></span>
-          <span class="editor-dot dot-y"></span>
-          <span class="editor-dot dot-g"></span>
-          <span class="editor-filename">lesson${i + 1}.py</span>
-        </div>
-        <div class="editor-btns">
-          <button class="reset-code-btn" onclick="resetCode()">↻ リセット</button>
-          <button class="run-btn" onclick="runCode()">▶ 実行する</button>
-        </div>
-      </div>
-      <textarea class="code-input" id="code-input" spellcheck="false" placeholder="ここにPythonコードを書こう...">${escHtml(l.code)}</textarea>
-      <div class="output-wrap">
-        <div class="output-label">出力</div>
-        <div class="output-box" id="output-box">ここに実行結果が表示されるよ</div>
-      </div>
-    </div>
-
-    <!-- Challenge -->
-    <div class="challenge-card">
-      <div class="challenge-label">🎯 チャレンジ</div>
-      <div class="challenge-text">${l.challenge}</div>
-      <div class="challenge-hint">💡 ヒント: ${l.hint}</div>
-    </div>
-
-    <!-- Result banner -->
-    <div class="result-banner" id="result-banner"></div>
-  `;
-
-  // Tab key support
-  const textarea = document.getElementById('code-input');
-  textarea.addEventListener('keydown', handleTab);
-
-  renderSidebar();
-}
-
-function handleTab(e) {
-  if (e.key === 'Tab') {
+// Tab support for all textareas
+document.addEventListener('keydown', e => {
+  if (e.key === 'Tab' && e.target.classList.contains('code-input')) {
     e.preventDefault();
     const ta = e.target;
     const start = ta.selectionStart;
@@ -722,124 +1165,18 @@ function handleTab(e) {
     ta.value = ta.value.substring(0, start) + '    ' + ta.value.substring(end);
     ta.selectionStart = ta.selectionEnd = start + 4;
   }
-}
+});
 
-function escHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// ──────────────────────────────────────
-// ACTIONS
-// ──────────────────────────────────────
-async function runCode() {
-  if (!skulptReady) return;
-
-  const code = document.getElementById('code-input').value;
-  const outputBox = document.getElementById('output-box');
-  const banner = document.getElementById('result-banner');
-
-  outputBox.className = 'output-box';
-  banner.className = 'result-banner';
-  banner.style.display = 'none';
-
-  try {
-    const output = await runPython(code);
-    outputBox.textContent = output || '（出力なし）';
-
-    // Check challenge
-    const lesson = lessons[state.currentLesson];
-    const passed = lesson.check(output, code);
-
-    if (passed) {
-      state.cleared.add(state.currentLesson);
-      const isLast = state.currentLesson === lessons.length - 1;
-      banner.className = 'result-banner success';
-      banner.innerHTML = `
-        <span class="result-icon">🎉</span>
-        <span>チャレンジクリア！すごい！</span>
-        ${isLast
-          ? `<button class="next-btn" onclick="showComplete()">🏆 結果を見る</button>`
-          : `<button class="next-btn" onclick="goToLesson(${state.currentLesson + 1})">次のレッスンへ →</button>`
-        }
-      `;
-      renderSidebar();
-    }
-  } catch(err) {
-    outputBox.className = 'output-box error';
-    // Translate common errors
-    let msg = err;
-    if (err.includes('SyntaxError')) msg = '⚠️ 文法エラー！書き方を確認してみよう\n\n' + err;
-    else if (err.includes('NameError')) msg = '⚠️ 名前エラー！変数名や関数名が間違ってないか確認しよう\n\n' + err;
-    else if (err.includes('TypeError')) msg = '⚠️ 型エラー！データの種類が合っていないかも\n\n' + err;
-    else if (err.includes('IndentationError')) msg = '⚠️ インデントエラー！スペース4つで下げよう\n\n' + err;
-    else msg = '⚠️ エラーが出たよ！コードを見直してみよう\n\n' + err;
-    outputBox.textContent = msg;
-
-    banner.className = 'result-banner fail';
-    banner.innerHTML = `<span class="result-icon">💪</span><span>エラーが出たけど大丈夫！直してもう一度やってみよう！</span>`;
-  }
-}
-
-function resetCode() {
-  const lesson = lessons[state.currentLesson];
-  document.getElementById('code-input').value = lesson.code;
-  document.getElementById('output-box').textContent = 'ここに実行結果が表示されるよ';
-  document.getElementById('output-box').className = 'output-box';
-  const banner = document.getElementById('result-banner');
-  banner.className = 'result-banner';
-  banner.style.display = 'none';
-}
-
-function goToLesson(i) {
-  if (i < 0 || i >= lessons.length) return;
-  state.currentLesson = i;
-  renderLesson();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showComplete() {
-  document.getElementById('content-area').innerHTML = `
-    <div class="lesson-card">
-      <div class="complete-screen">
-        <span class="complete-emoji">🏆</span>
-        <div class="complete-title">全レッスンクリア！</div>
-        <div class="complete-sub">
-          Python の基本を全部マスターしたよ！🎉<br>
-          print、変数、計算、文字列、if文、for文、リスト、関数...<br>
-          これだけ覚えれば、いろんなプログラムが作れる！
-        </div>
-        <button class="restart-btn" onclick="restartAll()">🔄 最初からやり直す</button>
-      </div>
-    </div>
-  `;
-  renderSidebar();
-}
-
-function restartAll() {
-  state.cleared.clear();
-  state.currentLesson = 0;
-  renderLesson();
-}
-
-// ──────────────────────────────────────
-// INIT
-// ──────────────────────────────────────
+// Init
 function init() {
   initSkulpt();
-  renderLesson();
-
-  // Hide loading
   const loading = document.getElementById('loading');
   loading.classList.add('hidden');
   setTimeout(() => loading.remove(), 500);
 }
 
-// Wait for Skulpt to load
-if (typeof Sk !== 'undefined') {
-  init();
-} else {
-  window.addEventListener('load', init);
-}
+if (typeof Sk !== 'undefined') init();
+else window.addEventListener('load', init);
 </script>
 </body>
 </html>
