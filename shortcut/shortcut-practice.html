@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows ショートカット練習場</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --outer-bg: #1a1a2e;
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --win-bg: #e8eaf0;
+  --win-taskbar: #1a1a2e;
+  --win-titlebar: #2d2d6e;
+  --win-blue: #0078d4;
+  --notepad-bg: #ffffff;
+  --text-dark: #1a1a2e;
+  --text-muted: rgba(240,240,255,0.55);
+  --correct: #2ecc71;
+  --yellow: #f9ca24;
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #1a1a2e);
+  min-height: 100vh;
+  color: #f0f0ff;
+  overflow-x: hidden;
+}
+
+/* ── OUTER WRAPPER ── */
+.outer { max-width: 1200px; margin: 0 auto; padding: 20px 16px 40px; }
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 20px; }
+.logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(12px, 2.5vw, 18px);
+  background: linear-gradient(90deg, #7c6af5, #50e6ff, #f9ca24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+
+/* ── TABS ── */
+.tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 50px;
+  color: var(--text-muted);
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 9px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn:hover { border-color: var(--accent); color: #fff; }
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124,106,245,0.4);
+}
+
+/* ── KEY DISPLAY ── */
+.key {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #3a3a5c 0%, #1e1e3a 100%);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-bottom: 3px solid rgba(0,0,0,0.5);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 11px; font-weight: 800;
+  padding: 3px 8px; min-width: 30px; height: 28px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 4px rgba(0,0,0,0.4);
+  white-space: nowrap;
+}
+.key.win  { background: linear-gradient(180deg, #0a74d4, #005a9e); }
+.key.ctrl { background: linear-gradient(180deg, #4a3a7c, #2d2455); }
+.key.alt  { background: linear-gradient(180deg, #3a5a4c, #1e3a2d); }
+.key.shift { background: linear-gradient(180deg, #5a3a5c, #3a1e3a); }
+.key.plus { background: none; border: none; box-shadow: none; border-bottom: none; color: var(--text-muted); font-size: 14px; min-width: 12px; padding: 0 1px; }
+.keys-row { display: flex; align-items: center; gap: 3px; }
+
+/* ────────────────────────────
+   PRACTICE MODE LAYOUT
+──────────────────────────── */
+#practice-mode {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 800px) {
+  #practice-mode { grid-template-columns: 1fr; }
+}
+
+/* ── FAKE DESKTOP ── */
+.fake-desktop-wrap {
+  position: relative;
+  background: var(--win-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  min-height: 520px;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+
+/* Desktop wallpaper */
+.desktop-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a3a6e 0%, #0f2550 100%);
+  bottom: 44px;
+}
+.desktop-icons-area {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 44px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding: 16px;
+  gap: 16px;
+}
+.desktop-icon {
+  width: 72px;
+  text-align: center;
+  cursor: default;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+.desktop-icon .icon-img { font-size: 32px; display: block; margin-bottom: 4px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+
+/* ── NOTEPAD WINDOW ── */
+.notepad-window {
+  position: absolute;
+  top: 16px; left: 16px; right: 16px; bottom: 60px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s, opacity 0.3s;
+  min-height: 0;
+}
+.notepad-window.minimized {
+  transform: scale(0.8) translateY(60px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.win-titlebar {
+  background: var(--win-blue);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.win-title { color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.win-btns { display: flex; gap: 4px; }
+.win-btn {
+  width: 24px; height: 24px;
+  border-radius: 4px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900;
+  transition: background 0.15s;
+}
+.win-btn.min { background: rgba(255,255,255,0.2); color: #fff; }
+.win-btn.min:hover { background: rgba(255,255,255,0.35); }
+.win-btn.close { background: #e81123; color: #fff; }
+.win-btn.close:hover { background: #c50f1f; }
+
+.notepad-menubar {
+  background: #f3f3f3;
+  border-bottom: 1px solid #ddd;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: #444;
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.notepad-menubar span { cursor: default; padding: 2px 4px; border-radius: 3px; }
+.notepad-menubar span:hover { background: rgba(0,120,212,0.1); }
+
+/* Search bar */
+.notepad-searchbar {
+  background: #fff9e6;
+  border-bottom: 2px solid #f9ca24;
+  padding: 6px 12px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.notepad-searchbar.open { display: flex; }
+.notepad-searchbar input {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  width: 140px;
+  outline: none;
+  font-family: inherit;
+}
+.notepad-searchbar input:focus { border-color: var(--win-blue); }
+.search-result-count { color: #888; font-weight: 700; font-size: 11px; }
+.search-close-btn { margin-left: auto; background: none; border: none; cursor: pointer; font-size: 16px; color: #888; }
+
+/* Notepad content */
+.notepad-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  font-family: 'Meiryo', monospace;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text-dark);
+  background: #fff;
+  outline: none;
+  position: relative;
+}
+.notepad-body .selected { background: #0078d4; color: #fff; border-radius: 2px; }
+.notepad-body .search-match { background: #f9ca24; border-radius: 2px; }
+.notepad-body .pasted-text { background: #d4edda; border-radius: 2px; animation: pasteFlash 1s ease forwards; }
+@keyframes pasteFlash { 0%,100% { background: #d4edda; } 50% { background: #51cf66; } }
+
+.save-indicator {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  background: rgba(0,120,212,0.1);
+  border: 1px solid rgba(0,120,212,0.3);
+  border-radius: 50px;
+  font-size: 11px;
+  padding: 3px 10px;
+  color: #0078d4;
+  font-weight: 700;
+  display: none;
+  animation: saveAnim 2s ease forwards;
+  z-index: 10;
+  pointer-events: none;
+}
+.save-indicator.show { display: block; }
+@keyframes saveAnim {
+  0% { opacity: 0; transform: translateY(4px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── ALT+TAB OVERLAY ── */
+.alttab-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  bottom: 44px;
+}
+.alttab-overlay.open { display: flex; }
+.alttab-switcher {
+  background: rgba(30,30,60,0.95);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+}
+.alttab-item {
+  width: 100px;
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.alttab-item.selected { border-color: var(--win-blue); background: rgba(0,120,212,0.2); }
+.alttab-item .app-icon { font-size: 32px; margin-bottom: 6px; display: block; }
+.alttab-item .app-name { font-size: 11px; color: #fff; font-weight: 700; }
+
+/* ── WIN+S SEARCH OVERLAY ── */
+.winsearch-overlay {
+  position: absolute;
+  bottom: 44px; left: 0; right: 0;
+  background: rgba(15,12,41,0.97);
+  backdrop-filter: blur(12px);
+  border-top: 2px solid rgba(124,106,245,0.5);
+  display: none;
+  flex-direction: column;
+  padding: 20px;
+  z-index: 50;
+  max-height: 280px;
+}
+.winsearch-overlay.open { display: flex; }
+.winsearch-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 16px;
+  border: 2px solid rgba(124,106,245,0.5);
+}
+.winsearch-input-wrap input {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 700;
+  flex: 1;
+  outline: none;
+}
+.winsearch-results { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.winsearch-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  font-size: 13px;
+  color: rgba(240,240,255,0.8);
+  font-weight: 700;
+}
+
+/* ── WIN+E EXPLORER ── */
+.explorer-window {
+  position: absolute;
+  top: 20px; left: 50%; transform: translateX(-50%);
+  width: min(440px, 90%);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 60;
+  animation: popIn 0.25s ease;
+}
+.explorer-window.open { display: flex; }
+@keyframes popIn {
+  from { transform: translateX(-50%) scale(0.9); opacity: 0; }
+  to   { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+.explorer-body { padding: 12px; }
+.explorer-path {
+  background: #f0f4f8;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.explorer-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.explorer-item { text-align: center; padding: 8px 4px; border-radius: 6px; cursor: pointer; }
+.explorer-item:hover { background: rgba(0,120,212,0.1); }
+.explorer-item .ei-icon { font-size: 24px; display: block; margin-bottom: 3px; }
+.explorer-item .ei-name { font-size: 10px; color: #333; font-weight: 700; }
+
+/* ── LOCK SCREEN ── */
+.lock-screen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0a1e, #1a1a3e);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.lock-screen.open { display: flex; }
+.lock-time { font-family: 'Press Start 2P', monospace; font-size: 40px; color: #fff; margin-bottom: 8px; }
+.lock-date { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 32px; font-weight: 700; }
+.lock-icon { font-size: 48px; margin-bottom: 16px; }
+.lock-hint { color: rgba(255,255,255,0.4); font-size: 12px; }
+.lock-unlock-btn {
+  margin-top: 24px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50px;
+  color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 10px 28px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lock-unlock-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* ── TASK MANAGER ── */
+.taskmanager-window {
+  position: absolute;
+  top: 20px; left: 50%; transform: translateX(-50%);
+  width: min(400px, 90%);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 60;
+  animation: popIn 0.25s ease;
+}
+.taskmanager-window.open { display: flex; }
+.tm-body { padding: 12px; font-size: 12px; color: var(--text-dark); }
+.tm-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  gap: 10px;
+}
+.tm-row:hover { background: #f0f4f8; }
+.tm-status { font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 50px; }
+.tm-status.ok { background: #d4edda; color: #155724; }
+.tm-status.freeze { background: #f8d7da; color: #721c24; }
+.tm-name { flex: 1; font-weight: 700; }
+.tm-cpu { color: #888; font-size: 11px; }
+.tm-kill-btn {
+  background: #e81123;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  cursor: pointer;
+  display: none;
+}
+.tm-kill-btn.visible { display: block; }
+
+/* ── TASKBAR ── */
+.fake-taskbar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 44px;
+  background: rgba(15,12,41,0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+}
+.taskbar-win-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: default;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.taskbar-win-btn:hover { background: rgba(255,255,255,0.1); }
+.taskbar-app {
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 2px solid var(--win-blue);
+}
+.taskbar-clock {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  text-align: right;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: rgba(15,12,41,0.97);
+  border: 2px solid rgba(124,106,245,0.6);
+  border-radius: 20px;
+  padding: 20px 28px;
+  text-align: center;
+  z-index: 200;
+  min-width: 220px;
+  max-width: 340px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.toast-icon { font-size: 48px; margin-bottom: 8px; display: block; }
+.toast-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.toast-sub { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+/* ── RIGHT PANEL ── */
+.right-panel { display: flex; flex-direction: column; gap: 14px; }
+
+.panel-card {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+}
+.panel-title {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Win key buttons */
+.win-key-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.win-key-trigger {
+  background: rgba(0,120,212,0.15);
+  border: 1.5px solid rgba(0,120,212,0.4);
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 8px 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  line-height: 1.4;
+}
+.win-key-trigger:hover { background: rgba(0,120,212,0.3); transform: scale(1.04); }
+.win-key-trigger .wkt-keys { margin-bottom: 4px; display: flex; justify-content: center; gap: 2px; flex-wrap: wrap; }
+
+/* Shortcut tracker */
+.tracker-list { display: flex; flex-direction: column; gap: 6px; }
+.tracker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  transition: all 0.3s;
+}
+.tracker-item.done {
+  background: rgba(46,204,113,0.12);
+  border: 1px solid rgba(46,204,113,0.3);
+}
+.tracker-item.active {
+  background: rgba(124,106,245,0.2);
+  border: 1px solid rgba(124,106,245,0.5);
+  animation: trackerPulse 0.5s ease;
+}
+@keyframes trackerPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+.tracker-check {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.tracker-item.done .tracker-check { background: var(--correct); border-color: var(--correct); }
+.tracker-item.active .tracker-check { background: var(--accent); border-color: var(--accent); }
+.tracker-keys-mini { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.tracker-name { font-size: 11px; font-weight: 700; color: rgba(240,240,255,0.7); }
+.tracker-item.done .tracker-name { color: var(--correct); }
+
+/* Progress */
+.progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.progress-label { font-size: 13px; font-weight: 800; color: #fff; }
+.progress-count { font-size: 13px; font-weight: 800; color: var(--accent2); }
+.progress-bar-wrap { background: rgba(255,255,255,0.1); border-radius: 50px; height: 8px; overflow: hidden; }
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 50px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+
+/* ── HINT CARD ── */
+.hint-card {
+  background: rgba(249,202,36,0.1);
+  border: 1.5px solid rgba(249,202,36,0.3);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #f9ca24;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.hint-card .hint-label { font-size: 10px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+
+/* ── STUDY MODE ── */
+#study-mode {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.shortcut-card {
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  padding: 18px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(10px);
+}
+.shortcut-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
+.card-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+.card-name { font-size: 16px; font-weight: 900; margin-bottom: 5px; color: #fff; }
+.card-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.6; }
+.card-scene { font-size: 11px; border-left: 3px solid; border-radius: 0 7px 7px 0; padding: 7px 10px; color: rgba(240,240,255,0.7); line-height: 1.5; background: rgba(255,255,255,0.04); }
+.card-scene::before { content: '💡 '; }
+
+/* ── COMPLETE SCREEN ── */
+.complete-screen {
+  text-align: center;
+  padding: 48px 24px;
+}
+.complete-emoji { font-size: 80px; display: block; margin-bottom: 16px; animation: bounce 1s ease infinite; }
+@keyframes bounce { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-12px); } }
+.complete-title { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+.complete-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; line-height: 1.7; }
+.reset-btn {
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 15px; font-weight: 800;
+  padding: 12px 36px; cursor: pointer; transition: all 0.2s;
+}
+.reset-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,106,245,0.4); }
+
+/* mini key style for tracker */
+.mkey {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.12);
+  border-radius: 4px;
+  font-size: 9px; font-weight: 800;
+  padding: 1px 5px;
+  min-width: 22px;
+  height: 18px;
+  color: #fff;
+  white-space: nowrap;
+}
+.mkey.win { background: rgba(0,120,212,0.5); }
+.mkey.ctrl { background: rgba(74,58,124,0.7); }
+.mkey.alt { background: rgba(58,90,76,0.7); }
+.mkey.plus { background: none; font-size: 11px; min-width: 8px; color: rgba(255,255,255,0.4); }
+</style>
+</head>
+<body>
+<div class="outer">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">⌨️ SHORTCUT DOJO</div>
+    <div class="sub">Windowsショートカット道場 — 実際に押して体感しよう！</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn" onclick="switchMode('study')">📖 学習モード</button>
+    <button class="tab-btn active" onclick="switchMode('practice')">🖥️ 練習モード</button>
+  </div>
+
+  <!-- STUDY MODE -->
+  <div id="study-mode" style="display:none;"></div>
+
+  <!-- PRACTICE MODE -->
+  <div id="practice-mode">
+
+    <!-- FAKE DESKTOP -->
+    <div class="fake-desktop-wrap">
+      <div class="desktop-bg"></div>
+
+      <!-- Desktop icons (shown when Win+D) -->
+      <div class="desktop-icons-area" id="desktop-icons-area" style="display:none;">
+        <div class="desktop-icon"><span class="icon-img">🌐</span>Chrome</div>
+        <div class="desktop-icon"><span class="icon-img">📁</span>フォルダ</div>
+        <div class="desktop-icon"><span class="icon-img">📝</span>メモ帳</div>
+        <div class="desktop-icon"><span class="icon-img">♻️</span>ゴミ箱</div>
+      </div>
+
+      <!-- NOTEPAD WINDOW -->
+      <div class="notepad-window" id="notepad-window">
+        <div class="win-titlebar">
+          <div class="win-title">📝 <span>メモ帳 — 夏休みの自由研究.txt</span></div>
+          <div class="win-btns">
+            <button class="win-btn min" title="最小化" onclick="minimizeNotepad()">—</button>
+            <button class="win-btn close" title="閉じる" onclick="closeNotepad()">✕</button>
+          </div>
+        </div>
+        <div class="notepad-menubar">
+          <span>ファイル(F)</span><span>編集(E)</span><span>書式(O)</span><span>表示(V)</span>
+        </div>
+
+        <!-- Search bar (Ctrl+F) -->
+        <div class="notepad-searchbar" id="notepad-searchbar">
+          <span>🔍</span>
+          <input type="text" id="search-input" placeholder="検索ワードを入力..." oninput="doSearch(this.value)">
+          <span class="search-result-count" id="search-count"></span>
+          <button class="search-close-btn" onclick="closeSearch()">✕</button>
+        </div>
+
+        <div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:column;">
+          <div class="notepad-body" id="notepad-body">
+            <div id="notepad-text"></div>
+          </div>
+          <div class="save-indicator" id="save-indicator">💾 保存しました！</div>
+        </div>
+      </div>
+
+      <!-- ALT+TAB OVERLAY -->
+      <div class="alttab-overlay" id="alttab-overlay">
+        <div class="alttab-switcher">
+          <div class="alttab-item selected">
+            <span class="app-icon">📝</span>
+            <div class="app-name">メモ帳</div>
+          </div>
+          <div class="alttab-item">
+            <span class="app-icon">🌐</span>
+            <div class="app-name">Chrome</div>
+          </div>
+          <div class="alttab-item">
+            <span class="app-icon">📁</span>
+            <div class="app-name">エクスプローラー</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WIN+S SEARCH -->
+      <div class="winsearch-overlay" id="winsearch-overlay">
+        <div class="winsearch-input-wrap">
+          <span>🔍</span>
+          <input type="text" id="winsearch-input" placeholder="アプリ、ファイルを検索..." oninput="doWinSearch(this.value)">
+        </div>
+        <div class="winsearch-results" id="winsearch-results">
+          <div class="winsearch-result-item">📝 メモ帳 — アプリ</div>
+          <div class="winsearch-result-item">🌐 Google Chrome — アプリ</div>
+          <div class="winsearch-result-item">📁 ドキュメント — フォルダ</div>
+        </div>
+      </div>
+
+      <!-- WIN+E EXPLORER -->
+      <div class="explorer-window" id="explorer-window">
+        <div class="win-titlebar">
+          <div class="win-title">📁 <span>エクスプローラー</span></div>
+          <div class="win-btns">
+            <button class="win-btn close" onclick="closeExplorer()">✕</button>
+          </div>
+        </div>
+        <div class="explorer-body">
+          <div class="explorer-path">📍 PC > ドキュメント</div>
+          <div class="explorer-items">
+            <div class="explorer-item"><span class="ei-icon">📁</span><div class="ei-name">学校</div></div>
+            <div class="explorer-item"><span class="ei-icon">📁</span><div class="ei-name">写真</div></div>
+            <div class="explorer-item"><span class="ei-icon">📁</span><div class="ei-name">音楽</div></div>
+            <div class="explorer-item"><span class="ei-icon">📝</span><div class="ei-name">自由研究.txt</div></div>
+            <div class="explorer-item"><span class="ei-icon">🖼️</span><div class="ei-name">image01.jpg</div></div>
+            <div class="explorer-item"><span class="ei-icon">📄</span><div class="ei-name">レポート.docx</div></div>
+            <div class="explorer-item"><span class="ei-icon">🎵</span><div class="ei-name">BGM.mp3</div></div>
+            <div class="explorer-item"><span class="ei-icon">💽</span><div class="ei-name">USB (E:)</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK MANAGER -->
+      <div class="taskmanager-window" id="taskmanager-window">
+        <div class="win-titlebar">
+          <div class="win-title">🚨 <span>タスクマネージャー</span></div>
+          <div class="win-btns">
+            <button class="win-btn close" onclick="closeTaskManager()">✕</button>
+          </div>
+        </div>
+        <div class="tm-body">
+          <div style="font-size:11px;font-weight:800;color:#888;padding:4px 10px;margin-bottom:4px;">プロセス</div>
+          <div class="tm-row">
+            <span class="tm-name">🌐 Google Chrome</span>
+            <span class="tm-cpu">CPU 12%</span>
+            <span class="tm-status ok">正常</span>
+          </div>
+          <div class="tm-row">
+            <span class="tm-name">📝 メモ帳</span>
+            <span class="tm-cpu">CPU 0%</span>
+            <span class="tm-status ok">正常</span>
+          </div>
+          <div class="tm-row">
+            <span class="tm-name" style="color:#e74c3c;">⚠️ 重いゲーム.exe</span>
+            <span class="tm-cpu" style="color:#e74c3c;">CPU 98%</span>
+            <span class="tm-status freeze">応答なし</span>
+            <button class="tm-kill-btn visible" onclick="killTask(this)">終了</button>
+          </div>
+          <div class="tm-row">
+            <span class="tm-name">🎵 音楽プレイヤー</span>
+            <span class="tm-cpu">CPU 2%</span>
+            <span class="tm-status ok">正常</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOCK SCREEN -->
+      <div class="lock-screen" id="lock-screen">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-time" id="lock-time">00:00</div>
+        <div class="lock-date" id="lock-date">ロック中</div>
+        <div class="lock-hint">クリックでパスワード入力画面へ</div>
+        <button class="lock-unlock-btn" onclick="closeLockScreen()">🔓 解除する</button>
+      </div>
+
+      <!-- TASKBAR -->
+      <div class="fake-taskbar">
+        <button class="taskbar-win-btn">⊞</button>
+        <div class="taskbar-app">📝 メモ帳</div>
+        <div class="taskbar-clock" id="taskbar-clock">--:--</div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+
+      <!-- Progress -->
+      <div class="panel-card">
+        <div class="progress-row">
+          <div class="progress-label">練習の進み具合</div>
+          <div class="progress-count" id="progress-count">0 / 11</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- Hint -->
+      <div class="hint-card" id="hint-card">
+        <div class="hint-label">💡 次に試してみよう</div>
+        <div id="hint-text">Ctrl + A を押して全部のテキストを選んでみよう！</div>
+      </div>
+
+      <!-- Win key triggers -->
+      <div class="panel-card">
+        <div class="panel-title">🪟 Winキー系（ボタンで体験）</div>
+        <div class="win-key-grid">
+          <button class="win-key-trigger" onclick="triggerWin('d')">
+            <div class="wkt-keys"><span class="mkey win">Win</span><span class="mkey plus">+</span><span class="mkey">D</span></div>
+            🖥️ デスクトップ
+          </button>
+          <button class="win-key-trigger" onclick="triggerWin('s')">
+            <div class="wkt-keys"><span class="mkey win">Win</span><span class="mkey plus">+</span><span class="mkey">S</span></div>
+            🔍 検索
+          </button>
+          <button class="win-key-trigger" onclick="triggerWin('e')">
+            <div class="wkt-keys"><span class="mkey win">Win</span><span class="mkey plus">+</span><span class="mkey">E</span></div>
+            📁 エクスプローラー
+          </button>
+          <button class="win-key-trigger" onclick="triggerWin('l')">
+            <div class="wkt-keys"><span class="mkey win">Win</span><span class="mkey plus">+</span><span class="mkey">L</span></div>
+            🔒 ロック
+          </button>
+        </div>
+      </div>
+
+      <!-- Tracker -->
+      <div class="panel-card">
+        <div class="panel-title">✅ 試したショートカット</div>
+        <div class="tracker-list" id="tracker-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">🎉</span>
+  <div class="toast-title" id="toast-title">コピー！</div>
+  <div class="toast-sub" id="toast-sub">テキストをクリップボードにコピーしました</div>
+</div>
+
+<script>
+// ──────────────────────────────────────
+// DATA
+// ──────────────────────────────────────
+const shortcuts = [
+  { id: 'ctrl_a',   icon: '☑️',  name: '全選択',       miniKeys: [['Ctrl','ctrl'],['+','plus'],['A','']], hint: 'Ctrl + A → テキストが全部青くなるよ！' },
+  { id: 'ctrl_c',   icon: '📋',  name: 'コピー',        miniKeys: [['Ctrl','ctrl'],['+','plus'],['C','']], hint: 'まず全選択(Ctrl+A)してから Ctrl + C でコピー！' },
+  { id: 'ctrl_v',   icon: '📌',  name: '貼り付け',      miniKeys: [['Ctrl','ctrl'],['+','plus'],['V','']], hint: 'コピーした後に Ctrl + V で貼り付け！' },
+  { id: 'ctrl_x',   icon: '✂️',  name: '切り取り',      miniKeys: [['Ctrl','ctrl'],['+','plus'],['X','']], hint: '何かを選んで Ctrl + X で切り取り！' },
+  { id: 'ctrl_z',   icon: '↩️',  name: '元に戻す',      miniKeys: [['Ctrl','ctrl'],['+','plus'],['Z','']], hint: 'Ctrl + Z を押すと直前の操作が取り消せる！' },
+  { id: 'ctrl_s',   icon: '💾',  name: '保存',          miniKeys: [['Ctrl','ctrl'],['+','plus'],['S','']], hint: 'Ctrl + S で保存！右上に通知が出るよ。' },
+  { id: 'ctrl_f',   icon: '🔎',  name: 'ページ内検索',  miniKeys: [['Ctrl','ctrl'],['+','plus'],['F','']], hint: 'Ctrl + F で検索バーが開く！「光合成」と入力してみよう' },
+  { id: 'alt_tab',  icon: '🔄',  name: 'ウィンドウ切替', miniKeys: [['Alt','alt'],['+','plus'],['Tab','']], hint: 'Alt + Tab でアプリ切り替えのメニューが出る！' },
+  { id: 'ctrl_shift_esc', icon:'🚨', name:'タスクマネージャー', miniKeys:[['Ctrl','ctrl'],['+','plus'],['Shift','shift'],['+','plus'],['Esc','']], hint: 'Ctrl + Shift + Esc でタスクマネージャーを開こう！' },
+  { id: 'win_d',    icon: '🖥️',  name: 'デスクトップ',    miniKeys: [['Win','win'],['+','plus'],['D','']], hint: '右の「Win+D」ボタンを押してデスクトップを表示しよう！' },
+  { id: 'win_s',    icon: '🔍',  name: 'Windows検索',     miniKeys: [['Win','win'],['+','plus'],['S','']], hint: '右の「Win+S」ボタンを押して検索を開こう！' },
+  { id: 'win_e',    icon: '📁',  name: 'エクスプローラー', miniKeys: [['Win','win'],['+','plus'],['E','']], hint: '右の「Win+E」ボタンでエクスプローラーを開こう！' },
+  { id: 'win_l',    icon: '🔒',  name: '画面ロック',      miniKeys: [['Win','win'],['+','plus'],['L','']], hint: '右の「Win+L」ボタンを押して画面をロックしよう！' },
+];
+
+const practiceState = {
+  done: new Set(),
+  clipboard: '',
+  textSelected: false,
+  history: [],
+  desktopShown: false,
+};
+
+const INITIAL_TEXT = `今日は学校で理科の授業がありました。
+光合成について学んだので、
+ノートにまとめたいと思います。
+
+【光合成のポイント】
+・植物は日光を使ってエネルギーを作る
+・二酸化炭素と水が必要
+・酸素が生み出される
+
+▼ このテキストでショートカットを練習しよう！`;
+
+let currentText = INITIAL_TEXT;
+let pastedText = '';
+
+// ──────────────────────────────────────
+// INIT
+// ──────────────────────────────────────
+function init() {
+  renderNotepad();
+  buildTracker();
+  updateClock();
+  setInterval(updateClock, 10000);
+  buildStudyMode();
+}
+
+function renderNotepad() {
+  const body = document.getElementById('notepad-text');
+  if (practiceState.textSelected) {
+    body.innerHTML = `<span class="selected">${escHtml(currentText)}</span>`;
+  } else {
+    body.innerHTML = escHtml(currentText);
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function buildTracker() {
+  const list = document.getElementById('tracker-list');
+  list.innerHTML = shortcuts.map(s => `
+    <div class="tracker-item" id="track-${s.id}">
+      <div class="tracker-check" id="check-${s.id}"></div>
+      <div class="tracker-keys-mini">${renderMiniKeys(s.miniKeys)}</div>
+      <div class="tracker-name">${s.name}</div>
+    </div>
+  `).join('');
+  updateHint();
+}
+
+function renderMiniKeys(keys) {
+  return keys.map(([label, cls]) => {
+    if (cls === 'plus') return `<span class="mkey plus">+</span>`;
+    return `<span class="mkey ${cls}">${label}</span>`;
+  }).join('');
+}
+
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const timeStr = `${h}:${m}`;
+  document.getElementById('taskbar-clock').textContent = timeStr;
+  document.getElementById('lock-time').textContent = timeStr;
+  document.getElementById('lock-date').textContent = now.toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' });
+}
+
+// ──────────────────────────────────────
+// SHORTCUT DETECTION
+// ──────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const ctrl = e.ctrlKey;
+  const alt = e.altKey;
+  const shift = e.shiftKey;
+  const k = e.key.toLowerCase();
+
+  if (ctrl && k === 'a')   { e.preventDefault(); doCtrlA(); }
+  else if (ctrl && k === 'c') { e.preventDefault(); doCtrlC(); }
+  else if (ctrl && k === 'v') { e.preventDefault(); doCtrlV(); }
+  else if (ctrl && k === 'x') { e.preventDefault(); doCtrlX(); }
+  else if (ctrl && k === 'z') { e.preventDefault(); doCtrlZ(); }
+  else if (ctrl && k === 's') { e.preventDefault(); doCtrlS(); }
+  else if (ctrl && k === 'f') { e.preventDefault(); doCtrlF(); }
+  else if (alt && k === 'tab') { e.preventDefault(); doAltTab(); }
+  else if (ctrl && shift && k === 'escape') { e.preventDefault(); doCtrlShiftEsc(); }
+  else if (k === 'escape') { closeAllOverlays(); }
+});
+
+// ──────────────────────────────────────
+// SHORTCUT ACTIONS
+// ──────────────────────────────────────
+function doCtrlA() {
+  practiceState.textSelected = true;
+  renderNotepad();
+  markDone('ctrl_a');
+  showToast('☑️', 'ぜんぶ選択！', '全部のテキストが青くなって選ばれた状態になったよ！');
+}
+
+function doCtrlC() {
+  if (practiceState.textSelected) {
+    practiceState.clipboard = currentText;
+    markDone('ctrl_c');
+    showToast('📋', 'コピー完了！', 'テキストをクリップボードにコピーしたよ！\nCtrl+V で貼り付けできる！');
+  } else {
+    showToast('💡', 'まず選択しよう！', 'Ctrl+A で全選択してから Ctrl+C でコピーできるよ！');
+  }
+}
+
+function doCtrlV() {
+  if (practiceState.clipboard) {
+    if (practiceState.done.has('ctrl_v')) {
+      // 2回目以降は貼り付け済みメッセージだけ見せる
+      showToast('📌', 'もう貼り付け済み！', 'すでに練習完了！Ctrl+Z で元に戻してみよう！');
+      return;
+    }
+    const prevText = currentText; // 変更前を保存
+    practiceState.textSelected = false;
+    const appended = '\n\n--- 貼り付けたテキスト ---\n' + practiceState.clipboard.substring(0, 40) + '...';
+    currentText = currentText + appended;
+    practiceState.history.push({ text: prevText }); // ✅ 変更前の状態を保存
+    renderNotepad();
+    // flash pasted section
+    const body = document.getElementById('notepad-text');
+    body.innerHTML += `<br><span class="pasted-text">📌 貼り付け完了！</span>`;
+    markDone('ctrl_v');
+    showToast('📌', '貼り付け！', 'コピーしたテキストを貼り付けたよ！Ctrl+Z で元に戻せるよ！');
+    setTimeout(() => renderNotepad(), 1500);
+  } else {
+    showToast('💡', 'まずコピーしよう！', 'Ctrl+A で全選択 → Ctrl+C でコピー → Ctrl+V で貼り付けできるよ！');
+  }
+}
+
+function doCtrlX() {
+  if (!practiceState.textSelected) {
+    showToast('💡', 'まず全選択しよう！', 'Ctrl+A で全選択してから Ctrl+X で切り取りできるよ！');
+    return;
+  }
+  const prevText = currentText;
+  practiceState.clipboard = currentText;
+  practiceState.history.push({ text: prevText });
+  currentText = '【切り取り済み ✂️】\nCtrl+Z で元に戻せるよ！';
+  practiceState.textSelected = false;
+  renderNotepad();
+  markDone('ctrl_x');
+  showToast('✂️', '切り取り！', 'テキストが切り取られたよ！Ctrl+V で別の場所に貼れる！Ctrl+Z で元に戻せるよ！');
+}
+
+function doCtrlZ() {
+  if (practiceState.history.length > 0) {
+    const prev = practiceState.history.pop();
+    currentText = prev.text;
+    practiceState.textSelected = false;
+    renderNotepad();
+    markDone('ctrl_z');
+    showToast('↩️', '元に戻した！', '直前の操作をなかったことにしたよ！何度でも押せる！');
+  } else {
+    currentText = INITIAL_TEXT;
+    practiceState.textSelected = false;
+    renderNotepad();
+    markDone('ctrl_z');
+    showToast('↩️', '元に戻した！', '最初の状態に戻ったよ！');
+  }
+}
+
+function doCtrlS() {
+  const ind = document.getElementById('save-indicator');
+  ind.classList.remove('show');
+  void ind.offsetWidth;
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 2000);
+  markDone('ctrl_s');
+  showToast('💾', '保存完了！', '作業内容が保存されたよ！こまめにCtrl+Sを押す習慣をつけよう！');
+}
+
+function doCtrlF() {
+  const bar = document.getElementById('notepad-searchbar');
+  bar.classList.toggle('open');
+  if (bar.classList.contains('open')) {
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-count').textContent = '';
+    document.getElementById('search-input').focus();
+    markDone('ctrl_f');
+    showToast('🔍', '検索バーを開いた！', '「光合成」や「植物」などのワードを入力して検索してみよう！');
+  } else {
+    renderNotepad(); // ✅ 閉じたときハイライトを消す
+  }
+}
+
+function doAltTab() {
+  const overlay = document.getElementById('alttab-overlay');
+  overlay.classList.add('open');
+  markDone('alt_tab');
+  showToast('🔄', 'ウィンドウ切替！', 'Altを押したまま Tab を何度か押すと切り替わるよ！', 1500);
+  setTimeout(() => overlay.classList.remove('open'), 2000);
+}
+
+function doCtrlShiftEsc() {
+  document.getElementById('taskmanager-window').classList.add('open');
+  markDone('ctrl_shift_esc');
+  showToast('🚨', 'タスクマネージャー！', 'フリーズしたアプリを強制終了できる画面が開いたよ！');
+}
+
+function triggerWin(key) {
+  if (key === 'd') {
+    const win = document.getElementById('notepad-window');
+    const icons = document.getElementById('desktop-icons-area');
+    practiceState.desktopShown = !practiceState.desktopShown;
+    win.classList.toggle('minimized', practiceState.desktopShown);
+    icons.style.display = practiceState.desktopShown ? 'flex' : 'none';
+    markDone('win_d');
+    showToast('🖥️', practiceState.desktopShown ? 'デスクトップ表示！' : 'ウィンドウ戻った！',
+      practiceState.desktopShown ? '全部のウィンドウが隠れてデスクトップが出たよ！もう一度押すと戻る' : 'ウィンドウが戻ってきたよ！');
+  } else if (key === 's') {
+    const overlay = document.getElementById('winsearch-overlay');
+    overlay.classList.toggle('open');
+    if (overlay.classList.contains('open')) {
+      document.getElementById('winsearch-input').focus();
+      markDone('win_s'); // ✅ now in shortcuts array
+      showToast('🔍', 'Windowsの検索！', 'アプリ名やファイル名を入力して素早く起動できるよ！');
+    }
+  } else if (key === 'e') {
+    document.getElementById('explorer-window').classList.add('open');
+    markDone('win_e'); // ✅ now in shortcuts array
+    showToast('📁', 'エクスプローラー！', 'ファイルやフォルダを管理する画面が開いたよ！');
+  } else if (key === 'l') {
+    document.getElementById('lock-screen').classList.add('open');
+    markDone('win_l');
+    showToast('🔒', '画面ロック！', 'パスワードがないと中身が見れなくなったよ！');
+  }
+}
+
+function closeSearch() {
+  document.getElementById('notepad-searchbar').classList.remove('open');
+  renderNotepad();
+}
+
+function doSearch(val) {
+  if (!val) { renderNotepad(); document.getElementById('search-count').textContent = ''; return; }
+  const count = (currentText.split(val).length - 1);
+  document.getElementById('search-count').textContent = count > 0 ? `${count}件` : '見つからない';
+  // ✅ Escape regex special chars to prevent crash on user input like "." or "("
+  const safeVal = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const safeDisplay = escHtml(val);
+  const escaped = escHtml(currentText).replace(new RegExp(safeDisplay.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), `<span class="search-match">${safeDisplay}</span>`);
+  document.getElementById('notepad-text').innerHTML = escaped.replace(/\n/g, '<br>');
+}
+
+function doWinSearch(val) {
+  const results = document.getElementById('winsearch-results');
+  const apps = ['📝 メモ帳', '🌐 Google Chrome', '📁 ドキュメント', '🧮 電卓', '🎨 ペイント', '⚙️ 設定'];
+  const filtered = apps.filter(a => !val || a.toLowerCase().includes(val.toLowerCase()));
+  results.innerHTML = filtered.slice(0,4).map(a => `<div class="winsearch-result-item">${a} — アプリ</div>`).join('') || '<div class="winsearch-result-item" style="color:#888;">見つかりませんでした</div>';
+}
+
+function closeAllOverlays() {
+  document.getElementById('alttab-overlay').classList.remove('open');
+  document.getElementById('winsearch-overlay').classList.remove('open');
+  document.getElementById('notepad-searchbar').classList.remove('open');
+  renderNotepad();
+}
+
+function closeExplorer() { document.getElementById('explorer-window').classList.remove('open'); }
+function closeTaskManager() { document.getElementById('taskmanager-window').classList.remove('open'); }
+function closeLockScreen() { document.getElementById('lock-screen').classList.remove('open'); }
+
+// ✅ Bug#4 fix: notepad min/close button handlers
+function minimizeNotepad() {
+  // 最小化ボタン → Win+D と同じ動作
+  triggerWin('d');
+  showToast('🖥️', '最小化！', 'ウィンドウが隠れたよ！もう一度「Win+D」ボタンで戻せる！');
+}
+function closeNotepad() {
+  showToast('ℹ️', 'ここでは閉じません！', '練習用なので✕ボタンは無効にしています。\n本物のWindowsではアプリが閉じるよ！');
+}
+
+function killTask(btn) {
+  const row = btn.closest('.tm-row');
+  row.style.opacity = '0.3';
+  btn.textContent = '終了した！';
+  btn.style.background = '#2ecc71';
+  setTimeout(() => row.style.transition = 'all 0.5s', 0);
+}
+
+// ──────────────────────────────────────
+// TRACKER / PROGRESS
+// ──────────────────────────────────────
+const HINTS = {
+  ctrl_a: 'Ctrl + A → 全選択してみよう！テキストが青くなるよ',
+  ctrl_c: '全選択した後 Ctrl + C でコピーしてみよう！',
+  ctrl_v: 'Ctrl + V → コピーしたテキストを貼り付けよう！',
+  ctrl_x: 'Ctrl + A で全選択してから Ctrl + X で切り取ってみよう！',
+  ctrl_z: 'Ctrl + Z → 切り取りや貼り付けを元に戻してみよう！',
+  ctrl_s: 'Ctrl + S → 作業を保存してみよう！右下に通知が出るよ',
+  ctrl_f: 'Ctrl + F → 検索バーを開こう！「光合成」と入力してみて',
+  alt_tab: 'Alt + Tab → ウィンドウ切り替えを試そう！',
+  ctrl_shift_esc: 'Ctrl + Shift + Esc → タスクマネージャーを開こう！',
+  win_d: '右の「Win+D」ボタンでデスクトップを表示しよう！',
+  win_s: '右の「Win+S」ボタンでWindows検索を開こう！',
+  win_e: '右の「Win+E」ボタンでエクスプローラーを開こう！',
+  win_l: '右の「Win+L」ボタンで画面をロックしよう！',
+};
+
+function markDone(id) {
+  if (!practiceState.done.has(id)) {
+    practiceState.done.add(id);
+    const item = document.getElementById(`track-${id}`);
+    const check = document.getElementById(`check-${id}`);
+    if (item) {
+      item.classList.add('active');
+      if (check) check.textContent = '✓';
+      setTimeout(() => {
+        item.classList.remove('active');
+        item.classList.add('done');
+      }, 600);
+    }
+    updateProgress();
+    updateHint();
+    checkComplete();
+  }
+}
+
+function updateProgress() {
+  const total = shortcuts.length;
+  const done = shortcuts.filter(s => practiceState.done.has(s.id)).length;
+  document.getElementById('progress-count').textContent = `${done} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${(done/total)*100}%`;
+}
+
+function updateHint() {
+  const next = shortcuts.find(s => !practiceState.done.has(s.id));
+  if (next) {
+    document.getElementById('hint-text').textContent = HINTS[next.id] || next.hint;
+  }
+}
+
+function checkComplete() {
+  const total = shortcuts.length;
+  const done = shortcuts.filter(s => practiceState.done.has(s.id)).length;
+  if (done >= total) {
+    setTimeout(() => {
+      document.getElementById('practice-mode').innerHTML = `
+        <div class="complete-screen" style="grid-column:1/-1;text-align:center;">
+          <span class="complete-emoji">🏆</span>
+          <div class="complete-title">全部マスター！すごい！</div>
+          <div class="complete-sub">全 ${total} 個のショートカットを練習したよ！<br>実際のパソコンでも使ってみよう！</div>
+          <button class="reset-btn" onclick="resetPractice()">🔄 もう一度練習する</button>
+        </div>
+      `;
+    }, 500);
+  }
+}
+
+function resetPractice() {
+  practiceState.done.clear();
+  practiceState.clipboard = '';
+  practiceState.textSelected = false;
+  practiceState.history = [];
+  practiceState.desktopShown = false;
+  currentText = INITIAL_TEXT;
+  location.reload();
+}
+
+// ──────────────────────────────────────
+// TOAST
+// ──────────────────────────────────────
+let toastTimer = null;
+function showToast(icon, title, sub, duration = 2200) {
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-sub').textContent = sub;
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+// ──────────────────────────────────────
+// STUDY MODE
+// ──────────────────────────────────────
+const studyData = [
+  { keys:'Ctrl + C', name:'コピー', icon:'📋', color:'#7c6af5', desc:'選んだ文字や画像をコピーする', scene:'テストのレポートで同じ文章を使い回したいとき！' },
+  { keys:'Ctrl + V', name:'貼り付け', icon:'📌', color:'#5a4fcf', desc:'コピーしたものを貼り付ける', scene:'コピーした文章を別の場所に入れたいとき！' },
+  { keys:'Ctrl + X', name:'切り取り', icon:'✂️', color:'#f76c6c', desc:'選んだものを切り取る（移動用）', scene:'文章を別の場所に移動させたいとき！' },
+  { keys:'Ctrl + Z', name:'元に戻す', icon:'↩️', color:'#f7a23e', desc:'直前の操作を取り消す', scene:'間違えて消してしまったとき！「やべ！」ってなったらすぐこれ！' },
+  { keys:'Ctrl + S', name:'上書き保存', icon:'💾', color:'#38c87a', desc:'今やっている作業を保存する', scene:'レポートが消えないようにしたいとき！こまめに押そう！' },
+  { keys:'Alt + Tab', name:'ウィンドウ切替', icon:'🔄', color:'#00bcd4', desc:'開いているアプリを素早く切り替える', scene:'音楽を聴きながら調べ物をするとき！' },
+  { keys:'Win + D', name:'デスクトップ表示', icon:'🖥️', color:'#3f8ef0', desc:'全部の窓を隠してデスクトップを出す', scene:'急に人に画面を見られそうになったとき！' },
+  { keys:'Win + S', name:'Windows検索', icon:'🔍', color:'#9c27b0', desc:'アプリやファイルを名前で検索できる', scene:'アプリがどこにあるか分からないとき！' },
+  { keys:'Win + E', name:'エクスプローラー', icon:'📁', color:'#ff9800', desc:'ファイルを管理する画面を開く', scene:'写真やファイルを探したいとき！' },
+  { keys:'Ctrl + A', name:'全選択', icon:'☑️', color:'#e91e63', desc:'全部の文字やファイルを一気に選ぶ', scene:'全部コピーしたいとき！Ctrl+A → Ctrl+C で全コピー完了！' },
+  { keys:'Ctrl + F', name:'ページ内検索', icon:'🔎', color:'#009688', desc:'ページや文書の中から言葉を探す', scene:'長い文章から特定の単語を見つけたいとき！' },
+  { keys:'Win + L', name:'画面ロック', icon:'🔒', color:'#607d8b', desc:'画面をロックして席を離れる', scene:'トイレに行くときに画面を隠したいとき！' },
+  { keys:'Ctrl + Shift + Esc', name:'タスクマネージャー', icon:'🚨', color:'#f44336', desc:'フリーズしたアプリを強制終了できる', scene:'パソコンが固まって動かなくなったとき！' },
+];
+
+function buildStudyMode() {
+  document.getElementById('study-mode').innerHTML = studyData.map(s => `
+    <div class="shortcut-card">
+      <span class="card-icon">${s.icon}</span>
+      <div style="font-size:12px;font-weight:800;color:${s.color};margin-bottom:6px;">${s.keys}</div>
+      <div class="card-name">${s.name}</div>
+      <div class="card-desc">${s.desc}</div>
+      <div class="card-scene" style="border-color:${s.color};">${s.scene}</div>
+    </div>
+  `).join('');
+}
+
+// ──────────────────────────────────────
+// MODE SWITCH
+// ──────────────────────────────────────
+function switchMode(mode) {
+  document.getElementById('study-mode').style.display = mode === 'study' ? 'grid' : 'none';
+  document.getElementById('practice-mode').style.display = mode === 'practice' ? 'grid' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && mode === 'study') || (i === 1 && mode === 'practice'));
+  });
+}
+
+init();
+</script>
+</body>
+</html>

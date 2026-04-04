@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC きほん道場</title>
+<meta name="description" content="パソコンの基本操作を楽しく学べる練習サイト。ショートカットキーやファイル操作など、実際に手を動かして覚えよう！">
+<meta property="og:title" content="PC きほん道場">
+<meta property="og:description" content="パソコンの基本操作を楽しく学べる練習サイト">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --outer-bg: #1a1a2e;
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --text-muted: rgba(240,240,255,0.55);
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #1a1a2e);
+  min-height: 100vh;
+  color: #f0f0ff;
+}
+
+.outer { max-width: 860px; margin: 0 auto; padding: 48px 20px 80px; }
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 48px; }
+.logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(16px, 3.5vw, 24px);
+  background: linear-gradient(90deg, #7c6af5, #50e6ff, #f9ca24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.sub {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+/* ── LESSON GRID ── */
+.lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+
+.lesson-card {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  backdrop-filter: blur(10px);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.lesson-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.card-icon { font-size: 44px; margin-bottom: 14px; display: block; }
+.card-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; color: #fff; }
+.card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  flex: 1;
+}
+.card-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 16px;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 50px;
+  width: fit-content;
+}
+.tag-ready { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
+.tag-soon  { background: rgba(255,255,255,0.06); color: rgba(240,240,255,0.35); border: 1px solid rgba(255,255,255,0.08); }
+
+/* ── COMING SOON ── */
+.lesson-card.soon {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  margin-top: 56px;
+  color: rgba(240,240,255,0.25);
+  font-size: 12px;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+<div class="outer">
+
+  <div class="header">
+    <div class="logo">🖥️ PC きほん道場</div>
+    <div class="sub">パソコンの基本を楽しく学ぼう！<br>実際に手を動かして覚える練習サイト</div>
+  </div>
+
+  <div class="lessons">
+
+    <!-- ショートカットキー -->
+    <a class="lesson-card" href="shortcut/shortcut-practice.html">
+      <span class="card-icon">⌨️</span>
+      <div class="card-title">ショートカットキー</div>
+      <div class="card-desc">コピー・貼り付け・元に戻すなど、パソコンを素早く操作できるキーボードの技を練習しよう！</div>
+      <div class="card-tag tag-ready">✅ プレイ可能</div>
+    </a>
+
+    <!-- タイピング（準備中） -->
+    <div class="lesson-card soon">
+      <span class="card-icon">🔤</span>
+      <div class="card-title">タイピング練習</div>
+      <div class="card-desc">ホームポジションから始めて、正しい指の使い方でキーボード入力を速くしよう！</div>
+      <div class="card-tag tag-soon">🔜 準備中</div>
+    </div>
+
+    <!-- ファイル操作（準備中） -->
+    <div class="lesson-card soon">
+      <span class="card-icon">📁</span>
+      <div class="card-title">ファイル操作</div>
+      <div class="card-desc">フォルダの作り方、ファイルの移動・コピー・名前変更など、整理整頓の基本を学ぼう！</div>
+      <div class="card-tag tag-soon">🔜 準備中</div>
+    </div>
+
+  </div>
+
+  <div class="footer">PC きほん道場 — つくって学ぶパソコン教室</div>
+
+</div>
+</body>
+</html>
