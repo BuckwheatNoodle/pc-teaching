@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python 入門 その2 — ミニゲームを作ろう！</title>
+<meta name="description" content="Python の基礎を使って楽しいミニゲームを作ろう！AIチャットの上手な使い方も学べる。">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://skulpt.org/js/skulpt.min.js"></script>
+<script src="https://skulpt.org/js/skulpt-stdlib.js"></script>
+<style>
+:root {
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --python-blue: #306998;
+  --python-yellow: #ffd43b;
+  --correct: #2ecc71;
+  --text-muted: rgba(240,240,255,0.55);
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+  --editor-bg: #1e1e2e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #1a2a4a, #1a1a2e);
+  min-height: 100vh; color: #f0f0ff;
+}
+.outer { max-width: 900px; margin: 0 auto; padding: 24px 18px 80px; }
+
+.header { text-align: center; margin-bottom: 28px; }
+.logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(11px, 2.4vw, 16px);
+  background: linear-gradient(90deg, #306998, #ffd43b, #ff6b6b, #50e6ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; display: inline-block; margin-bottom: 6px;
+}
+.sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+.home-link {
+  display: inline-block; margin-top: 8px;
+  color: var(--accent2); font-size: 12px; font-weight: 700;
+  text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+}
+.home-link:hover { opacity: 1; }
+
+/* TOC */
+.toc {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 28px; backdrop-filter: blur(10px);
+}
+.toc-title { font-size: 14px; font-weight: 900; margin-bottom: 10px; color: var(--python-yellow); }
+.toc-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.toc-list a {
+  font-size: 13px; font-weight: 700; color: rgba(240,240,255,0.7);
+  text-decoration: none; padding: 4px 12px; border-radius: 8px;
+  border: 1px solid transparent; transition: all 0.2s;
+}
+.toc-list a:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+
+/* Section */
+.section {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 18px; padding: 28px 26px; margin-bottom: 20px;
+  backdrop-filter: blur(10px); scroll-margin-top: 20px;
+}
+.section-num { font-size: 11px; font-weight: 900; color: var(--python-yellow); letter-spacing: 1.5px; margin-bottom: 4px; }
+.section-title { font-size: 22px; font-weight: 900; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.section-body { font-size: 14px; line-height: 2.1; color: rgba(240,240,255,0.85); }
+.section-body h3 {
+  font-size: 16px; font-weight: 900; margin: 24px 0 10px;
+  padding-left: 12px; border-left: 4px solid var(--python-yellow); color: #fff;
+}
+.section-body h3:first-child { margin-top: 0; }
+.section-body code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(255,215,59,0.12); border: 1px solid rgba(255,215,59,0.25);
+  border-radius: 5px; padding: 1px 7px; font-size: 13px;
+  color: var(--python-yellow); font-weight: 700;
+}
+.section-body ul, .section-body ol { padding-left: 1.5em; margin: 8px 0; }
+.section-body li { margin-bottom: 4px; }
+
+.point {
+  background: rgba(48,105,152,0.15); border-left: 4px solid var(--python-blue);
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+.warn {
+  background: rgba(255,107,107,0.08); border-left: 4px solid #ff6b6b;
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.step {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start;
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--python-blue), #4a8abf);
+  color: #fff; font-size: 14px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-content { flex: 1; font-size: 13px; line-height: 1.9; }
+.step-content strong { color: var(--python-yellow); }
+
+/* Concept cards */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 14px 0; }
+.concept-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.concept-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.concept-name { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.concept-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+/* Compare */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+@media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+.compare-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 16px;
+}
+.compare-card h4 { font-size: 14px; font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.compare-card p { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+.compare-card.good { border-color: rgba(46,204,113,0.3); background: rgba(46,204,113,0.05); }
+.compare-card.bad { border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.05); }
+
+/* AI Chat mockup */
+.ai-chat {
+  background: #f7f7f8; border-radius: 12px; overflow: hidden;
+  margin: 16px 0; border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2); color: #333;
+}
+.ai-chat-bar {
+  background: #ececec; padding: 8px 14px; font-size: 12px; font-weight: 800;
+  color: #666; display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid #ddd;
+}
+.ai-chat-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.ai-msg {
+  padding: 12px 16px; border-radius: 12px; font-size: 13px; line-height: 1.8;
+  max-width: 85%;
+}
+.ai-msg.user {
+  background: #e3f2fd; align-self: flex-end; border-bottom-right-radius: 4px; color: #1a237e;
+}
+.ai-msg.bot {
+  background: #fff; border: 1px solid #eee; align-self: flex-start; border-bottom-left-radius: 4px; color: #333;
+}
+.ai-msg code {
+  font-family: 'Fira Code', monospace; background: rgba(0,0,0,0.06);
+  border-radius: 4px; padding: 1px 5px; font-size: 12px; color: #c62828;
+}
+
+/* Try-it */
+.try-it {
+  background: rgba(46,204,113,0.08); border: 1.5px solid rgba(46,204,113,0.25);
+  border-radius: 14px; padding: 18px 20px; margin: 16px 0;
+}
+.try-it-label { font-size: 11px; font-weight: 900; color: var(--correct); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.try-it-body { font-size: 13px; line-height: 1.9; }
+
+/* Challenge card */
+.challenge {
+  background: rgba(255,215,59,0.06); border: 1.5px solid rgba(255,215,59,0.2);
+  border-radius: 14px; padding: 20px; margin: 16px 0;
+}
+.challenge-label { font-size: 11px; font-weight: 900; color: var(--python-yellow); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.challenge-body { font-size: 13px; line-height: 1.9; }
+
+/* Editor */
+.editor-wrap {
+  background: var(--editor-bg); border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; overflow: hidden; margin: 16px 0;
+}
+.editor-topbar {
+  background: rgba(0,0,0,0.3); padding: 8px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.editor-topbar-left {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 800; color: rgba(240,240,255,0.5);
+}
+.editor-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+.run-btn {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none; border-radius: 8px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 12px; font-weight: 800; padding: 6px 18px;
+  cursor: pointer; transition: all 0.2s;
+}
+.run-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(40,167,69,0.4); }
+textarea.code-input {
+  width: 100%; min-height: 120px; background: var(--editor-bg);
+  border: none; color: #e0e0ff;
+  font-family: 'Fira Code', monospace; font-size: 14px; line-height: 1.8;
+  padding: 14px 16px; resize: vertical; outline: none; tab-size: 4;
+}
+.output-wrap { border-top: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2); }
+.output-label { padding: 6px 14px 0; font-size: 11px; font-weight: 800; color: rgba(240,240,255,0.35); letter-spacing: 1px; }
+.output-box {
+  padding: 8px 14px 12px; font-family: 'Fira Code', monospace;
+  font-size: 13px; line-height: 1.7; color: #a0ffa0;
+  white-space: pre-wrap; min-height: 28px; max-height: 200px; overflow-y: auto;
+}
+.output-box.error { color: #ff6b6b; }
+
+/* Flowchart-like box */
+.flow {
+  background: rgba(124,106,245,0.08); border: 1.5px solid rgba(124,106,245,0.25);
+  border-radius: 14px; padding: 20px; margin: 16px 0; text-align: center;
+}
+.flow-title { font-size: 13px; font-weight: 900; color: var(--accent); margin-bottom: 12px; }
+.flow-steps {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px;
+  font-size: 13px; font-weight: 800;
+}
+.flow-step {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px; padding: 8px 16px; color: #fff;
+}
+.flow-step.highlight { background: rgba(46,204,113,0.2); border-color: rgba(46,204,113,0.4); color: var(--correct); }
+.flow-arrow { color: var(--text-muted); font-size: 18px; }
+
+/* Rule card */
+.rule-card {
+  background: rgba(255,152,0,0.06); border: 1.5px solid rgba(255,152,0,0.2);
+  border-radius: 14px; padding: 20px; margin: 14px 0;
+}
+.rule-card h4 { font-size: 14px; font-weight: 900; color: #ffb74d; margin-bottom: 8px; }
+.rule-card p { font-size: 13px; line-height: 1.8; color: rgba(240,240,255,0.8); }
+
+/* Loading */
+.loading-overlay {
+  position: fixed; inset: 0; background: rgba(15,12,41,0.95);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 500; transition: opacity 0.4s;
+}
+.loading-overlay.hidden { opacity: 0; pointer-events: none; }
+.loading-spinner {
+  width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.1);
+  border-top-color: var(--python-yellow); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin-bottom: 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; font-weight: 800; color: var(--text-muted); }
+
+/* Nav */
+.nav-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08);
+}
+.nav-btn {
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 14px; font-weight: 800; padding: 10px 24px;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,106,245,0.4); }
+.nav-btn.secondary { background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); }
+.nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">🐍 Python エンジンを準備中...</div>
+</div>
+
+<div class="outer">
+
+  <div class="header">
+    <div class="logo">🎮 PYTHON DOJO 2</div>
+    <div class="sub">ミニゲームを作ろう！— AIも使いこなすプログラミング入門</div>
+    <a class="home-link" href="../index.html">← トップページに戻る</a>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">📖 もくじ</div>
+    <ul class="toc-list">
+      <li><a href="#intro">① この章でやること</a></li>
+      <li><a href="#ai-rule">② AIチャットの使い方ルール</a></li>
+      <li><a href="#random">③ ランダムを使おう</a></li>
+      <li><a href="#game1">④ 数当てゲーム</a></li>
+      <li><a href="#game2">⑤ じゃんけんゲーム</a></li>
+      <li><a href="#game3">⑥ おみくじメーカー</a></li>
+      <li><a href="#game4">⑦ クイズゲーム</a></li>
+      <li><a href="#ai-practice">⑧ AIに質問する練習</a></li>
+      <li><a href="#challenge">⑨ 自由チャレンジ</a></li>
+      <li><a href="#next">⑩ さらに先へ</a></li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 1: イントロ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="intro">
+    <div class="section-num">SECTION 01</div>
+    <div class="section-title">🎮 この章でやること</div>
+    <div class="section-body">
+      <p>
+        「Python入門」で学んだ基礎を<b>組み合わせて</b>、実際に動くミニゲームを作ります！<br>
+        さらに、<b>AIチャット（ChatGPTやClaude）を「学習の味方」として上手に使う方法</b>も身につけよう。
+      </p>
+
+      <h3>前提知識</h3>
+      <p>この章では、Python入門で学んだ以下の知識を使います：</p>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">📦</span>
+          <div class="concept-name">変数</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🔀</span>
+          <div class="concept-name">if文</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🔁</span>
+          <div class="concept-name">for / while</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📝</span>
+          <div class="concept-name">リスト</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⚙️</span>
+          <div class="concept-name">関数</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🎲</span>
+          <div class="concept-name">random（新！）</div>
+        </div>
+      </div>
+
+      <h3>進め方</h3>
+      <div class="flow">
+        <div class="flow-title">🔄 学習サイクル</div>
+        <div class="flow-steps">
+          <div class="flow-step highlight">① 自分で考える</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">② コードを書く</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">③ エラーが出たら自分で直す</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">④ どうしても詰まったらAIに聞く</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step highlight">⑤ 理解して自分の力にする</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 大事なのは<b>「自分で書けるようになること」</b>。<br>
+        AIは答えを出してもらう道具じゃなく、<b>わからないことを教えてもらう先生</b>として使おう！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 2: AIの使い方ルール -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="ai-rule">
+    <div class="section-num">SECTION 02</div>
+    <div class="section-title">🤖 AIチャットの使い方ルール</div>
+    <div class="section-body">
+      <p>
+        ChatGPTやClaudeなどのAIチャットは、プログラミング学習のすごい味方になる。<br>
+        でも<b>使い方を間違えると、逆に成長できなくなる</b>。ルールを決めておこう。
+      </p>
+
+      <h3>3つのルール</h3>
+
+      <div class="rule-card">
+        <h4>🥇 ルール1: まず自分で15分考える</h4>
+        <p>
+          すぐAIに聞くのはNG。まずは自分でコードを書いてみよう。<br>
+          エラーが出ても、エラーメッセージを読んで自分で直してみる。<br>
+          <b>15分やっても解決しないときに初めてAIに聞く。</b>
+        </p>
+      </div>
+
+      <div class="rule-card">
+        <h4>🥈 ルール2: 「答え」ではなく「ヒント」を聞く</h4>
+        <p>
+          ×「じゃんけんゲームのコードを書いて」<br>
+          ○「じゃんけんゲームで、コンピュータの手をランダムに出す方法がわかりません。ヒントをください」<br>
+          <b>完成品をもらうのではなく、わからない部分だけ質問する。</b>
+        </p>
+      </div>
+
+      <div class="rule-card">
+        <h4>🥉 ルール3: もらった答えを必ず理解する</h4>
+        <p>
+          AIのコードをコピペして動いた！…で終わらない。<br>
+          <b>「なぜこう書くのか」を自分の言葉で説明できるまで理解する。</b><br>
+          わからなければ「この部分を初心者向けに説明して」と追加で聞こう。
+        </p>
+      </div>
+
+      <h3>良い質問と悪い質問</h3>
+      <div class="compare-grid">
+        <div class="compare-card bad">
+          <h4>❌ 悪い質問</h4>
+          <p>
+            「Pythonでじゃんけんゲーム作って」<br>
+            「このエラー直して」<br>
+            「数当てゲームのコード全部ください」<br><br>
+            → 自分で考えていない。成長しない。
+          </p>
+        </div>
+        <div class="compare-card good">
+          <h4>✅ 良い質問</h4>
+          <p>
+            「random.choice の使い方を教えて」<br>
+            「このエラーはどういう意味？: NameError: name 'x' is not defined」<br>
+            「whileループの中でbreakを使うとどうなる？」<br><br>
+            → 具体的で、学ぶ意欲がある。
+          </p>
+        </div>
+      </div>
+
+      <h3>AIチャットに質問するテンプレート</h3>
+      <div class="ai-chat">
+        <div class="ai-chat-bar">🤖 AIチャット — 質問テンプレート</div>
+        <div class="ai-chat-body">
+          <div class="ai-msg user">
+            Python を勉強中の初心者です。<br><br>
+            【やりたいこと】<br>
+            〇〇をするプログラムを作りたい<br><br>
+            【自分で試したこと】<br>
+            △△のコードを書いたけど、□□のエラーが出る<br><br>
+            【聞きたいこと】<br>
+            エラーの原因と、どう直せばいいかヒントを教えてください。<br>
+            コード全体ではなく、考え方を教えてほしいです。
+          </div>
+          <div class="ai-msg bot">
+            いい質問ですね！そのエラーは〇〇が原因で…（ヒント付きの説明）
+          </div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 「初心者です」「ヒントを教えて」「考え方を教えて」と伝えると、<br>
+        AIは答えをそのまま出さずに、理解を助ける説明をしてくれるよ！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 3: random -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="random">
+    <div class="section-num">SECTION 03</div>
+    <div class="section-title">🎲 ランダムを使おう</div>
+    <div class="section-body">
+      <p>ゲームにはランダム（でたらめ）な要素が必要。Python の <code>random</code> モジュールを使おう！</p>
+
+      <h3>import ってなに？</h3>
+      <p>
+        Python には最初から使える機能の他に、<b>追加で読み込んで使う機能</b>があります。<br>
+        <code>import random</code> と書くと、ランダム系の機能が使えるようになる。
+      </p>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>random_demo.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false">import random
+
+# 1〜10のランダムな整数
+num = random.randint(1, 10)
+print("ランダムな数: " + str(num))
+
+# リストからランダムに1つ選ぶ
+fruits = ["りんご", "バナナ", "みかん", "ぶどう"]
+chosen = random.choice(fruits)
+print("選ばれたフルーツ: " + chosen)
+
+# リストの順番をシャッフル
+cards = [1, 2, 3, 4, 5]
+random.shuffle(cards)
+print("シャッフル結果: " + str(cards))</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ（何度か実行すると結果が変わる！）</div>
+        </div>
+      </div>
+
+      <h3>よく使う random の機能</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🔢</span>
+          <div class="concept-name">randint(a, b)</div>
+          <div class="concept-desc">a〜bのランダムな整数<br>サイコロやくじに使う</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">☝️</span>
+          <div class="concept-name">choice(リスト)</div>
+          <div class="concept-desc">リストから1つ選ぶ<br>おみくじやカードに使う</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🔀</span>
+          <div class="concept-name">shuffle(リスト)</div>
+          <div class="concept-desc">リストの順番を混ぜる<br>トランプのシャッフルに</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 4: 数当てゲーム -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="game1">
+    <div class="section-num">PROJECT 01</div>
+    <div class="section-title">🔢 数当てゲーム</div>
+    <div class="section-body">
+      <p>コンピュータが考えた秘密の数を、ヒントを頼りに当てるゲーム！</p>
+
+      <h3>ゲームのルール</h3>
+      <ol>
+        <li>コンピュータが1〜50の数をランダムに決める</li>
+        <li>プレイヤーが数字を予想する</li>
+        <li>「もっと大きい」「もっと小さい」とヒントが出る</li>
+        <li>正解したら何回目で当てたか表示！</li>
+      </ol>
+
+      <div class="point">
+        💡 <b>使う知識：</b> random.randint / while ループ / if-elif-else / 変数（カウント）
+      </div>
+
+      <h3>まずは自分で考えてみよう</h3>
+      <div class="challenge">
+        <div class="challenge-label">🤔 考えてみよう（15分チャレンジ）</div>
+        <div class="challenge-body">
+          以下のステップで考えてみよう：<br>
+          ① 秘密の数をランダムに決めるにはどう書く？<br>
+          ② 「正解するまで繰り返す」にはどのループを使う？<br>
+          ③ 予想と答えを比べるにはどうする？<br>
+          ④ 何回目で当てたかを数えるにはどうする？<br><br>
+          <b>下のエディタに自分のコードを書いてみよう！</b>
+        </div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>guess_game.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false" style="min-height:160px;"># 数当てゲーム
+# ※ブラウザでは input() が使えないので
+#   プレイヤーの予想はリストで再現するよ
+
+import random
+
+answer = random.randint(1, 50)
+guesses = [25, 10, 35, 42, answer]  # ← 予想のシミュレーション
+count = 0
+
+print("=== 数当てゲーム ===")
+print("1〜50の数を当ててね！")
+print("")
+
+for guess in guesses:
+    count = count + 1
+    print(str(count) + "回目の予想: " + str(guess))
+
+    if guess < answer:
+        print("→ もっと大きいよ！")
+    elif guess > answer:
+        print("→ もっと小さいよ！")
+    else:
+        print("→ 正解！！ " + str(count) + "回で当てたね！")
+        break
+
+    print("")</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">💻 自分のPCで完全版を作ろう</div>
+        <div class="try-it-body">
+          自分のパソコンなら <code>input()</code> が使えるので、本当にキーボードから入力できるゲームが作れるよ！<br>
+          <code>guess = int(input("予想を入力: "))</code> と書けば、入力した文字を数値に変換できる。<br>
+          PowerShellで <code>python guess_game.py</code> で実行してみよう！
+        </div>
+      </div>
+
+      <h3>詰まったときのAIへの質問例</h3>
+      <div class="ai-chat">
+        <div class="ai-chat-bar">🤖 こんなふうに聞こう</div>
+        <div class="ai-chat-body">
+          <div class="ai-msg user">
+            数当てゲームを作っています。<code>while</code>ループで「正解するまで繰り返す」と書きたいのですが、条件をどう書けばいいですか？ヒントだけ教えてください。
+          </div>
+          <div class="ai-msg bot">
+            いい質問ですね！ヒント：<code>while</code>の条件に「まだ正解していない」という状態を表す変数（フラグ）を使う方法がありますよ。<code>True</code>と<code>False</code>で管理してみてください。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 5: じゃんけん -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="game2">
+    <div class="section-num">PROJECT 02</div>
+    <div class="section-title">✊ じゃんけんゲーム</div>
+    <div class="section-body">
+      <p>コンピュータとじゃんけん対決！</p>
+
+      <h3>ゲームのルール</h3>
+      <ol>
+        <li>プレイヤーとコンピュータがそれぞれ手を出す</li>
+        <li>コンピュータの手はランダム</li>
+        <li>勝ち・負け・あいこを判定して表示</li>
+      </ol>
+
+      <div class="challenge">
+        <div class="challenge-label">🤔 考えてみよう</div>
+        <div class="challenge-body">
+          ① グー・チョキ・パーをどうデータで表す？（リスト？数字？）<br>
+          ② コンピュータの手をランダムに選ぶにはどうする？<br>
+          ③ 勝ち負けの判定はどう書く？（if文が何個必要？）
+        </div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>janken.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false" style="min-height:200px;">import random
+
+hands = ["グー", "チョキ", "パー"]
+
+# プレイヤーの手（PCでは input() で入力できる）
+player = "グー"
+computer = random.choice(hands)
+
+print("=== じゃんけんゲーム ===")
+print("あなた: " + player)
+print("コンピュータ: " + computer)
+print("")
+
+if player == computer:
+    print("あいこ！")
+elif (player == "グー" and computer == "チョキ") or \
+     (player == "チョキ" and computer == "パー") or \
+     (player == "パー" and computer == "グー"):
+    print("あなたの勝ち！ やったね！")
+else:
+    print("あなたの負け... 次は勝とう！")</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ（何度か実行してみよう！）</div>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 改造チャレンジ</div>
+        <div class="challenge-body">
+          動いたら改造してみよう！<br>
+          ・<code>player</code> を「チョキ」や「パー」に変えて動作確認<br>
+          ・3回勝負にして、勝った回数を数えるようにしてみよう<br>
+          ・自分のPCで <code>input()</code> を使って本当に選べるようにしよう
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 6: おみくじ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="game3">
+    <div class="section-num">PROJECT 03</div>
+    <div class="section-title">🎋 おみくじメーカー</div>
+    <div class="section-body">
+      <p>自分だけのオリジナルおみくじを作ろう！</p>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>omikuji.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false" style="min-height:240px;">import random
+
+print("===================")
+print("  今日のおみくじ")
+print("===================")
+print("")
+
+# おみくじの結果（確率を変えたいときは同じ項目を増やす）
+results = ["大吉", "中吉", "中吉", "小吉", "小吉", "小吉", "吉", "吉", "末吉", "凶"]
+fortune = random.choice(results)
+print("【" + fortune + "】")
+print("")
+
+# 運勢ごとのメッセージ
+lucky_items = {
+    "大吉": "最高の1日！何をやってもうまくいく！",
+    "中吉": "いい感じ！積極的に行動しよう！",
+    "小吉": "まずまず。コツコツやれば成果が出る！",
+    "吉":   "普通にいい日。いつも通りでOK！",
+    "末吉": "あとから運が上がってくるよ！",
+    "凶":   "ピンチはチャンス！慎重に過ごそう！",
+}
+print(lucky_items[fortune])
+print("")
+
+# ラッキーアイテム
+items = ["赤いペン", "チョコレート", "青い靴下", "猫の動画", "カレーライス", "新しいノート"]
+print("ラッキーアイテム: " + random.choice(items))
+
+# ラッキーナンバー
+print("ラッキーナンバー: " + str(random.randint(1, 99)))</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 <b>新しい知識: 辞書（dict）</b><br>
+        <code>{"キー": "値"}</code> の形でデータを管理できる。<br>
+        おみくじの結果（キー）に対応するメッセージ（値）を紐づけるのに使ったよ！<br>
+        わからなかったら「Python 辞書 初心者」でAIに聞いてみよう。
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 改造チャレンジ</div>
+        <div class="challenge-body">
+          ・ラッキーアイテムやメッセージを自分好みに変えてみよう<br>
+          ・「ラッキーカラー」や「今日の運勢アドバイス」を追加しよう<br>
+          ・友達の名前を入れて「〇〇さんの今日の運勢」にしてみよう
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 7: クイズゲーム -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="game4">
+    <div class="section-num">PROJECT 04</div>
+    <div class="section-title">❓ クイズゲーム</div>
+    <div class="section-body">
+      <p>今までの知識を全部使った、一番大きなプロジェクト！</p>
+
+      <div class="challenge">
+        <div class="challenge-label">🤔 まず自分で設計してみよう</div>
+        <div class="challenge-body">
+          いきなりコードを書く前に、紙やメモ帳で設計しよう：<br><br>
+          ① クイズのデータ（問題・選択肢・正解）をどう管理する？<br>
+          ② 問題を順番に出すにはどうする？<br>
+          ③ 正解数をどうやって数える？<br>
+          ④ 最後に結果をどう表示する？<br><br>
+          15分考えてから、下のコードを見てみよう。
+        </div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="editor-topbar">
+          <div class="editor-topbar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>quiz.py</span>
+          </div>
+          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+        </div>
+        <textarea class="code-input" spellcheck="false" style="min-height:340px;">import random
+
+# クイズデータ: [問題, [選択肢], 正解の番号]
+quizzes = [
+    ["日本で一番高い山は？",
+     ["1. 富士山", "2. 北岳", "3. 奥穂高岳"], 1],
+    ["Pythonの名前の由来は？",
+     ["1. ニシキヘビ", "2. コメディ番組", "3. 発明者の名前"], 2],
+    ["1バイトは何ビット？",
+     ["1. 4ビット", "2. 8ビット", "3. 16ビット"], 2],
+    ["HTMLは何の略？",
+     ["1. Hyper Text Markup Language", "2. High Tech Modern Language", "3. Home Tool Making Language"], 1],
+]
+
+# クイズをシャッフル
+random.shuffle(quizzes)
+
+print("=== クイズゲーム ===")
+print("全" + str(len(quizzes)) + "問に挑戦！")
+print("")
+
+score = 0
+
+# ブラウザ用: 自動回答（PCでは input() で入力）
+auto_answers = [1, 2, 2, 1]
+
+for i in range(len(quizzes)):
+    quiz = quizzes[i]
+    question = quiz[0]
+    choices = quiz[1]
+    correct = quiz[2]
+
+    print("Q" + str(i + 1) + ". " + question)
+    for c in choices:
+        print("  " + c)
+
+    # プレイヤーの回答
+    player_answer = auto_answers[i]
+    print("→ あなたの答え: " + str(player_answer))
+
+    if player_answer == correct:
+        print("⭕ 正解！")
+        score = score + 1
+    else:
+        print("❌ 不正解... 答えは " + str(correct))
+    print("")
+
+# 結果発表
+print("=== 結果 ===")
+print(str(len(quizzes)) + "問中 " + str(score) + "問正解！")
+
+if score == len(quizzes):
+    print("パーフェクト！ 天才！")
+elif score >= len(quizzes) * 0.7:
+    print("すごい！よくできました！")
+elif score >= len(quizzes) * 0.4:
+    print("まずまず！もう一回やってみよう！")
+else:
+    print("ドンマイ！復習してからリトライ！")</textarea>
+        <div class="output-wrap">
+          <div class="output-label">出力</div>
+          <div class="output-box">ここに実行結果が表示されるよ</div>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 改造チャレンジ</div>
+        <div class="challenge-body">
+          ・自分だけのオリジナルクイズを5問以上追加しよう<br>
+          ・正解したとき「連続正解ボーナス！」を表示する機能をつけよう<br>
+          ・<b>上級:</b> 関数に分けてコードを整理してみよう（<code>def ask_question(quiz):</code> など）<br>
+          ・自分のPCで <code>input()</code> を使って本当に回答できるようにしよう
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 8: AIに質問する練習 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="ai-practice">
+    <div class="section-num">SECTION 08</div>
+    <div class="section-title">💬 AIに質問する練習</div>
+    <div class="section-body">
+      <p>
+        実際にAIチャットを使ってみよう！<br>
+        ここでは<b>「いい質問の仕方」</b>を練習します。
+      </p>
+
+      <h3>場面1: エラーが出たとき</h3>
+      <div class="ai-chat">
+        <div class="ai-chat-bar">🤖 質問の例</div>
+        <div class="ai-chat-body">
+          <div class="ai-msg user">
+            Python で以下のエラーが出ました。初心者なので原因を教えてください。<br><br>
+            <code>TypeError: can only concatenate str to str</code><br><br>
+            自分のコード:<br>
+            <code>print("スコア: " + score)</code><br><br>
+            score は数値の変数です。
+          </div>
+          <div class="ai-msg bot">
+            このエラーは、文字列（str）と数値（int）を <code>+</code> でつなごうとしたときに出ます。<br><br>
+            数値を文字列に変換するには <code>str()</code> を使います：<br>
+            <code>print("スコア: " + str(score))</code>
+          </div>
+        </div>
+      </div>
+
+      <h3>場面2: やり方がわからないとき</h3>
+      <div class="ai-chat">
+        <div class="ai-chat-bar">🤖 質問の例</div>
+        <div class="ai-chat-body">
+          <div class="ai-msg user">
+            じゃんけんゲームを3回勝負にしたいです。<br>
+            今は1回だけ動くコードが書けています。<br>
+            3回繰り返して、最後に「2勝1敗」のように表示するには、<br>
+            どういう考え方で書けばいいですか？<br>
+            コード全体ではなく、考え方のヒントを教えてください。
+          </div>
+          <div class="ai-msg bot">
+            いい質問です！考え方のヒント：<br>
+            ① 今の1回分のコードを <code>for</code> ループで3回繰り返す<br>
+            ② 勝ち数を数える変数（例: <code>win_count = 0</code>）を用意する<br>
+            ③ 勝つたびにその変数に1を足す<br>
+            ④ ループが終わったら結果を表示<br><br>
+            まずはこの流れで書いてみてください！
+          </div>
+        </div>
+      </div>
+
+      <h3>場面3: コードを理解したいとき</h3>
+      <div class="ai-chat">
+        <div class="ai-chat-bar">🤖 質問の例</div>
+        <div class="ai-chat-body">
+          <div class="ai-msg user">
+            以下のコードの意味がわかりません。1行ずつ初心者向けに説明してもらえますか？<br><br>
+            <code>result = [x * 2 for x in range(5)]</code>
+          </div>
+          <div class="ai-msg bot">
+            これは「リスト内包表記」という書き方です。<br>
+            普通に書くとこうなります：<br><br>
+            <code>result = []</code><br>
+            <code>for x in range(5):</code> ← 0〜4を繰り返す<br>
+            <code>    result.append(x * 2)</code> ← 各数を2倍にして追加<br><br>
+            結果: <code>[0, 2, 4, 6, 8]</code><br>
+            これを1行で書いたのがさっきのコードです！
+          </div>
+        </div>
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 実際にやってみよう</div>
+        <div class="try-it-body">
+          ChatGPT（chat.openai.com）やClaude（claude.ai）を開いて、以下を試してみよう：<br><br>
+          ① 「Python の random.shuffle はどういう動きをしますか？簡単な例で教えてください」と聞く<br>
+          ② 返ってきた説明を<b>自分の言葉で誰かに説明できるか</b>確認する<br>
+          ③ サンプルコードを<b>手で打って</b>動かしてみる（コピペ禁止！）<br><br>
+          <b>手で打つことで、コードが頭に入るよ！</b>
+        </div>
+      </div>
+
+      <div class="warn">
+        ⚠️ <b>AIの回答は100%正しいとは限らない！</b><br>
+        たまに間違った情報を教えることもあります。<br>
+        おかしいと思ったら「本当にそうですか？」と確認したり、実際にコードを動かして確かめよう。
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 9: 自由チャレンジ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="challenge">
+    <div class="section-num">SECTION 09</div>
+    <div class="section-title">🏆 自由チャレンジ</div>
+    <div class="section-body">
+      <p>ここまでの知識で、オリジナルのプログラムを作ってみよう！<br>アイデアがない人のために、お題を用意したよ。</p>
+
+      <h3>チャレンジメニュー（好きなのを選ぼう）</h3>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">⭐</span>
+          <div class="concept-name">パスワード生成器</div>
+          <div class="concept-desc">ランダムな文字を組み合わせて安全なパスワードを作る</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⭐</span>
+          <div class="concept-name">相性占い</div>
+          <div class="concept-desc">2人の名前を入れると相性%が出る</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⭐⭐</span>
+          <div class="concept-name">タイピング速度測定</div>
+          <div class="concept-desc">表示された文字を打って速度を測定</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⭐⭐</span>
+          <div class="concept-name">スロットマシン</div>
+          <div class="concept-desc">3つの絵柄が揃ったら当たり！</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⭐⭐⭐</span>
+          <div class="concept-name">RPG風バトル</div>
+          <div class="concept-desc">HP・攻撃力を使ったターン制バトル</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⭐⭐⭐</span>
+          <div class="concept-name">自分だけのクイズアプリ</div>
+          <div class="concept-desc">問題を追加・シャッフル・スコア記録</div>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div class="flow-title">🔄 作り方の流れ</div>
+        <div class="flow-steps">
+          <div class="flow-step">① アイデアを決める</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">② ルールを紙に書く</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">③ 小さく作り始める</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">④ 動かして確認</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">⑤ 少しずつ機能追加</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 <b>最初から完璧を目指さない！</b><br>
+        まず「一番簡単なバージョン」を動かす → そこから少しずつ機能を足していく。<br>
+        プロのプログラマーもみんなこの方法で作ってるよ！
+      </div>
+
+      <h3>AIの上手な活用タイミング</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">✅</div>
+          <div class="step-content">
+            <strong>「この機能の作り方の考え方を教えて」</strong>と聞くのはOK<br>
+            自分で考えた上で方向性を確認するのは良い使い方
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">✅</div>
+          <div class="step-content">
+            <strong>エラーの意味を聞く</strong>のはOK<br>
+            エラーメッセージを貼り付けて「これどういう意味？」と聞こう
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">✅</div>
+          <div class="step-content">
+            <strong>自分のコードのレビュー</strong>を頼むのはOK<br>
+            「このコードで改善できるところはある？」と聞いてみよう
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">❌</div>
+          <div class="step-content">
+            <strong>「〇〇のコードを全部書いて」</strong>はNG<br>
+            自分で考える機会がなくなる。部分的なヒントを聞こう
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 10: さらに先へ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="next">
+    <div class="section-num">SECTION 10</div>
+    <div class="section-title">🚀 さらに先へ</div>
+    <div class="section-body">
+      <p>ここまでできたら、もう「プログラミングができる人」です！</p>
+
+      <h3>ここまでに身についたこと</h3>
+      <ul>
+        <li>Python の基本文法（変数、if文、ループ、リスト、関数、辞書）</li>
+        <li>ライブラリ（random）の使い方</li>
+        <li>プログラムを設計する力（ルールを考える → コードにする）</li>
+        <li>エラーを読んで自分で直す力</li>
+        <li>AIを「学習ツール」として上手に使う力</li>
+      </ul>
+
+      <h3>次に学ぶとおすすめなこと</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🌐</span>
+          <div class="concept-name">Webサイトを作る</div>
+          <div class="concept-desc">HTML/CSS/JavaScript で自分のサイトを作ろう</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🎮</span>
+          <div class="concept-name">pygame でゲーム</div>
+          <div class="concept-desc">画面に絵を描いて動かす本格的なゲーム制作</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🤖</span>
+          <div class="concept-name">Bot を作る</div>
+          <div class="concept-desc">Discord Bot など、自動で動くプログラム</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📊</span>
+          <div class="concept-name">データ分析</div>
+          <div class="concept-desc">pandas でデータを整理してグラフを作ろう</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 <b>一番大事なこと：作りたいものを作ること。</b><br>
+        教科書を読み続けるより、「こういうの作りたい！」と思ったものを実際に作る方が100倍成長する。<br>
+        わからないことはAIに聞きながら、どんどん挑戦しよう！
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-bottom">
+    <a class="nav-btn secondary" href="../index.html">← トップページ</a>
+    <a class="nav-btn secondary" href="../python/python-basics.html">📖 Python入門 その1</a>
+  </div>
+
+</div>
+
+<script>
+function initSkulpt() {
+  Sk.configure({
+    output: text => { Sk.__output += text; },
+    read: x => {
+      if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+        throw "File not found: '" + x + "'";
+      return Sk.builtinFiles["files"][x];
+    },
+  });
+}
+
+function runEditor(btn) {
+  const wrap = btn.closest('.editor-wrap');
+  const code = wrap.querySelector('.code-input').value;
+  const outputBox = wrap.querySelector('.output-box');
+  Sk.__output = '';
+  outputBox.className = 'output-box';
+  Sk.misceval.asyncToPromise(() =>
+    Sk.importMainWithBody("<stdin>", false, code, true)
+  ).then(() => {
+    outputBox.textContent = Sk.__output || '（出力なし）';
+  }).catch(err => {
+    outputBox.className = 'output-box error';
+    let msg = err.toString();
+    if (msg.includes('SyntaxError')) msg = '⚠️ 文法エラー！書き方を確認してみよう\n\n' + msg;
+    else if (msg.includes('NameError')) msg = '⚠️ 名前エラー！変数名や関数名を確認しよう\n\n' + msg;
+    else if (msg.includes('TypeError')) msg = '⚠️ 型エラー！データの種類が合ってないかも\n\n' + msg;
+    else if (msg.includes('IndentationError')) msg = '⚠️ インデントエラー！スペース4つで下げよう\n\n' + msg;
+    else msg = '⚠️ エラーが出たよ！コードを見直してみよう\n\n' + msg;
+    outputBox.textContent = msg;
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Tab' && e.target.classList.contains('code-input')) {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '    ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 4;
+  }
+});
+
+function init() {
+  initSkulpt();
+  const loading = document.getElementById('loading');
+  loading.classList.add('hidden');
+  setTimeout(() => loading.remove(), 500);
+}
+if (typeof Sk !== 'undefined') init();
+else window.addEventListener('load', init);
+</script>
+</body>
+</html>
