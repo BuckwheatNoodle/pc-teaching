@@ -265,6 +265,7 @@ body {
 }
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
+<link rel="stylesheet" href="../shared/terms.css">
 </head>
 <body>
 <div class="outer">
@@ -349,7 +350,7 @@ body {
     <div class="section-num">SECTION 02</div>
     <div class="section-title">🗂️ エクスプローラーを使いこなそう</div>
     <div class="section-body">
-      <p><b>エクスプローラー</b>は、ファイルやフォルダを管理するための Windows の基本アプリです。</p>
+      <p><b><span class="term" data-tip="Windowsでファイルやフォルダを管理するアプリ。Win+Eで開ける">エクスプローラー</span></b>は、ファイルやフォルダを管理するための Windows の基本アプリです。</p>
 
       <h3>エクスプローラーの開き方</h3>
       <div class="shortcut-row">
@@ -400,7 +401,7 @@ body {
         <div class="step">
           <div class="step-num">→</div>
           <div class="step-content">
-            <strong>アドレスバー</strong> — 今いる場所（パス）を表示。クリックして直接入力もできる
+            <strong><span class="term" data-tip="エクスプローラーの上にある、今いるフォルダの場所を表示する部分">アドレスバー</span></strong> — 今いる場所（パス）を表示。クリックして直接入力もできる
           </div>
         </div>
         <div class="step">
@@ -505,7 +506,7 @@ body {
       </ul>
 
       <div class="warn">
-        ⚠️ 名前を変えるときに<b>拡張子（.txt, .jpg など）を消さないように注意！</b><br>
+        ⚠️ 名前を変えるときに<b><span class="term" data-tip="ファイル名の最後の .txt や .jpg の部分。ファイルの種類を表すラベル" data-reading="かくちょうし">拡張子</span>（.txt, .jpg など）を消さないように注意！</b><br>
         拡張子を消すとファイルが開けなくなることがあります。（拡張子については後で詳しく説明）
       </div>
 
@@ -736,7 +737,7 @@ body {
     <div class="section-title">🗺️ パスを理解しよう</div>
     <div class="section-body">
       <p>
-        <b>パス（Path）</b>とは、ファイルやフォルダの「住所」のこと。<br>
+        <b><span class="term" data-tip="ファイルやフォルダの住所。パソコンの中のどこにあるかを正確に示す">パス</span>（Path）</b>とは、ファイルやフォルダの「住所」のこと。<br>
         パソコンの中のどこにデータがあるかを正確に示します。
       </p>
 
@@ -760,7 +761,7 @@ body {
       <h3>絶対パスと相対パス</h3>
       <div class="compare-grid">
         <div class="compare-card">
-          <h4>🏠 絶対パス</h4>
+          <h4>🏠 <span class="term" data-tip="一番上（Cドライブ）から書く完全な住所。どこにいても場所がわかる" data-reading="ぜったいパス">絶対パス</span></h4>
           <p>
             一番上（C:\）からの完全な住所。<br>
             <code>C:\Users\あなた\Documents\レポート.docx</code><br>
@@ -768,7 +769,7 @@ body {
           </p>
         </div>
         <div class="compare-card">
-          <h4>📍 相対パス</h4>
+          <h4>📍 <span class="term" data-tip="今いる場所からの道順。短く書けるけど、今いる場所で意味が変わる" data-reading="そうたいパス">相対パス</span></h4>
           <p>
             今いる場所からの道順。<br>
             <code>Documents\レポート.docx</code><br>
@@ -887,7 +888,7 @@ body {
     <div class="section-title">📦 圧縮と展開（ZIP）</div>
     <div class="section-body">
       <p>
-        複数のファイルをまとめて1つにしたり、ファイルサイズを小さくするのが<b>圧縮</b>。<br>
+        複数のファイルをまとめて1つにしたり、ファイルサイズを小さくするのが<b><span class="term" data-tip="複数のファイルを1つにまとめて小さくすること。段ボールに荷物を詰めるイメージ" data-reading="あっしゅく">圧縮</span></b>。<br>
         メールで送るときや、ネットからダウンロードしたファイルでよく使います。
       </p>
 
@@ -900,7 +901,7 @@ body {
           </p>
         </div>
         <div class="compare-card">
-          <h4>📂 展開（解凍）</h4>
+          <h4>📂 <span class="term" data-tip="圧縮されたファイルから中身を取り出すこと。解凍ともいう" data-reading="てんかい">展開</span>（解凍）</h4>
           <p>
             .zip ファイルから元のファイルを取り出す。<br>
             「段ボールを開けて中身を出す」イメージ。
@@ -1141,5 +1142,6 @@ body {
   </div>
 
 </div>
+<script src="../shared/terms.js"></script>
 </body>
 </html>

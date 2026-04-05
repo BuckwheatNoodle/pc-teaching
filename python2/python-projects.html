@@ -192,6 +192,7 @@ textarea.code-input {
 .nav-btn.secondary { background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); }
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
+<link rel="stylesheet" href="../shared/terms.css">
 </head>
 <body>
 
@@ -228,7 +229,7 @@ textarea.code-input {
     <div class="section-num">SECTION 01</div>
     <div class="section-title">🎲 ランダムを使おう</div>
     <div class="section-body">
-      <p>ゲームに「でたらめ」な要素を入れるには <code>random</code> を使う。まず動かしてみよう！</p>
+      <p>ゲームに「でたらめ」な要素を入れるには <span class="term" data-tip="でたらめな数や選択を作るための機能" data-reading="ランダム"><code>random</code></span> を使う。まず動かしてみよう！</p>
 
       <div class="editor-wrap">
         <div class="editor-topbar">
@@ -456,7 +457,7 @@ print("ラッキーナンバー: " + str(random.randint(1, 99)))</textarea>
       </div>
 
       <div class="point">
-        💡 <b>新しく登場: 辞書（dict）</b><br>
+        💡 <b>新しく登場: <span class="term" data-tip="名前（キー）と値をセットで管理するデータの入れ物。電話帳のようなもの" data-reading="じしょ">辞書</span>（dict）</b><br>
         <code>{"キー": "値"}</code> の形で、名前をつけてデータを管理できる。<br>
         ここでは おみくじの結果 → メッセージ を紐づけるのに使ったよ。
       </div>
@@ -720,5 +721,6 @@ function init() {
 if (typeof Sk !== 'undefined') init();
 else window.addEventListener('load', init);
 </script>
+<script src="../shared/terms.js"></script>
 </body>
 </html>

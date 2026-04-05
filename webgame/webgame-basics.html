@@ -157,6 +157,7 @@ textarea.html-input {
 .nav-btn.secondary { background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); }
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
+<link rel="stylesheet" href="../shared/terms.css">
 </head>
 <body>
 <div class="outer">
@@ -324,8 +325,8 @@ textarea.html-input {
 
       <div class="point">
         💡 <b>新しい知識:</b><br>
-        ・<code>setInterval</code> — 一定時間ごとに処理を繰り返す（タイマーに使う）<br>
-        ・<code>document.getElementById</code> — HTMLの要素を取得して中身を変える
+        ・<span class="term" data-tip="一定の時間ごとに処理を繰り返す命令。タイマーやアニメーションに使う" data-reading="セットインターバル"><code>setInterval</code></span> — 一定時間ごとに処理を繰り返す（タイマーに使う）<br>
+        ・<span class="term" data-tip="HTMLの要素をIDで見つけて取得する命令。見つけた要素の中身や見た目を変えられる"><code>document.getElementById</code></span> — HTMLの要素を取得して中身を変える
       </div>
 
       <div class="challenge">
@@ -416,7 +417,7 @@ textarea.html-input {
 
       <div class="point">
         💡 <b>新しい知識:</b><br>
-        ・<code>setTimeout</code> — 指定した時間後に処理を実行（遅延タイマー）<br>
+        ・<span class="term" data-tip="指定した時間が経ってから処理を実行する命令" data-reading="セットタイムアウト"><code>setTimeout</code></span> — 指定した時間後に処理を実行（遅延タイマー）<br>
         ・<code>Math.random()</code> — JavaScript のランダム（0〜1の小数を返す）<br>
         ・<code>Date.now()</code> — 現在の時刻をミリ秒で取得（反応速度の計測に使う）
       </div>
@@ -772,5 +773,6 @@ document.querySelectorAll('.live-editor').forEach(function(editor) {
   frame.srcdoc = code;
 });
 </script>
+<script src="../shared/terms.js"></script>
 </body>
 </html>

@@ -179,6 +179,7 @@ textarea.html-input {
 .nav-btn.secondary { background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); }
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
+<link rel="stylesheet" href="../shared/terms.css">
 </head>
 <body>
 <div class="outer">
@@ -210,7 +211,7 @@ textarea.html-input {
     <div class="section-num html">SECTION 01</div>
     <div class="section-title">🌍 Webページの仕組み</div>
     <div class="section-body">
-      <p>今見ているこのページも、全部 <b>HTML・CSS・JavaScript</b> の3つでできている。</p>
+      <p>今見ているこのページも、全部 <b><span class="term" data-tip="Webページの中身と構造を作る言語。見出しや段落、ボタンなどを配置する" data-reading="エイチティーエムエル">HTML</span>・<span class="term" data-tip="Webページの見た目を変える言語。色・大きさ・配置などを設定する" data-reading="シーエスエス">CSS</span>・<span class="term" data-tip="Webページに動きをつける言語。クリックしたときの反応などを作る" data-reading="ジャバスクリプト">JavaScript</span></b> の3つでできている。</p>
 
       <div class="concept-grid">
         <div class="concept-card" style="border-color:rgba(228,77,38,0.4);">
@@ -263,7 +264,7 @@ textarea.html-input {
     <div class="section-num html">SECTION 02</div>
     <div class="section-title">🏗️ HTML の基本</div>
     <div class="section-body">
-      <p>HTMLは<b>タグ</b>で文章を囲んで「これは見出し」「これは段落」と教える言語。</p>
+      <p>HTMLは<b><span class="term" data-tip="HTMLの命令。&lt;h1&gt;や&lt;p&gt;のように書いて、文字の役割を決める">タグ</span></b>で文章を囲んで「これは見出し」「これは段落」と教える言語。</p>
 
       <div class="live-editor">
         <div class="live-editor-bar">
@@ -450,7 +451,7 @@ textarea.html-input {
         </div>
       </div>
 
-      <h3 class="css">よく使うCSSプロパティ</h3>
+      <h3 class="css">よく使うCSS<span class="term" data-tip="CSSで「何を変えるか」を指定する部分。color（色）やfont-size（大きさ）など">プロパティ</span></h3>
       <div class="concept-grid">
         <div class="concept-card">
           <span class="concept-icon">🎨</span>
@@ -559,7 +560,7 @@ textarea.html-input {
       </div>
 
       <div class="point">
-        💡 <b>Flexbox</b> は CSS で横並び・縦並びを作る超便利な仕組み。<br>
+        💡 <b><span class="term" data-tip="CSSで要素を横並びや縦並びに配置できる超便利な仕組み" data-reading="フレックスボックス">Flexbox</span></b> は CSS で横並び・縦並びを作る超便利な仕組み。<br>
         <code class="css">display: flex</code> を親要素につけると、中の要素が横に並ぶ！<br>
         <code class="css">flex-direction: column</code> にすると縦並びになるよ。
       </div>
@@ -828,5 +829,6 @@ document.querySelectorAll('.live-editor').forEach(function(editor) {
   frame.srcdoc = code;
 });
 </script>
+<script src="../shared/terms.js"></script>
 </body>
 </html>

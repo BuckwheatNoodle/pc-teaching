@@ -250,6 +250,7 @@ textarea.code-input {
 }
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
+<link rel="stylesheet" href="../shared/terms.css">
 </head>
 <body>
 
@@ -659,7 +660,7 @@ print("はじめてのPython！")</textarea>
     <div class="section-body">
       <h3>変数ってなに？</h3>
       <p>
-        <b>変数</b>は、データを入れておく<b>名前つきの箱</b>。<br>
+        <b><span class="term" data-tip="データに名前をつけて保存しておく箱のようなもの" data-reading="へんすう">変数</span></b>は、データを入れておく<b>名前つきの箱</b>。<br>
         <code>=</code> を使ってデータを入れます（「代入」と言います）。
       </p>
 
@@ -684,7 +685,7 @@ print("身長:", height)</textarea>
         </div>
       </div>
 
-      <h3>データ型とは？</h3>
+      <h3><span class="term" data-tip="数字・文字など、データの種類のこと。種類によってできることが違う" data-reading="データがた">データ型</span>とは？</h3>
       <p>変数に入れるデータには<b>種類（型）</b>があります。</p>
 
       <div class="terminal">
@@ -728,7 +729,7 @@ print("身長:", height)</textarea>
       <p>Python は電卓のように計算ができます。</p>
 
       <div class="terminal">
-        <div class="terminal-bar">📖 算術演算子</div>
+        <div class="terminal-bar">📖 <span class="term" data-tip="計算に使う記号。+（足す）、-（引く）、*（かける）など" data-reading="さんじゅつえんざんし">算術演算子</span></div>
         <div class="terminal-body"><span class="highlight">+</span>   足し算      10 + 3   → 13
 <span class="highlight">-</span>   引き算      10 - 3   → 7
 <span class="highlight">*</span>   かけ算      10 * 3   → 30
@@ -803,7 +804,7 @@ print(message)</textarea>
     <div class="section-body">
       <p>
         プログラムに<b>「判断」</b>させることができます。<br>
-        「もし〜なら、〇〇する。そうでなければ、△△する。」という命令です。
+        「もし〜なら、〇〇する。そうでなければ、△△する。」という<span class="term" data-tip="「もし〜なら」で処理を分けること" data-reading="じょうけんぶんき">条件分岐</span>の命令です。
       </p>
 
       <div class="terminal">
@@ -817,12 +818,12 @@ print(message)</textarea>
       </div>
 
       <div class="warn">
-        ⚠️ <b>インデント（字下げ）が超重要！</b><br>
+        ⚠️ <b><span class="term" data-tip="行の先頭にスペースを入れて下げること。Pythonではこれでコードの範囲を決める">インデント</span>（字下げ）が超重要！</b><br>
         if の中の処理は<b>スペース4つ</b>で下げます。これがないとエラーになります。<br>
         Python はインデントで「どこまでが if の中か」を判断しています。
       </div>
 
-      <h3>比較演算子</h3>
+      <h3><span class="term" data-tip="2つの値を比べるための記号。==（等しい）、>（より大きい）など" data-reading="ひかくえんざんし">比較演算子</span></h3>
       <div class="terminal">
         <div class="terminal-bar">📖 条件に使える記号</div>
         <div class="terminal-body"><span class="highlight">==</span>   等しい         age == 14
@@ -1004,7 +1005,7 @@ for i in range(len(scores)):
     <div class="section-title">⚙️ 関数</div>
     <div class="section-body">
       <p>
-        同じ処理を何度も使いたいとき、<b>関数</b>にまとめると便利です。<br>
+        同じ処理を何度も使いたいとき、<b><span class="term" data-tip="何度も使いたい処理をひとまとめにして名前をつけたもの" data-reading="かんすう">関数</span></b>にまとめると便利です。<br>
         「自分だけのオリジナル命令」を作るようなものです。
       </p>
 
@@ -1020,7 +1021,7 @@ for i in range(len(scores)):
 
       <p>
         <code>def</code> は「define（定義する）」の略。<br>
-        <b>引数（ひきすう）</b>は関数に渡すデータ、<b>戻り値（もどりち）</b>は関数が返すデータです。
+        <b><span class="term" data-tip="関数に渡すデータのこと。材料を渡して料理してもらうイメージ" data-reading="ひきすう">引数</span>（ひきすう）</b>は関数に渡すデータ、<b><span class="term" data-tip="関数が処理した結果を返してくれる値のこと" data-reading="もどりち">戻り値</span>（もどりち）</b>は関数が返すデータです。
       </p>
 
       <div class="editor-wrap">
@@ -1178,5 +1179,6 @@ function init() {
 if (typeof Sk !== 'undefined') init();
 else window.addEventListener('load', init);
 </script>
+<script src="../shared/terms.js"></script>
 </body>
 </html>

@@ -1,0 +1,91 @@
+/* ── 用語ツールチップ ── */
+.term {
+  color: #50e6ff;
+  border-bottom: 1.5px dashed rgba(80,230,255,0.4);
+  cursor: help;
+  position: relative;
+  font-weight: 700;
+  transition: color 0.15s;
+}
+.term:hover { color: #7df3ff; }
+
+/* ツールチップ本体 */
+.term-tip {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(15,12,41,0.97);
+  border: 1.5px solid rgba(80,230,255,0.35);
+  border-radius: 14px;
+  padding: 14px 16px;
+  max-width: 320px;
+  width: max-content;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+  animation: tipIn 0.15s ease;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(240,240,255,0.9);
+}
+@keyframes tipIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.term-tip-word {
+  font-size: 15px;
+  font-weight: 900;
+  color: #50e6ff;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.term-tip-reading {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(240,240,255,0.45);
+}
+.term-tip-body {
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.term-tip-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50px;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(240,240,255,0.7);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.term-tip-ai:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+.term-tip-copied {
+  font-size: 11px;
+  color: #2ecc71;
+  font-weight: 800;
+  margin-left: 6px;
+  display: none;
+}
+.term-tip-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: rgba(240,240,255,0.35);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.term-tip-close:hover { color: #fff; background: rgba(255,255,255,0.1); }

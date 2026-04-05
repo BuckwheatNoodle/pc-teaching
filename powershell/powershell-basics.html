@@ -215,6 +215,7 @@ body {
 }
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
+<link rel="stylesheet" href="../shared/terms.css">
 </head>
 <body>
 <div class="outer">
@@ -250,9 +251,9 @@ body {
     <div class="section-title">⬛ CLIってなに？</div>
     <div class="section-body">
       ふだんパソコンを使うとき、マウスでアイコンをクリックして操作するよね。<br>
-      これを <b>GUI（ジーユーアイ）</b>= グラフィカル・ユーザー・インターフェース と言います。
+      これを <b><span class="term" data-tip="マウスでクリックして操作する、普段使っている画面のこと" data-reading="ジーユーアイ">GUI</span>（ジーユーアイ）</b>= グラフィカル・ユーザー・インターフェース と言います。
 
-      <p>一方、<b>CLI（シーエルアイ）</b>= コマンドライン・インターフェース は、<b>文字（コマンド）を打って</b>パソコンを操作する方法です。</p>
+      <p>一方、<b><span class="term" data-tip="キーボードで文字を打ってパソコンを操作する方法。マウスを使わない" data-reading="シーエルアイ">CLI</span>（シーエルアイ）</b>= コマンドライン・インターフェース は、<b>文字（コマンド）を打って</b>パソコンを操作する方法です。</p>
 
       <div class="concept-grid">
         <div class="concept-card">
@@ -352,7 +353,7 @@ https://aka.ms/PSWindows</span>
       </div>
 
       <div class="point">
-        💡 <code>PS C:\Users\あなた&gt;</code> の部分を<b>「プロンプト」</b>と言います。「入力待ちですよ」という意味。<br>
+        💡 <code>PS C:\Users\あなた&gt;</code> の部分を<b>「<span class="term" data-tip="「ここにコマンドを打ってね」という入力待ちの表示">プロンプト</span>」</b>と言います。「入力待ちですよ」という意味。<br>
         <code>C:\Users\あなた</code> は今いる場所（フォルダ）を表していま���。
       </div>
     </div>
@@ -396,7 +397,7 @@ d-----        2025/04/01    10:00                Pictures</span></div>
       </div>
 
       <div class="point">
-        💡 <code>d-----</code> の <b>d</b> は「ディレクトリ（フォルダ）」を意味するよ。ファイルには <code>-a----</code> のように表示されます。
+        💡 <code>d-----</code> の <b>d</b> は「<span class="term" data-tip="フォルダのこと。CLIの世界ではこう呼ぶ">ディレクトリ</span>（フォルダ）」を意味するよ。ファイルには <code>-a----</code> のように表示されます。
       </div>
 
       <h3>画面に文字を表示する — Write-Output</h3>
@@ -483,7 +484,7 @@ Mode                 LastWriteTime         Length Name
       </div>
 
       <div class="point">
-        💡 <b>パス（Path）のルール：</b><br>
+        💡 <b><span class="term" data-tip="ファイルやフォルダの住所。パソコンの中のどこにあるかを示す">パス</span>（Path）のルール：</b><br>
         ・<code>\</code>（バックスラッシュ）でフォルダを区切る<br>
         ・<code>.</code> = 今いるフォルダ<br>
         ・<code>..</code> = 一つ上のフォルダ<br>
@@ -652,7 +653,7 @@ d-----        2025/04/04    15:30                test-folder</span>
     <div class="section-body">
       <p>CLI を使いこなすための必須テクニックを紹介！</p>
 
-      <h3>Tab 補完 — 最重要テクニック！</h3>
+      <h3><span class="term" data-tip="ファイル名を途中まで打ってTabキーを押すと、自動で残りを入力してくれる機能">Tab補完</span> — 最重要テクニック！</h3>
       <p>フォルダ名やファイル名を全部打つ必要はありません。<b>途中まで打って <span class="kbd">Tab</span> を押す</b>と自動で補完されます！</p>
 
       <div class="terminal">
@@ -714,7 +715,7 @@ d-----        2025/04/04    15:30                test-folder</span>
     <div class="section-body">
       <p>CLI の真の力は、<b>コマンドをつなげる</b>ことにあります。</p>
 
-      <h3>パイプ <code>|</code> とは？</h3>
+      <h3><span class="term" data-tip="コマンドの結果を次のコマンドに渡す仕組み。水道管のようにデータが流れる">パイプ</span> <code>|</code> とは？</h3>
       <p>
         あるコマンドの出力を、別のコマンドの入力として渡す仕組みです。<br>
         水道管（パイプ）のように、データが流れていくイメージ。
@@ -900,5 +901,6 @@ d-----        2025/04/04    15:30                test-folder</span>
   </div>
 
 </div>
+<script src="../shared/terms.js"></script>
 </body>
 </html>
