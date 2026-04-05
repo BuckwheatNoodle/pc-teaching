@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://skulpt.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; frame-src 'self' blob:;">
+<title>コンピュータ基礎クイズ - PC きほん道場</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --outer-bg: #1a1a2e;
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --text-muted: rgba(240,240,255,0.7);
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+  --correct: #2ecc71;
+  --incorrect: #ff6b6b;
+  --gold: #f9ca24;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #1a1a2e);
+  min-height: 100vh;
+  color: #f0f0ff;
+}
+
+.outer { max-width: 780px; margin: 0 auto; padding: 24px 18px 80px; }
+
+/* ── HEADER ── */
+.page-header { text-align: center; margin-bottom: 32px; }
+.page-header .logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(14px, 3vw, 20px);
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.page-header .sub { color: var(--text-muted); font-size: 14px; font-weight: 700; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  background: rgba(255,255,255,0.06);
+  border-radius: 50px;
+  height: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 50px;
+  width: 0%;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.progress-text {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+
+/* ── QUIZ CARD ── */
+.quiz-card {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 24px;
+  padding: 36px 32px;
+  backdrop-filter: blur(10px);
+  animation: cardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.q-category {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 12px;
+  border-radius: 50px;
+  background: rgba(124,106,245,0.18);
+  color: #b0a4ff;
+  margin-bottom: 16px;
+}
+
+.q-number {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent2);
+  margin-bottom: 8px;
+}
+
+.q-text {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  color: #fff;
+}
+
+/* ── CHOICES ── */
+.choices { display: flex; flex-direction: column; gap: 12px; }
+
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid var(--panel-border);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  color: #f0f0ff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.choice-btn:hover:not(:disabled) {
+  border-color: rgba(124,106,245,0.5);
+  background: rgba(124,106,245,0.08);
+  transform: translateX(4px);
+}
+
+.choice-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  font-size: 14px;
+  font-weight: 900;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+.choice-btn:hover:not(:disabled) .choice-label {
+  background: rgba(124,106,245,0.25);
+  color: #b0a4ff;
+}
+
+/* States */
+.choice-btn.correct {
+  border-color: var(--correct);
+  background: rgba(46,204,113,0.1);
+}
+.choice-btn.correct .choice-label {
+  background: var(--correct);
+  color: #fff;
+}
+.choice-btn.incorrect {
+  border-color: var(--incorrect);
+  background: rgba(255,107,107,0.08);
+}
+.choice-btn.incorrect .choice-label {
+  background: var(--incorrect);
+  color: #fff;
+}
+.choice-btn.dim {
+  opacity: 0.35;
+}
+.choice-btn:disabled { cursor: default; }
+
+/* ── FEEDBACK ── */
+.feedback {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 16px;
+  animation: feedbackIn 0.4s ease-out;
+  line-height: 1.8;
+}
+@keyframes feedbackIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.feedback.is-correct {
+  background: rgba(46,204,113,0.08);
+  border-left: 4px solid var(--correct);
+}
+.feedback.is-incorrect {
+  background: rgba(255,107,107,0.08);
+  border-left: 4px solid var(--incorrect);
+}
+.feedback-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+.feedback-title {
+  font-size: 16px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+.feedback.is-correct .feedback-title { color: var(--correct); }
+.feedback.is-incorrect .feedback-title { color: var(--incorrect); }
+
+.feedback-body {
+  font-size: 14px;
+  color: rgba(240,240,255,0.85);
+  line-height: 1.9;
+}
+.feedback-body strong { color: #fff; }
+.feedback-body code {
+  background: rgba(255,255,255,0.08);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+/* ── KEYWORD BOX inside feedback ── */
+.keyword-box {
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.keyword-box-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent2);
+  margin-bottom: 6px;
+}
+.keyword-box-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+/* ── AI BUTTON ── */
+.ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  border: 1.5px solid rgba(124,106,245,0.35);
+  border-radius: 12px;
+  background: rgba(124,106,245,0.1);
+  color: #b0a4ff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.ai-btn:hover {
+  background: rgba(124,106,245,0.2);
+  border-color: rgba(124,106,245,0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(124,106,245,0.2);
+}
+
+/* ── NEXT BUTTON ── */
+.next-btn {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent), #5b4ed4);
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(124,106,245,0.35);
+}
+
+/* ── AI POPUP ── */
+.ai-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(10,8,30,0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.25s ease;
+}
+.ai-popup-overlay.closing { opacity: 0; transition: opacity 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.ai-popup {
+  background: linear-gradient(135deg, #1e1b4b, #2d2a5e);
+  border: 1.5px solid rgba(124,106,245,0.3);
+  border-radius: 24px;
+  padding: 40px 36px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  animation: popupIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes popupIn {
+  from { opacity: 0; transform: scale(0.9) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.ai-popup-icon { font-size: 40px; margin-bottom: 12px; }
+.ai-popup-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+.ai-popup-body { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+.ai-popup-progress { background: rgba(255,255,255,0.08); border-radius: 50px; height: 6px; overflow: hidden; }
+.ai-popup-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 50px;
+  animation: progressFill 2s linear forwards;
+}
+@keyframes progressFill { from { width: 0; } to { width: 100%; } }
+
+/* ── RESULT SCREEN ── */
+.result-screen { animation: cardIn 0.5s ease-out; }
+
+.result-header { text-align: center; margin-bottom: 32px; }
+.result-score-ring {
+  width: 160px; height: 160px;
+  margin: 0 auto 20px;
+  position: relative;
+}
+.result-score-ring svg { transform: rotate(-90deg); }
+.result-score-ring circle {
+  fill: none;
+  stroke-width: 8;
+}
+.ring-bg { stroke: rgba(255,255,255,0.06); }
+.ring-fill {
+  stroke: var(--accent2);
+  stroke-linecap: round;
+  stroke-dasharray: 440;
+  stroke-dashoffset: 440;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ring-fill.gold { stroke: var(--gold); }
+.ring-fill.green { stroke: var(--correct); }
+.ring-fill.red { stroke: var(--incorrect); }
+
+.result-score-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.result-score-num {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 28px;
+  color: #fff;
+}
+.result-score-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.result-rank {
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.result-msg {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+/* ── REVIEW LIST ── */
+.review-title {
+  font-size: 16px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  color: #fff;
+}
+.review-item {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.review-header:hover { background: rgba(255,255,255,0.03); }
+.review-marker {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.review-marker.ok { background: rgba(46,204,113,0.15); color: var(--correct); }
+.review-marker.ng { background: rgba(255,107,107,0.12); color: var(--incorrect); }
+.review-q {
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+  line-height: 1.5;
+}
+.review-toggle {
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: transform 0.25s;
+}
+.review-item.open .review-toggle { transform: rotate(180deg); }
+
+.review-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.review-item.open .review-body { max-height: 600px; }
+.review-body-inner {
+  padding: 0 20px 20px;
+  font-size: 13px;
+  color: rgba(240,240,255,0.8);
+  line-height: 1.8;
+}
+.review-body-inner .review-answer {
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+.review-body-inner .review-answer.ok { color: var(--correct); }
+.review-body-inner .review-answer.ng { color: var(--incorrect); }
+
+/* ── RETRY BUTTON ── */
+.retry-btn {
+  display: block;
+  width: 100%;
+  margin-top: 24px;
+  padding: 16px;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.retry-btn:hover {
+  background: rgba(124,106,245,0.12);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .quiz-card { padding: 24px 18px; }
+  .q-text { font-size: 15px; }
+  .choice-btn { padding: 14px 16px; font-size: 14px; }
+}
+</style>
+<link rel="stylesheet" href="../shared/icons.css">
+</head>
+<body class="has-site-header">
+<script src="../shared/header.js"></script>
+
+<div class="outer">
+  <div class="page-header">
+    <div class="logo">コンピュータ基礎クイズ</div>
+    <div class="sub">基本情報レベルのIT知識を四択で腕試し！</div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 20</div>
+
+  <!-- Quiz area -->
+  <div id="quizArea"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════
+   QUIZ DATA - 20 questions
+   ═════════════��═════════════════ */
+var QUESTIONS = [
+  {
+    category: 'ハードウェア',
+    q: 'CPU の役割として最も適切なものはどれか。',
+    choices: [
+      'データを長期的に保存する',
+      'プログラムの命令を実行し計算処理を行う',
+      'ネットワーク通信を制御する',
+      '画面に映像を表示する'
+    ],
+    answer: 1,
+    explanation: '<strong>CPU（Central Processing Unit）</strong>は「中央処理装置」と呼ばれ、プログラムの命令を<strong>読み取り・解釈・実行</strong>するコンピュータの頭脳です。',
+    keyword: 'クロック周波数（GHz）が高いほど1秒あたりの処理回数が多く、コア数が多いほど同時に複数の処理を実行できます。',
+    aiPrompt: 'CPUの仕組みを中学生にもわかるように詳しく教えてください。クロック周波数・コア・スレッドについても説明してください。'
+  },
+  {
+    category: 'ハードウェア',
+    q: 'コンピュータの主記憶装置（メインメモリ）の特徴として正しいものはどれか。',
+    choices: [
+      '電源を切ってもデータが消えない',
+      'HDD より容量が大きい',
+      'CPU が直接読み書きできる高速な記憶装置である',
+      'データの書き込みはできるが読み出しはできない'
+    ],
+    answer: 2,
+    explanation: '<strong>主記憶装置（RAM）</strong>は CPU が直接アクセスできる<strong>高速な記憶装置</strong>です。ただし<strong>揮発性</strong>（電源を切るとデータが消える）という特徴があります。',
+    keyword: 'RAM = Random Access Memory。DDR4やDDR5などの規格があり、容量はGB単位で表します。8GB〜16GBが一般的です。',
+    aiPrompt: 'RAMとROMの違い、主記憶装置と補助記憶装置の違いについて中学生にわかりやすく教えてください。'
+  },
+  {
+    category: '2進数・データ',
+    q: '10進数の「13」を2進数で表すとどれか。',
+    choices: [
+      '1011',
+      '1101',
+      '1110',
+      '1010'
+    ],
+    answer: 1,
+    explanation: '13 を2で割っていくと：13÷2=6余り<strong>1</strong>、6÷2=3余り<strong>0</strong>、3÷2=1余り<strong>1</strong>、1÷2=0余り<strong>1</strong>。余りを下から読んで <strong>1101</strong> です。',
+    keyword: '2進数はコンピュータの基本。8桁（8ビット）= 1バイトで、0〜255（2^8 - 1）を表現できます。',
+    aiPrompt: '2進数から10進数への変換、10進数から2進数への変換のやり方を中学生にわかりやすく教えてください。練習問題も出してください。'
+  },
+  {
+    category: '2進数・データ',
+    q: '1バイトで表現できる値の範囲（符号なし整数）はどれか。',
+    choices: [
+      '0〜127',
+      '0〜255',
+      '0〜511',
+      '1〜256'
+    ],
+    answer: 1,
+    explanation: '1バイト = <strong>8ビット</strong>です。8ビットで表現できる最大値は 2<sup>8</sup> - 1 = <strong>255</strong> なので、0〜255 の計256通りの値を表せます。',
+    keyword: 'ビット（bit）は0か1の最小単位。バイト（Byte）= 8ビット。KB → MB → GB → TB と1024倍ずつ大きくなります。',
+    aiPrompt: 'ビットとバイトの関係、KB・MB・GB・TBの単位について中学生にもわかるように教えてください。'
+  },
+  {
+    category: 'ソフトウェア',
+    q: 'OS（オペレーティングシステム）の役割として適切でないものはどれか。',
+    choices: [
+      'ハードウェアの管理と制御',
+      'ファイルシステムの管理',
+      'Webページのデザイン作成',
+      'アプリケーションの実行管理'
+    ],
+    answer: 2,
+    explanation: 'OS はハードウェアの管理、ファイル管理、メモリ管理、プロセス管理など<strong>コンピュータの基盤</strong>を担います。<strong>Webページのデザイン作成</strong>はアプリケーションソフトの仕事です。',
+    keyword: 'Windows, macOS, Linux, Android, iOS が代表的なOS。OS の上でアプリケーション（ブラウザ、エディタ等）が動作します。',
+    aiPrompt: 'OSの役割と種類について中学生にわかりやすく教えてください。Windows、macOS、Linuxの違いも説明してください。'
+  },
+  {
+    category: 'ソフトウェア',
+    q: 'プログラムの実行方式のうち、ソースコードを1行ずつ翻訳しながら実行する方式を何というか。',
+    choices: [
+      'コンパイラ方式',
+      'インタプリタ方式',
+      'アセンブラ方式',
+      'バッチ方式'
+    ],
+    answer: 1,
+    explanation: '<strong>インタプリタ方式</strong>はソースコードを1行ずつ機械語に翻訳しながら実行します。Python や JavaScript がこの方式です。対して<strong>コンパイラ方式</strong>は全体を一括翻訳してから実行します。',
+    keyword: 'インタプリタ：開発が手軽だが実行速度は遅め。コンパイラ：事前に全翻訳するため実行速度が速い（C言語など）。',
+    aiPrompt: 'インタプリタとコンパイラの違いを中学生にわかるように説明してください。PythonやJavaScriptがどちらの方式か教えてください。'
+  },
+  {
+    category: 'ネットワーク',
+    q: 'インターネット上でコンピュータを識別するために使われる、数値で表されるアドレスを何というか。',
+    choices: [
+      'MACアドレス',
+      'IPアドレス',
+      'ドメイン名',
+      'ポート番号'
+    ],
+    answer: 1,
+    explanation: '<strong>IPアドレス</strong>はインターネット上の住所のようなもので、各コンピュータを識別します。IPv4 では<code>192.168.1.1</code>のような形式、IPv6 ではより長い形式で表されます。',
+    keyword: 'IPアドレスには「グローバルIP」（インターネット上で一意）と「プライベートIP」（LAN内で使用）があります。',
+    aiPrompt: 'IPアドレスの仕組みを中学生にわかるように教えてください。IPv4とIPv6の違い、グローバルIPとプライベートIPについても説明してください。'
+  },
+  {
+    category: 'ネットワーク',
+    q: 'ドメイン名をIPアドレスに変換するサービスを何というか。',
+    choices: [
+      'DHCP',
+      'FTP',
+      'DNS',
+      'SMTP'
+    ],
+    answer: 2,
+    explanation: '<strong>DNS（Domain Name System）</strong>は「google.com」のような人間が読みやすいドメイン名を、コンピュータが理解できるIPアドレスに変換する<strong>名前解決</strong>のしくみです。',
+    keyword: 'DHCP=IPアドレス自動割り当て、FTP=ファイル転送、SMTP=メール送信、DNS=名前解決。それぞれ役割が違います。',
+    aiPrompt: 'DNSの仕組みを中学生にわかるように教えてください。ブラウザでURLを入力してからページが表示されるまでの流れを順番に説明してください。'
+  },
+  {
+    category: 'ネットワーク',
+    q: 'HTTPSの「S」が意味するものとして正しいものはどれか。',
+    choices: [
+      'Speed（高速）',
+      'Secure（安全）',
+      'Simple（簡単）',
+      'Standard（標準）'
+    ],
+    answer: 1,
+    explanation: 'HTTPS の S は <strong>Secure</strong> を意味し、通信内容が<strong>SSL/TLS</strong>によって暗号化されます。URLの横に鍵マークが表示されるのが目印です。',
+    keyword: 'HTTP = 暗号化なし（盗聴リスクあり）。HTTPS = SSL/TLSで暗号化（安全）。現在はほぼすべてのサイトがHTTPSを使用しています。',
+    aiPrompt: 'HTTPとHTTPSの違い、SSL/TLSによる暗号化の仕組みを中学生にわかるように教えてください。'
+  },
+  {
+    category: 'セキュリティ',
+    q: '不正アクセスやウイルスからネットワークを守るために、通信を監視・制御するしくみを何というか。',
+    choices: [
+      'ファイアウォール',
+      'バックアップ',
+      'デフラグ',
+      'クラウド'
+    ],
+    answer: 0,
+    explanation: '<strong>ファイアウォール</strong>（防火壁）は、ネットワーク上の通信を監視し、不正なアクセスを<strong>遮断</strong>するセキュリティのしくみです。',
+    keyword: 'ファイアウォールは「パケットフィルタリング」で通信の許可/拒否を判断します。Windows にも標準搭載されています。',
+    aiPrompt: 'ファイアウォールの仕組みと種類を中学生にわかるように教えてください。Windowsのファイアウォール設定についても説明してください。'
+  },
+  {
+    category: 'セキュリティ',
+    q: '実在する企業やサービスを装ったメールで個人情報を騙し取る攻撃を何というか。',
+    choices: [
+      'ブルートフォース攻撃',
+      'DDoS攻撃',
+      'フィッシング',
+      'バッファオーバーフロー'
+    ],
+    answer: 2,
+    explanation: '<strong>フィッシング（Phishing）</strong>は銀行やECサイトなどを装った偽メール・偽サイトで、パスワードやクレジットカード情報を<strong>騙し取る</strong>手口です。',
+    keyword: '見分け方：送信元アドレスの確認、URLの確認（https://の後のドメイン名）、不自然な日本語がないかチェック。',
+    aiPrompt: 'フィッシング詐欺の具体的な手口と見分け方を中学生にわかりやすく教えてください。実際の例も交えて説明してください。'
+  },
+  {
+    category: 'アルゴリズム',
+    q: 'データの中から目的の値を見つける方法のうち、データが整列済みのとき真ん中から半分ずつ範囲を絞る方法を何というか。',
+    choices: [
+      '線形探索（リニアサーチ）',
+      '二分探索（バイナリサーチ）',
+      'ハッシュ探索',
+      '幅優先探索'
+    ],
+    answer: 1,
+    explanation: '<strong>二分探索</strong>はソート済みデータの中央と比較して、探す範囲を<strong>半分に絞る</strong>ことを繰り返します。1000個のデータでも約10回の比較で見つけられます。',
+    keyword: '二分探索の計算量は O(log n)。線形探索の O(n) より圧倒的に速い。ただしデータが事前にソートされている必要があります。',
+    aiPrompt: '二分探索と線形探索の違いを中学生にわかるように説明してください。具体的な例を使って、なぜ二分探索が速いのか教えてください。'
+  },
+  {
+    category: 'アルゴリズム',
+    q: '次のフローチャートの処理で、変数 x に 5 を入れて実行した場合の出力はどれか。\n\n① x に 2 を掛ける → ② x に 3 を足す → ③ x を出力',
+    choices: [
+      '10',
+      '13',
+      '16',
+      '25'
+    ],
+    answer: 1,
+    explanation: '① x = 5 × 2 = <strong>10</strong>　→　② x = 10 + 3 = <strong>13</strong>　→　③ 出力: <strong>13</strong>。フローチャートは<strong>上から順番に</strong>処理を実行します。',
+    keyword: 'フローチャートの基本図形：長方形=処理、ひし形=条件分岐、平行四辺形=入出力、角丸四角形=開始・終了。',
+    aiPrompt: 'フローチャートの読み方と基本的な図形の意味を中学生にわかるように教えてください。簡単な練習問題も出してください。'
+  },
+  {
+    category: 'データベース',
+    q: 'リレーショナルデータベースでデータを取得するために使う言語はどれか。',
+    choices: [
+      'HTML',
+      'CSS',
+      'SQL',
+      'Python'
+    ],
+    answer: 2,
+    explanation: '<strong>SQL（Structured Query Language）</strong>はデータベースを操作する専用言語です。<code>SELECT * FROM users</code> のように書いてデータの検索・追加・更新・削除を行います。',
+    keyword: 'SELECT=取得、INSERT=追加、UPDATE=更新、DELETE=削除。この4つがSQLの基本操作（CRUD）です。',
+    aiPrompt: 'SQLの基本的な使い方を中学生にわかるように教えてください。SELECT文の書き方を具体例で説明してください。'
+  },
+  {
+    category: 'ハードウェア',
+    q: 'SSD と HDD を比較したとき、SSD の特徴として正しいものはどれか。',
+    choices: [
+      'ディスクが物理的に回転する',
+      '一般的に HDD より容量あたりの価格が安い',
+      '衝撃に弱く壊れやすい',
+      '読み書き速度が HDD より高速である'
+    ],
+    answer: 3,
+    explanation: '<strong>SSD</strong>はフラッシュメモリを使うため、物理的に動く部品がなく<strong>高速・静音・耐衝撃性</strong>に優れます。HDDはディスクが回転するため低速ですが、容量あたりの価格は安いです。',
+    keyword: 'SSD = Solid State Drive（半導体）。HDD = Hard Disk Drive（磁気ディスク）。最近のPCはSSDが主流です。',
+    aiPrompt: 'SSDとHDDの違い、メリット・デメリットを中学生にわかりやすく教えてください。どちらを選ぶべきかのアドバイスもお願いします。'
+  },
+  {
+    category: '2進数・データ',
+    q: '16進数の「FF」を10進数に変換するといくつになるか。',
+    choices: [
+      '16',
+      '100',
+      '255',
+      '256'
+    ],
+    answer: 2,
+    explanation: '16進数の F = 15 です。FF = 15×16 + 15 = 240 + 15 = <strong>255</strong>。ちなみに FF は2進数だと 11111111（8ビットすべて1）です。',
+    keyword: '16進数は 0〜9, A(10)〜F(15) の16種の数字を使います。色コード（#FF0000 = 赤）やメモリアドレスでよく使われます。',
+    aiPrompt: '16進数の仕組みと変換方法を中学生にわかるように教えてください。Webの色コードとの関係も説明してください。'
+  },
+  {
+    category: 'ネットワーク',
+    q: 'Webページを閲覧するとき、ブラウザがWebサーバにデータを要求することを何というか。',
+    choices: [
+      'レスポンス',
+      'リクエスト',
+      'ルーティング',
+      'レンダリング'
+    ],
+    answer: 1,
+    explanation: 'ブラウザからサーバへの要求を<strong>リクエスト</strong>、サーバからの応答を<strong>レスポンス</strong>といいます。この「リクエスト→レスポンス」のやりとりがWeb通信の基本です。',
+    keyword: 'HTTPメソッド：GET=データ取得、POST=データ送信。ステータスコード：200=成功、404=見つからない、500=サーバエラー。',
+    aiPrompt: 'HTTPリクエストとレスポンスの仕組みを中学生にわかるように教えてください。GETとPOSTの違い、ステータスコードについても説明してください。'
+  },
+  {
+    category: 'セキュリティ',
+    q: 'パスワードの管理方法として最も適切なものはどれか。',
+    choices: [
+      '覚えやすいように全サービスで同じパスワードを使う',
+      '誕生日や電話番号をパスワードにする',
+      'サービスごとに異なる長く複雑なパスワードを使う',
+      'パスワードを紙に書いてモニターに貼っておく'
+    ],
+    answer: 2,
+    explanation: '<strong>サービスごとに異なるパスワード</strong>を使うことで、1つのサービスが漏洩しても他のサービスは安全です。長さは<strong>12文字以上</strong>、英大小文字・数字・記号を混ぜると強力です。',
+    keyword: 'パスワードマネージャー（1Password, Bitwardenなど）を使うと、複雑なパスワードを安全に管理できます。',
+    aiPrompt: '安全なパスワードの作り方と管理方法を中学生にわかるように教えてください。パスワードマネージャーについても説明してください。'
+  },
+  {
+    category: 'ソフトウェア',
+    q: 'ソースコードが公開されており、誰でも自由に利用・改変・再配布できるソフトウェアを何というか。',
+    choices: [
+      'フリーウェ���',
+      'シェアウェア',
+      'オープンソースソフトウェア',
+      'ファームウェア'
+    ],
+    answer: 2,
+    explanation: '<strong>オープンソースソフトウェア（OSS）</strong>はソースコードが公開され、利用・改変・再配布が許可されたソフトウェアです。Linux, Python, Firefox などが代表例です。',
+    keyword: 'ライセンス（MIT, GPL, Apache等）によって利用条件は異なります。「無料」と「オープンソース」は別の概念です。',
+    aiPrompt: 'オープンソースソフトウェアとは何か、中学生にわかるように教えてください。有名なOSSの例やライセンスの種類も説明してください。'
+  },
+  {
+    category: 'データベース',
+    q: 'データベースの「主キー（Primary Key）」の説明として正しいものはどれか。',
+    choices: [
+      'データを暗号化するための鍵',
+      '各レコードを一意に識別するための項目',
+      'テーブル同士を結合するための外部参照',
+      'データベースにログインするためのパスワード'
+    ],
+    answer: 1,
+    explanation: '<strong>主キー</strong>はテーブル内の各行（レコード）を<strong>一意に識別</strong>するための項目です。学生番号や社員IDのように、他と重複しない値である必要があります。',
+    keyword: '主キーの条件：一意（重複なし）かつ NULL でないこと。外部キー（Foreign Key）は他テーブルの主キーを参照するもの。',
+    aiPrompt: 'データベースの主キーと外部キーの役割を中学生にわかるように教えてください。具体的なテーブルの例を使って説明してください。'
+  }
+];
+
+/* ═══════════════════════════════
+   QUIZ ENGINE
+   ═══════════════════════════════ */
+var state = {
+  current: 0,
+  answers: [],  // { selected, correct, isCorrect }
+  shuffledChoices: []  // per-question shuffled indices
+};
+
+// Shuffle choice order per question (keep track of mapping)
+function shuffleChoices(qIndex) {
+  var q = QUESTIONS[qIndex];
+  var indices = [];
+  for (var i = 0; i < q.choices.length; i++) indices.push(i);
+  // Fisher-Yates
+  for (var j = indices.length - 1; j > 0; j--) {
+    var k = Math.floor(Math.random() * (j + 1));
+    var tmp = indices[j]; indices[j] = indices[k]; indices[k] = tmp;
+  }
+  return indices;
+}
+
+function updateProgress() {
+  var pct = (state.current / QUESTIONS.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent =
+    (state.current + 1 > QUESTIONS.length ? QUESTIONS.length : state.current + 1) + ' / ' + QUESTIONS.length;
+}
+
+var LABELS = ['ア', 'イ', 'ウ', 'エ'];
+
+function renderQuestion() {
+  var q = QUESTIONS[state.current];
+  var order = shuffleChoices(state.current);
+  state.shuffledChoices[state.current] = order;
+
+  var choicesHtml = '';
+  for (var i = 0; i < order.length; i++) {
+    choicesHtml +=
+      '<button class="choice-btn" data-idx="' + order[i] + '" onclick="selectAnswer(this,' + order[i] + ')">' +
+        '<span class="choice-label">' + LABELS[i] + '</span>' +
+        '<span>' + escHtml(q.choices[order[i]]) + '</span>' +
+      '</button>';
+  }
+
+  var qTextHtml = escHtml(q.q).replace(/\n/g, '<br>');
+
+  document.getElementById('quizArea').innerHTML =
+    '<div class="quiz-card">' +
+      '<span class="q-category">' + escHtml(q.category) + '</span>' +
+      '<div class="q-number">Q' + (state.current + 1) + '</div>' +
+      '<div class="q-text">' + qTextHtml + '</div>' +
+      '<div class="choices" id="choices">' + choicesHtml + '</div>' +
+      '<div id="feedbackArea"></div>' +
+    '</div>';
+
+  updateProgress();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Answer selection ── */
+window.selectAnswer = function (btn, idx) {
+  var q = QUESTIONS[state.current];
+  var isCorrect = idx === q.answer;
+
+  // Disable all buttons
+  var btns = document.querySelectorAll('.choice-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].disabled = true;
+    var bIdx = parseInt(btns[i].getAttribute('data-idx'));
+    if (bIdx === q.answer) {
+      btns[i].classList.add('correct');
+    } else if (btns[i] === btn && !isCorrect) {
+      btns[i].classList.add('incorrect');
+    } else {
+      btns[i].classList.add('dim');
+    }
+  }
+
+  state.answers[state.current] = {
+    selected: idx,
+    correct: q.answer,
+    isCorrect: isCorrect
+  };
+
+  // Feedback
+  var fbClass = isCorrect ? 'is-correct' : 'is-incorrect';
+  var fbIcon = isCorrect ? '\u2705' : '\u274C';
+  var fbTitle = isCorrect ? '\u6B63\u89E3\uFF01' : '\u4E0D\u6B63\u89E3\u2026';
+  var correctText = isCorrect ? '' :
+    '<div class="review-answer ng">\u2192 \u6B63\u89E3\uFF1A' + LABELS[state.shuffledChoices[state.current].indexOf(q.answer)] + '. ' + escHtml(q.choices[q.answer]) + '</div>';
+
+  var html =
+    '<div class="feedback ' + fbClass + '">' +
+      '<span class="feedback-icon">' + fbIcon + '</span>' +
+      '<div class="feedback-title">' + fbTitle + '</div>' +
+      correctText +
+      '<div class="feedback-body">' + q.explanation + '</div>' +
+      '<div class="keyword-box">' +
+        '<div class="keyword-box-title">\uD83D\uDCA1 \u8986\u3048\u3066\u304A\u304D\u305F\u3044\u30DD\u30A4\u30F3\u30C8</div>' +
+        '<div class="keyword-box-body">' + q.keyword + '</div>' +
+      '</div>' +
+      '<button class="ai-btn" onclick="openAI(' + state.current + ')">' +
+        '\uD83E\uDD16 AI\u306B\u3082\u3063\u3068\u8A73\u3057\u304F\u805E\u304F' +
+      '</button>' +
+    '</div>' +
+    '<button class="next-btn" onclick="nextQuestion()">' +
+      (state.current < QUESTIONS.length - 1 ? '\u6B21\u306E\u554F\u984C\u3078 \u2192' : '\u7D50\u679C\u3092\u898B\u308B \uD83C\uDFC6') +
+    '</button>';
+
+  document.getElementById('feedbackArea').innerHTML = html;
+
+  // Scroll feedback into view
+  document.querySelector('.feedback').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+/* ── Next question ── */
+window.nextQuestion = function () {
+  state.current++;
+  if (state.current >= QUESTIONS.length) {
+    showResult();
+  } else {
+    renderQuestion();
+    document.querySelector('.quiz-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
+
+/* ── AI popup ── */
+window.openAI = function (qIdx) {
+  var q = QUESTIONS[qIdx];
+  var prompt = q.aiPrompt;
+
+  // Copy to clipboard
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(prompt);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = prompt;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  // Show popup
+  var overlay = document.createElement('div');
+  overlay.className = 'ai-popup-overlay';
+  overlay.innerHTML =
+    '<div class="ai-popup">' +
+      '<div class="ai-popup-icon">\uD83D\uDCCB</div>' +
+      '<div class="ai-popup-title">\u8CEA\u554F\u6587\u3092\u30B3\u30D4\u30FC\u3057\u307E\u3057\u305F\uFF01</div>' +
+      '<div class="ai-popup-body">ChatGPT \u304C\u958B\u3044\u305F\u3089 <strong>Ctrl + V</strong> \u3067\u8CBC\u308A\u4ED8\u3051\u3066\u306D\uFF01</div>' +
+      '<div class="ai-popup-progress"><div class="ai-popup-bar"></div></div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+
+  var timer = setTimeout(function () {
+    window.open('https://chatgpt.com/', '_blank', 'noopener,noreferrer');
+    closePopup();
+  }, 2000);
+
+  overlay.addEventListener('click', function () {
+    clearTimeout(timer);
+    window.open('https://chatgpt.com/', '_blank', 'noopener,noreferrer');
+    closePopup();
+  });
+
+  function closePopup() {
+    overlay.classList.add('closing');
+    setTimeout(function () {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 300);
+  }
+};
+
+/* ═══════════════════════════════
+   RESULT SCREEN
+   ═══════════════════════════════ */
+function showResult() {
+  updateProgress();
+
+  var correct = 0;
+  for (var i = 0; i < state.answers.length; i++) {
+    if (state.answers[i] && state.answers[i].isCorrect) correct++;
+  }
+  var pct = Math.round((correct / QUESTIONS.length) * 100);
+
+  // Determine rank
+  var rank, rankColor, msg;
+  if (pct >= 90) {
+    rank = '\uD83C\uDFC6 S\u30E9\u30F3\u30AF\uFF01\u5929\u624D\uFF01';
+    rankColor = 'gold';
+    msg = '\u7D20\u6674\u3089\u3057\u3044\uFF01\u57FA\u672C\u60C5\u5831\u6280\u8853\u8005\u30EC\u30D9\u30EB\u306E\u77E5\u8B58\u304C\u3042\u308A\u307E\u3059\u3002';
+  } else if (pct >= 70) {
+    rank = '\uD83E\uDD47 A\u30E9\u30F3\u30AF\uFF01\u512A\u79C0\uFF01';
+    rankColor = 'green';
+    msg = '\u3088\u304F\u3067\u304D\u3066\u3044\u307E\u3059\uFF01\u9593\u9055\u3048\u305F\u554F\u984C\u3092\u5FA9\u7FD2\u3059\u308C\u3070\u5B8C\u74A7\u3067\u3059\u3002';
+  } else if (pct >= 50) {
+    rank = '\uD83E\uDD48 B\u30E9\u30F3\u30AF\uFF01\u3042\u3068\u5C11\u3057\uFF01';
+    rankColor = 'green';
+    msg = '\u57FA\u672C\u306F\u629C\u3051\u3066\u3044\u307E\u3059\u3002\u89E3\u8AAC\u3092\u8AAD\u3093\u3067\u5F31\u70B9\u3092\u514B\u670D\u3057\u3088\u3046\uFF01';
+  } else {
+    rank = '\uD83D\uDCDA C\u30E9\u30F3\u30AF\uFF01\u4F38\u3073\u3057\u308D\uFF01';
+    rankColor = 'red';
+    msg = '\u307E\u3060\u307E\u3060\u4F38\u3073\u308B\uFF01\u89E3\u8AAC\u3068AI\u89E3\u8AAC\u3092\u6D3B\u7528\u3057\u3066\u5B66\u3073\u76F4\u305D\u3046\u3002';
+  }
+
+  // Build review items
+  var reviewHtml = '';
+  for (var j = 0; j < QUESTIONS.length; j++) {
+    var q = QUESTIONS[j];
+    var a = state.answers[j];
+    var ok = a && a.isCorrect;
+    var order = state.shuffledChoices[j];
+    var selectedLabel = a ? LABELS[order.indexOf(a.selected)] : '?';
+    var correctLabel = LABELS[order.indexOf(q.answer)];
+
+    var answerLine = ok
+      ? '<div class="review-answer ok">\u2714 \u3042\u306A\u305F\u306E\u56DE\u7B54: ' + selectedLabel + '. ' + escHtml(q.choices[q.answer]) + '</div>'
+      : '<div class="review-answer ng">\u2718 \u3042\u306A\u305F: ' + selectedLabel + '. ' + escHtml(q.choices[a.selected]) + '</div>' +
+        '<div class="review-answer ok">\u2714 \u6B63\u89E3: ' + correctLabel + '. ' + escHtml(q.choices[q.answer]) + '</div>';
+
+    reviewHtml +=
+      '<div class="review-item">' +
+        '<div class="review-header" onclick="toggleReview(this)">' +
+          '<span class="review-marker ' + (ok ? 'ok' : 'ng') + '">' + (ok ? '\u2714' : '\u2718') + '</span>' +
+          '<span class="review-q">Q' + (j+1) + '. ' + escHtml(q.q).split('\n')[0] + '</span>' +
+          '<span class="review-toggle">\u25BC</span>' +
+        '</div>' +
+        '<div class="review-body"><div class="review-body-inner">' +
+          answerLine +
+          '<div style="margin-top:10px">' + q.explanation + '</div>' +
+          '<div class="keyword-box" style="margin-top:12px">' +
+            '<div class="keyword-box-title">\uD83D\uDCA1 \u30DD\u30A4\u30F3\u30C8</div>' +
+            '<div class="keyword-box-body">' + q.keyword + '</div>' +
+          '</div>' +
+          '<button class="ai-btn" onclick="openAI(' + j + ')" style="margin-top:12px">' +
+            '\uD83E\uDD16 AI\u306B\u3082\u3063\u3068\u8A73\u3057\u304F\u805E\u304F' +
+          '</button>' +
+        '</div></div>' +
+      '</div>';
+  }
+
+  // Ring circumference = 2 * PI * 70 ≈ 440
+  var dashOffset = 440 - (440 * pct / 100);
+
+  document.getElementById('quizArea').innerHTML =
+    '<div class="result-screen">' +
+      '<div class="result-header">' +
+        '<div class="result-score-ring">' +
+          '<svg width="160" height="160" viewBox="0 0 160 160">' +
+            '<circle class="ring-bg" cx="80" cy="80" r="70"/>' +
+            '<circle class="ring-fill ' + rankColor + '" id="ringFill" cx="80" cy="80" r="70" style="stroke-dashoffset:440"/>' +
+          '</svg>' +
+          '<div class="result-score-text">' +
+            '<div class="result-score-num">' + pct + '%</div>' +
+            '<div class="result-score-label">' + correct + ' / ' + QUESTIONS.length + ' \u6B63\u89E3</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="result-rank">' + rank + '</div>' +
+        '<div class="result-msg">' + msg + '</div>' +
+      '</div>' +
+      '<div class="review-title">\uD83D\uDCDD \u5168\u554F\u984C\u306E\u632F\u308A\u8FD4\u308A</div>' +
+      reviewHtml +
+      '<button class="retry-btn" onclick="retryQuiz()">\uD83D\uDD04 \u3082\u3046\u4E00\u5EA6\u30C1\u30E3\u30EC\u30F3\u30B8</button>' +
+      '<button class="next-btn" onclick="location.href=\'../index.html\'" style="margin-top:12px;background:rgba(255,255,255,0.06);border:1.5px solid var(--panel-border)">' +
+        '\uD83C\uDFE0 \u30C8\u30C3\u30D7\u306B\u623B\u308B' +
+      '</button>' +
+    '</div>';
+
+  // Animate ring
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      document.getElementById('ringFill').style.strokeDashoffset = dashOffset;
+    });
+  });
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.toggleReview = function (header) {
+  header.parentElement.classList.toggle('open');
+};
+
+window.retryQuiz = function () {
+  state.current = 0;
+  state.answers = [];
+  state.shuffledChoices = [];
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+/* ── Start ── */
+renderQuestion();
+</script>
+</body>
+</html>
