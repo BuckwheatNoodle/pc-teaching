@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://skulpt.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; frame-src 'self' blob:;">
 <title>Webページを作ろう！ — PC きほん道場</title>
 <meta name="description" content="HTML・CSS・JavaScript の基本を学んで、自分だけのWebページを作ろう！">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
@@ -284,7 +285,7 @@ textarea.html-input {
 &lt;p&gt;文字を&lt;b&gt;太字&lt;/b&gt;にしたり、&lt;i&gt;斜め&lt;/i&gt;にしたりもできる。&lt;/p&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts"></iframe>
         </div>
       </div>
 
@@ -308,7 +309,7 @@ textarea.html-input {
 &lt;p&gt;このように、タグで囲んだ部分がブラウザに表示されるよ。&lt;/p&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts"></iframe>
         </div>
       </div>
 
@@ -367,7 +368,7 @@ textarea.html-input {
 &lt;button&gt;いいね！&lt;/button&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts"></iframe>
         </div>
       </div>
 
@@ -448,7 +449,7 @@ textarea.html-input {
 &lt;/style&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts"></iframe>
         </div>
       </div>
 
@@ -556,7 +557,7 @@ textarea.html-input {
 &lt;/style&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts"></iframe>
         </div>
       </div>
 
@@ -630,7 +631,7 @@ textarea.html-input {
 &lt;/script&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts"></iframe>
         </div>
       </div>
 
@@ -771,7 +772,7 @@ textarea.html-input {
 &lt;/script&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame" style="min-height:360px;"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts" style="min-height:360px;"></iframe>
         </div>
       </div>
 

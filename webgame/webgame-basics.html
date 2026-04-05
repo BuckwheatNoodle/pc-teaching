@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://skulpt.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; frame-src 'self' blob:;">
 <title>Webゲームを作ろう！ — PC きほん道場</title>
 <meta name="description" content="HTML/CSS/JavaScript でブラウザで遊べるゲームを作ろう！">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
@@ -239,7 +240,7 @@ textarea.html-input {
 &lt;/script&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts"></iframe>
         </div>
       </div>
 
@@ -320,7 +321,7 @@ textarea.html-input {
 &lt;/script&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame" style="min-height:320px;"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts" style="min-height:320px;"></iframe>
         </div>
       </div>
 
@@ -412,7 +413,7 @@ textarea.html-input {
 &lt;/script&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame" style="min-height:300px;"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts" style="min-height:300px;"></iframe>
         </div>
       </div>
 
@@ -541,7 +542,7 @@ textarea.html-input {
 &lt;/script&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー</div>
-          <iframe class="preview-frame" style="min-height:360px;"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts" style="min-height:360px;"></iframe>
         </div>
       </div>
 
@@ -659,7 +660,7 @@ textarea.html-input {
 &lt;/script&gt;</textarea>
         <div class="preview-frame-wrap">
           <div class="preview-label">プレビュー（← →キーでカゴを操作！プレビュー内をクリックしてからキーを押してね）</div>
-          <iframe class="preview-frame" style="min-height:360px;"></iframe>
+          <iframe class="preview-frame" sandbox="allow-scripts" style="min-height:360px;"></iframe>
         </div>
       </div>
 

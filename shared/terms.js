@@ -88,14 +88,14 @@
 
       // 2秒後にChatGPTを開いてポップアップを消す
       setTimeout(function() {
-        window.open('https://chatgpt.com/', '_blank');
+        window.open('https://chatgpt.com/', '_blank', 'noopener,noreferrer');
         overlay.classList.add('closing');
         setTimeout(function() { overlay.remove(); }, 300);
       }, 2000);
 
       // ポップアップクリックで即座に開く
       overlay.addEventListener('click', function() {
-        window.open('https://chatgpt.com/', '_blank');
+        window.open('https://chatgpt.com/', '_blank', 'noopener,noreferrer');
         overlay.classList.add('closing');
         setTimeout(function() { overlay.remove(); }, 300);
       });
