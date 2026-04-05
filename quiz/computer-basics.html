@@ -664,13 +664,6 @@ function showStartScreen() {
   document.getElementById('progressFill').style.width = '0%';
 
   var history = loadHistory();
-  var bestPct = 0, bestTime = '-';
-  for (var i = 0; i < history.length; i++) {
-    if (history[i].pct > bestPct || (history[i].pct === bestPct && history[i].time < bestTime)) {
-      bestPct = history[i].pct;
-      bestTime = history[i].time;
-    }
-  }
 
   document.getElementById('quizArea').innerHTML =
     '<div class="start-screen">' +
