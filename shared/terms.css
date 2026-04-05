@@ -69,13 +69,6 @@
   background: rgba(255,255,255,0.15);
   color: #fff;
 }
-.term-tip-copied {
-  font-size: 11px;
-  color: #2ecc71;
-  font-weight: 800;
-  margin-left: 6px;
-  display: none;
-}
 .term-tip-close {
   position: absolute;
   top: 8px;
@@ -89,3 +82,80 @@
   border-radius: 4px;
 }
 .term-tip-close:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+/* ── AI遷移ポップアップ ── */
+.ai-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popOverlayIn 0.2s ease;
+  cursor: pointer;
+}
+.ai-popup-overlay.closing {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+@keyframes popOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.ai-popup {
+  background: rgba(15,12,41,0.97);
+  border: 1.5px solid rgba(80,230,255,0.35);
+  border-radius: 20px;
+  padding: 28px 32px;
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: popIn 0.25s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.ai-popup-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+.ai-popup-title {
+  font-size: 17px;
+  font-weight: 900;
+  color: #50e6ff;
+  margin-bottom: 8px;
+}
+.ai-popup-body {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(240,240,255,0.8);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.ai-popup-body b {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+.ai-popup-progress {
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.ai-popup-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #50e6ff, #7c6af5);
+  border-radius: 4px;
+  animation: progressFill 2s linear forwards;
+}
+@keyframes progressFill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}

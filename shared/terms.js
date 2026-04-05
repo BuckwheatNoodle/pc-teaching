@@ -43,10 +43,7 @@
       '<button class="term-tip-close" onclick="this.parentElement.remove()">✕</button>' +
       '<div class="term-tip-word">📖 ' + word + readingHtml + '</div>' +
       '<div class="term-tip-body">' + desc + '</div>' +
-      '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">' +
-        '<a class="term-tip-ai" data-query="' + aiQuery.replace(/"/g, '&quot;') + '" onclick="copyAndOpenAI(this);return false;" href="#">💬 AIにもっと聞く</a>' +
-        '<span class="term-tip-copied" id="tip-copied">✅ コピーしました！</span>' +
-      '</div>';
+      '<a class="term-tip-ai" data-query="' + aiQuery.replace(/"/g, '&quot;') + '" onclick="copyAndOpenAI(this);return false;" href="#">💬 AIにもっと聞く</a>';
 
     document.body.appendChild(tip);
     currentTip = tip;
@@ -54,30 +51,55 @@
     positionTip(tip, term);
   }
 
-  // AIに聞くボタン
-  window.copyAndOpenAI = function(btn) {
-    const query = btn.dataset.query;
-
-    // クリップボードにコピー
-    navigator.clipboard.writeText(query).then(function() {
-      const copied = btn.parentElement.querySelector('.term-tip-copied');
-      if (copied) copied.style.display = 'inline';
-      setTimeout(function() { if (copied) copied.style.display = 'none'; }, 2000);
-    }).catch(function() {
-      // フォールバック
-      const ta = document.createElement('textarea');
-      ta.value = query;
+  // クリップボードにコピー（Promise）
+  function copyToClipboard(text) {
+    return navigator.clipboard.writeText(text).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand('copy');
       ta.remove();
-      const copied = btn.parentElement.querySelector('.term-tip-copied');
-      if (copied) copied.style.display = 'inline';
-      setTimeout(function() { if (copied) copied.style.display = 'none'; }, 2000);
     });
+  }
 
-    // ChatGPTを開く
-    window.open('https://chatgpt.com/', '_blank');
+  // AIに聞くボタン
+  window.copyAndOpenAI = function(btn) {
+    var query = btn.dataset.query;
+
+    copyToClipboard(query).then(function() {
+      // ポップアップを表示
+      var overlay = document.createElement('div');
+      overlay.className = 'ai-popup-overlay';
+      overlay.innerHTML =
+        '<div class="ai-popup">' +
+          '<div class="ai-popup-icon">📋</div>' +
+          '<div class="ai-popup-title">質問文をコピーしました！</div>' +
+          '<div class="ai-popup-body">' +
+            '2秒後に ChatGPT が開きます。<br>' +
+            '<b>Ctrl + V</b> で貼り付けて質問しよう！' +
+          '</div>' +
+          '<div class="ai-popup-progress"><div class="ai-popup-bar"></div></div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+
+      // ツールチップを閉じる
+      closeTip();
+
+      // 2秒後にChatGPTを開いてポップアップを消す
+      setTimeout(function() {
+        window.open('https://chatgpt.com/', '_blank');
+        overlay.classList.add('closing');
+        setTimeout(function() { overlay.remove(); }, 300);
+      }, 2000);
+
+      // ポップアップクリックで即座に開く
+      overlay.addEventListener('click', function() {
+        window.open('https://chatgpt.com/', '_blank');
+        overlay.classList.add('closing');
+        setTimeout(function() { overlay.remove(); }, 300);
+      });
+    });
   };
 
   // クリックでツールチップ表示
