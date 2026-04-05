@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://skulpt.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; frame-src 'self' blob:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://skulpt.org https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; frame-src 'self' blob:;">
 <title>PC きほん道場</title>
 <meta name="description" content="パソコンの基本操作を楽しく学べる練習サイト。ショートカットキーやファイル操作など、実際に手を動かして覚えよう！">
 <meta property="og:title" content="PC きほん道場">
@@ -28,44 +28,93 @@ body {
   background: linear-gradient(135deg, #0f0c29, #302b63, #1a1a2e);
   min-height: 100vh;
   color: #f0f0ff;
+  overflow-x: hidden;
 }
 
-.outer { max-width: 860px; margin: 0 auto; padding: 48px 20px 80px; }
+/* ── 3D CANVAS BACKGROUND ── */
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.outer { max-width: 860px; margin: 0 auto; padding: 48px 20px 80px; position: relative; z-index: 1; }
 
 /* ── HERO ── */
-.hero { text-align: center; margin-bottom: 56px; }
+.hero { text-align: center; margin-bottom: 64px; padding-top: 20px; }
 .hero-title {
   font-family: 'Press Start 2P', monospace;
-  font-size: clamp(16px, 3.5vw, 24px);
-  background: linear-gradient(90deg, #7c6af5, #50e6ff, #f9ca24);
+  font-size: clamp(18px, 4vw, 28px);
+  background: linear-gradient(90deg, #7c6af5, #50e6ff, #f9ca24, #7c6af5);
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  animation: heroEntrance 1s ease-out, heroShimmer 4s ease-in-out infinite, heroFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 24px rgba(124, 106, 245, 0.4));
 }
 .hero-sub {
   color: var(--text-muted);
   font-size: 15px;
   font-weight: 700;
   line-height: 1.8;
+  animation: fadeSlideUp 1s ease-out 0.3s both;
+}
+
+@keyframes heroEntrance {
+  from { opacity: 0; transform: scale(0.85) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes heroShimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes heroFloat {
+  0%, 100% { filter: drop-shadow(0 0 24px rgba(124, 106, 245, 0.4)); }
+  50%      { filter: drop-shadow(0 0 40px rgba(80, 230, 255, 0.5)); }
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── SECTION ── */
-.section { margin-bottom: 48px; }
+.section { margin-bottom: 56px; }
 .section-heading {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  position: relative;
+}
+.section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 1px;
+  transition: width 0.8s ease-out;
+}
+.section-heading.visible::after {
+  width: 100%;
 }
 .section-icon { font-size: 28px; line-height: 1; }
 .section-title {
   font-size: 20px;
   font-weight: 900;
   color: #fff;
+  transition: text-shadow 0.6s ease-out;
+}
+.section-heading.visible .section-title {
+  text-shadow: 0 0 16px rgba(124, 106, 245, 0.3);
 }
 .section-count {
   font-size: 12px;
@@ -85,17 +134,42 @@ body {
   backdrop-filter: blur(10px);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s ease,
+              border-color 0.35s ease;
   display: flex;
   flex-direction: column;
+  will-change: transform;
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
 }
-.lesson-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
-  border-color: rgba(255,255,255,0.25);
+/* Hover glow overlay */
+.lesson-card:not(.soon)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(124, 106, 245, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.lesson-card:not(.soon):hover::before { opacity: 1; }
+.lesson-card:not(.soon):hover {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 32px rgba(124, 106, 245, 0.1);
+  border-color: rgba(124, 106, 245, 0.3);
 }
 
-.card-icon { font-size: 44px; margin-bottom: 14px; display: block; }
+.card-icon {
+  font-size: 44px;
+  margin-bottom: 14px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.lesson-card:not(.soon):hover .card-icon { transform: scale(1.15) rotate(-3deg); }
+
 .card-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; color: #fff; }
 .card-desc {
   font-size: 13px;
@@ -114,8 +188,31 @@ body {
   border-radius: 50px;
   width: fit-content;
 }
-.tag-ready { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
-.tag-soon  { background: rgba(255,255,255,0.06); color: rgba(240,240,255,0.35); border: 1px solid rgba(255,255,255,0.08); }
+.tag-ready {
+  background: rgba(46,204,113,0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46,204,113,0.3);
+  animation: tagPulse 2s ease-in-out infinite;
+}
+.tag-soon { background: rgba(255,255,255,0.06); color: rgba(240,240,255,0.35); border: 1px solid rgba(255,255,255,0.08); }
+
+@keyframes tagPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.2); }
+  50%      { box-shadow: 0 0 12px 2px rgba(46, 204, 113, 0.15); }
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Soon cards stay dimmed even when revealed */
+.reveal.visible.soon { opacity: 0.45; }
 
 /* ── COMING SOON ── */
 .lesson-card.soon {
@@ -136,6 +233,7 @@ body {
 </head>
 <body class="has-site-header">
 
+<canvas id="bg-canvas"></canvas>
 <script src="shared/header.js"></script>
 
 <div class="outer">
@@ -275,5 +373,8 @@ body {
   <div class="footer">PC きほん道場 — つくって学ぶパソコン教室</div>
 
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="shared/index-animations.js"></script>
 </body>
 </html>
