@@ -692,6 +692,7 @@ body {
 .mkey.alt { background: rgba(58,90,76,0.7); }
 .mkey.plus { background: none; font-size: 11px; min-width: 8px; color: rgba(255,255,255,0.4); }
 </style>
+<link rel="stylesheet" href="../shared/icons.css">
 </head>
 <body>
 <div class="outer">
@@ -732,7 +733,7 @@ body {
           <div class="win-title">📝 <span>メモ帳 — 夏休みの自由研究.txt</span></div>
           <div class="win-btns">
             <button class="win-btn min" title="最小化" onclick="minimizeNotepad()">—</button>
-            <button class="win-btn close" title="閉じる" onclick="closeNotepad()">✕</button>
+            <button class="win-btn close" title="閉じる" onclick="closeNotepad()"><span class="icon-close"></span></button>
           </div>
         </div>
         <div class="notepad-menubar">
@@ -744,7 +745,7 @@ body {
           <span>🔍</span>
           <input type="text" id="search-input" placeholder="検索ワードを入力..." oninput="doSearch(this.value)">
           <span class="search-result-count" id="search-count"></span>
-          <button class="search-close-btn" onclick="closeSearch()">✕</button>
+          <button class="search-close-btn" onclick="closeSearch()"><span class="icon-close"></span></button>
         </div>
 
         <div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:column;">
@@ -791,7 +792,7 @@ body {
         <div class="win-titlebar">
           <div class="win-title">📁 <span>エクスプローラー</span></div>
           <div class="win-btns">
-            <button class="win-btn close" onclick="closeExplorer()">✕</button>
+            <button class="win-btn close" onclick="closeExplorer()"><span class="icon-close"></span></button>
           </div>
         </div>
         <div class="explorer-body">
@@ -814,7 +815,7 @@ body {
         <div class="win-titlebar">
           <div class="win-title">🚨 <span>タスクマネージャー</span></div>
           <div class="win-btns">
-            <button class="win-btn close" onclick="closeTaskManager()">✕</button>
+            <button class="win-btn close" onclick="closeTaskManager()"><span class="icon-close"></span></button>
           </div>
         </div>
         <div class="tm-body">

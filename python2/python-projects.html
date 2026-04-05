@@ -193,6 +193,7 @@ textarea.code-input {
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
 <link rel="stylesheet" href="../shared/terms.css">
+<link rel="stylesheet" href="../shared/icons.css">
 </head>
 <body>
 
@@ -206,7 +207,7 @@ textarea.code-input {
   <div class="header">
     <div class="logo">🎮 PYTHON DOJO 2</div>
     <div class="sub">ミニゲームを作ろう！</div>
-    <a class="home-link" href="../index.html">← トップページに戻る</a>
+    <a class="home-link" href="../index.html"><span class="icon-arrow-left"></span> トップページに戻る</a>
   </div>
 
   <div class="toc">
@@ -237,7 +238,7 @@ textarea.code-input {
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>random_demo.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false">import random
 
@@ -294,7 +295,7 @@ print("シャッフル: " + str(cards))</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>guess_game.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false" style="min-height:200px;">import random
 
@@ -352,7 +353,7 @@ for guess in guesses:
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>janken.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false" style="min-height:260px;">import random
 
@@ -419,7 +420,7 @@ else:
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>omikuji.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false" style="min-height:280px;">import random
 
@@ -488,7 +489,7 @@ print("ラッキーナンバー: " + str(random.randint(1, 99)))</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>quiz.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false" style="min-height:360px;">import random
 
@@ -664,7 +665,7 @@ else:
 
   <!-- NAV -->
   <div class="nav-bottom">
-    <a class="nav-btn secondary" href="../index.html">← トップページ</a>
+    <a class="nav-btn secondary" href="../index.html"><span class="icon-arrow-left"></span> トップページ</a>
     <a class="nav-btn secondary" href="../python/python-basics.html">📖 Python入門 その1</a>
   </div>
 

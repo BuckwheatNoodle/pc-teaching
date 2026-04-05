@@ -1,0 +1,89 @@
+/* ── 共通 SVG/CSS アイコン ── */
+
+/* ▶ 再生ボタン (run-btn, preview-btn 内) */
+.icon-play {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+  flex-shrink: 0;
+}
+
+/* ✕ 閉じるボタン */
+.icon-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  position: relative;
+}
+.icon-close::before,
+.icon-close::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.icon-close::before { transform: rotate(45deg); }
+.icon-close::after  { transform: rotate(-45deg); }
+
+/* ← → ナビ矢印 */
+.icon-arrow-left,
+.icon-arrow-right {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  flex-shrink: 0;
+}
+.icon-arrow-left {
+  background: currentColor;
+  clip-path: polygon(40% 0%, 0% 50%, 40% 100%, 40% 65%, 100% 65%, 100% 35%, 40% 35%);
+}
+.icon-arrow-right {
+  background: currentColor;
+  clip-path: polygon(60% 0%, 100% 50%, 60% 100%, 60% 65%, 0% 65%, 0% 35%, 60% 35%);
+}
+
+/* ✅ 成功 / ❌ 失敗バッジ */
+.badge-ready,
+.badge-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.badge-ready::before,
+.badge-done::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.badge-ready::before {
+  background: #2ecc71;
+  clip-path: polygon(20% 50%, 40% 70%, 80% 25%, 85% 30%, 40% 78%, 15% 55%);
+}
+
+.badge-fail::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  background: #ff6b6b;
+  clip-path: polygon(20% 10%, 50% 40%, 80% 10%, 90% 20%, 60% 50%, 90% 80%, 80% 90%, 50% 60%, 20% 90%, 10% 80%, 40% 50%, 10% 20%);
+}
+
+/* チェックマーク（トラッカー用） */
+.icon-check {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(20% 50%, 40% 70%, 80% 25%, 85% 30%, 40% 78%, 15% 55%);
+}

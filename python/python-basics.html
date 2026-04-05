@@ -251,6 +251,7 @@ textarea.code-input {
 .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 </style>
 <link rel="stylesheet" href="../shared/terms.css">
+<link rel="stylesheet" href="../shared/icons.css">
 </head>
 <body>
 
@@ -264,7 +265,7 @@ textarea.code-input {
   <div class="header">
     <div class="logo">🐍 PYTHON DOJO</div>
     <div class="sub">Windows 11 で Python をはじめよう！</div>
-    <a class="home-link" href="../index.html">← トップページに戻る</a>
+    <a class="home-link" href="../index.html"><span class="icon-arrow-left"></span> トップページに戻る</a>
   </div>
 
   <!-- ── TABLE OF CONTENTS ── -->
@@ -545,7 +546,7 @@ textarea.code-input {
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>hello.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false">print("Hello, World!")
 print("はじめてのPython！")</textarea>
@@ -670,7 +671,7 @@ print("はじめてのPython！")</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>variables.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false">name = "太郎"
 age = 14
@@ -745,7 +746,7 @@ print("身長:", height)</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>calc.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false"># 買い物の計算
 apple = 150
@@ -777,7 +778,7 @@ print("あまり:", 10 % 3, "個")</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>strings.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false"># 文字列の結合
 greeting = "こんにちは、" + "太郎" + "さん！"
@@ -840,7 +841,7 @@ print(message)</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>if_example.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false"># テストの点数で判定
 score = 75
@@ -893,7 +894,7 @@ else:
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>for_loop.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false"># 1から10まで足してみよう
 total = 0
@@ -916,7 +917,7 @@ print("合計: " + str(total))</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>while_loop.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false"># HPが0になるまで攻撃！
 hp = 50
@@ -974,7 +975,7 @@ print("たおした！")</textarea>
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>list_example.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false"># クラスのテスト結果
 scores = [85, 72, 90, 68, 95, 78]
@@ -1030,7 +1031,7 @@ for i in range(len(scores)):
             <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
             <span>function.py</span>
           </div>
-          <button class="run-btn" onclick="runEditor(this)">▶ 実行する</button>
+          <button class="run-btn" onclick="runEditor(this)"><span class="icon-play"></span> 実行する</button>
         </div>
         <textarea class="code-input" spellcheck="false"># あいさつ関数（戻り値なし）
 def greet(name):
@@ -1112,7 +1113,7 @@ print("BMI: " + str(round(result, 1)))</textarea>
 
   <!-- NAV -->
   <div class="nav-bottom">
-    <a class="nav-btn secondary" href="../index.html">← トップページ</a>
+    <a class="nav-btn secondary" href="../index.html"><span class="icon-arrow-left"></span> トップページ</a>
   </div>
 
 </div>
