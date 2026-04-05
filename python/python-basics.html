@@ -664,7 +664,7 @@ print("はじめてのPython！")</textarea>
       <h3>変数ってなに？</h3>
       <p>
         <b><span class="term" data-tip="データに名前をつけて保存しておく箱のようなもの" data-reading="へんすう">変数</span></b>は、データを入れておく<b>名前つきの箱</b>。<br>
-        <code>=</code> を使ってデータを入れます（「代入」と言います）。
+        <code>=</code> を使ってデータを入れます（「<span class="term" data-tip="変数にデータを入れること。= を使って右の値を左の変数に入れる" data-reading="だいにゅう">代入</span>」と言います）。
       </p>
 
       <div class="editor-wrap">
@@ -708,15 +708,15 @@ print("身長:", height)</textarea>
 
       <div class="point">
         💡 <b>数字の "123" と数値の 123 は違う！</b><br>
-        <code>"123"</code> は文字列（足し算すると結合される → <code>"123" + "456"</code> → <code>"123456"</code>）<br>
-        <code>123</code> は整数（足し算すると計算される → <code>123 + 456</code> → <code>579</code>）
+        <code>"123"</code> は<span class="term" data-tip="文字の並びのこと。ダブルクォーテーション（&quot;&quot;）で囲んで表す" data-reading="もじれつ">文字列</span>（足し算すると結合される → <code>"123" + "456"</code> → <code>"123456"</code>）<br>
+        <code>123</code> は<span class="term" data-tip="小数点のない数字。1, 42, -10 など" data-reading="せいすう">整数</span>（足し算すると計算される → <code>123 + 456</code> → <code>579</code>）
       </div>
 
       <h3>変数の名前のルール</h3>
       <ul>
         <li>英字・数字・アンダースコア（<code>_</code>）が使える</li>
         <li>数字で始めてはダメ（<code>1name</code> はNG、<code>name1</code> はOK）</li>
-        <li>予約語（<code>if</code>, <code>for</code> など Python が使う単語）は使えない</li>
+        <li><span class="term" data-tip="Pythonが特別な意味で使っている単語。if, for, while などは変数名に使えない" data-reading="よやくご">予約語</span>（<code>if</code>, <code>for</code> など Python が使う単語）は使えない</li>
         <li>わかりやすい名前をつけよう！（<code>x</code> より <code>score</code> の方がわかりやすい）</li>
       </ul>
     </div>
@@ -1058,9 +1058,9 @@ print("BMI: " + str(round(result, 1)))</textarea>
 
       <div class="point">
         💡 <b>関数のメリット：</b><br>
-        ・同じコードを何度も書かなくていい（<b>再利用</b>）<br>
-        ・処理に名前がつくのでコードが読みやすくなる（<b>可読性</b>）<br>
-        ・修正するとき1か所直せば全部に反映される（<b>保守性</b>）
+        ・同じコードを何度も書かなくていい（<span class="term" data-tip="一度作ったコードを別の場所でも使い回すこと" data-reading="さいりよう"><b>再利用</b></span>）<br>
+        ・処理に名前がつくのでコードが読みやすくなる（<span class="term" data-tip="コードがどれだけ読みやすいか。名前がわかりやすいと可読性が高い" data-reading="かどくせい"><b>可読性</b></span>）<br>
+        ・修正するとき1か所直せば全部に反映される（<span class="term" data-tip="プログラムを後から修正しやすいかどうか。1か所直せば全部に反映されると保守性が高い" data-reading="ほしゅせい"><b>保守性</b></span>）
       </div>
     </div>
   </div>
