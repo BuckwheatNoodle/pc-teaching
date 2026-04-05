@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webページを作ろう！ — PC きほん道場</title>
+<meta name="description" content="HTML・CSS・JavaScript の基本を学んで、自分だけのWebページを作ろう！">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #7c6af5;
+  --accent2: #50e6ff;
+  --html-orange: #e44d26;
+  --css-blue: #264de4;
+  --js-yellow: #f7df1e;
+  --correct: #2ecc71;
+  --text-muted: rgba(240,240,255,0.55);
+  --panel-bg: rgba(255,255,255,0.06);
+  --panel-border: rgba(255,255,255,0.12);
+  --editor-bg: #1e1e2e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #1a1a4a, #2a0a2a);
+  min-height: 100vh; color: #f0f0ff;
+}
+.outer { max-width: 900px; margin: 0 auto; padding: 24px 18px 80px; }
+
+.header { text-align: center; margin-bottom: 28px; }
+.logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(11px, 2.4vw, 16px);
+  background: linear-gradient(90deg, #e44d26, #264de4, #f7df1e);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; display: inline-block; margin-bottom: 6px;
+}
+.sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+.home-link {
+  display: inline-block; margin-top: 8px; color: var(--accent2);
+  font-size: 12px; font-weight: 700; text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+}
+.home-link:hover { opacity: 1; }
+
+.toc {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 28px; backdrop-filter: blur(10px);
+}
+.toc-title { font-size: 14px; font-weight: 900; margin-bottom: 10px; color: var(--html-orange); }
+.toc-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.toc-list a {
+  font-size: 13px; font-weight: 700; color: rgba(240,240,255,0.7);
+  text-decoration: none; padding: 4px 12px; border-radius: 8px;
+  border: 1px solid transparent; transition: all 0.2s;
+}
+.toc-list a:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+
+.section {
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  border-radius: 18px; padding: 28px 26px; margin-bottom: 20px;
+  backdrop-filter: blur(10px); scroll-margin-top: 20px;
+}
+.section-num { font-size: 11px; font-weight: 900; letter-spacing: 1.5px; margin-bottom: 4px; }
+.section-num.html { color: var(--html-orange); }
+.section-num.css { color: var(--css-blue); }
+.section-num.js { color: var(--js-yellow); }
+.section-title { font-size: 22px; font-weight: 900; margin-bottom: 16px; }
+.section-body { font-size: 14px; line-height: 2.1; color: rgba(240,240,255,0.85); }
+.section-body h3 {
+  font-size: 16px; font-weight: 900; margin: 24px 0 10px;
+  padding-left: 12px; color: #fff;
+}
+.section-body h3.html { border-left: 4px solid var(--html-orange); }
+.section-body h3.css { border-left: 4px solid var(--css-blue); }
+.section-body h3.js { border-left: 4px solid var(--js-yellow); }
+.section-body h3:first-child { margin-top: 0; }
+.section-body code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 5px; padding: 1px 7px; font-size: 13px;
+  color: #fff; font-weight: 700;
+}
+.section-body code.html { color: var(--html-orange); background: rgba(228,77,38,0.1); border-color: rgba(228,77,38,0.2); }
+.section-body code.css { color: var(--css-blue); background: rgba(38,77,228,0.1); border-color: rgba(38,77,228,0.2); }
+.section-body code.js { color: var(--js-yellow); background: rgba(247,223,30,0.1); border-color: rgba(247,223,30,0.2); }
+.section-body ul, .section-body ol { padding-left: 1.5em; margin: 8px 0; }
+.section-body li { margin-bottom: 4px; }
+
+.point {
+  background: rgba(38,77,228,0.1); border-left: 4px solid var(--css-blue);
+  border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; line-height: 1.9;
+}
+
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin: 14px 0; }
+.concept-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.concept-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+.concept-name { font-size: 13px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.concept-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+/* Tag reference */
+.tag-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+.tag-table th {
+  text-align: left; padding: 8px 12px;
+  background: rgba(228,77,38,0.12); color: var(--html-orange);
+  font-weight: 800; font-size: 12px;
+  border-bottom: 2px solid rgba(228,77,38,0.2);
+}
+.tag-table td {
+  padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); vertical-align: top;
+}
+.tag-table td:first-child {
+  font-family: 'Fira Code', monospace; color: var(--html-orange); font-weight: 700; white-space: nowrap;
+}
+.tag-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+.challenge {
+  background: rgba(247,223,30,0.06); border: 1.5px solid rgba(247,223,30,0.2);
+  border-radius: 14px; padding: 18px 20px; margin: 16px 0;
+}
+.challenge-label { font-size: 11px; font-weight: 900; color: var(--js-yellow); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.challenge-body { font-size: 13px; line-height: 1.9; }
+
+/* Live editor */
+.live-editor {
+  background: var(--editor-bg); border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; overflow: hidden; margin: 16px 0;
+}
+.live-editor-bar {
+  background: rgba(0,0,0,0.3); padding: 8px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.live-editor-bar-left {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 800; color: rgba(240,240,255,0.5);
+}
+.editor-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+.preview-btn {
+  background: linear-gradient(135deg, #e44d26, #f06529);
+  border: none; border-radius: 8px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 12px; font-weight: 800; padding: 6px 18px;
+  cursor: pointer; transition: all 0.2s;
+}
+.preview-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(228,77,38,0.4); }
+textarea.html-input {
+  width: 100%; min-height: 160px; background: var(--editor-bg);
+  border: none; color: #e0e0ff;
+  font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.7;
+  padding: 14px 16px; resize: vertical; outline: none; tab-size: 2;
+}
+.preview-frame-wrap {
+  border-top: 1px solid rgba(255,255,255,0.06); background: #fff;
+}
+.preview-label {
+  padding: 6px 14px 0; font-size: 11px; font-weight: 800;
+  color: #aaa; letter-spacing: 1px; background: #f5f5f5;
+}
+.preview-frame { width: 100%; border: none; min-height: 160px; background: #fff; }
+
+/* Nav */
+.nav-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08);
+}
+.nav-btn {
+  background: linear-gradient(135deg, var(--accent), #5a4fcf);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 14px; font-weight: 800; padding: 10px 24px;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,106,245,0.4); }
+.nav-btn.secondary { background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); }
+.nav-btn.secondary:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
+</style>
+</head>
+<body>
+<div class="outer">
+
+  <div class="header">
+    <div class="logo">🌐 WEB DOJO</div>
+    <div class="sub">HTML / CSS / JavaScript の基本を学ぼう！</div>
+    <a class="home-link" href="../index.html">← トップページに戻る</a>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">📖 もくじ</div>
+    <ul class="toc-list">
+      <li><a href="#what">① Webページの仕組み</a></li>
+      <li><a href="#html">② HTMLの基本</a></li>
+      <li><a href="#tags">③ よく使うタグ</a></li>
+      <li><a href="#css">④ CSSで見た目を変える</a></li>
+      <li><a href="#layout">⑤ レイアウトの基本</a></li>
+      <li><a href="#js">⑥ JavaScriptで動きをつける</a></li>
+      <li><a href="#project">⑦ 自己紹介ページを作ろう</a></li>
+      <li><a href="#howto">⑧ 自分のPCで作る方法</a></li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 1: Webページの仕組み -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="what">
+    <div class="section-num html">SECTION 01</div>
+    <div class="section-title">🌍 Webページの仕組み</div>
+    <div class="section-body">
+      <p>今見ているこのページも、全部 <b>HTML・CSS・JavaScript</b> の3つでできている。</p>
+
+      <div class="concept-grid">
+        <div class="concept-card" style="border-color:rgba(228,77,38,0.4);">
+          <span class="concept-icon">🏗️</span>
+          <div class="concept-name" style="color:#e44d26;">HTML</div>
+          <div class="concept-desc">ページの<b>中身と構造</b><br>文字、画像、ボタンなど<br>「何を置くか」</div>
+        </div>
+        <div class="concept-card" style="border-color:rgba(38,77,228,0.4);">
+          <span class="concept-icon">🎨</span>
+          <div class="concept-name" style="color:#264de4;">CSS</div>
+          <div class="concept-desc">ページの<b>見た目</b><br>色、大きさ、配置<br>「どう見せるか」</div>
+        </div>
+        <div class="concept-card" style="border-color:rgba(247,223,30,0.4);">
+          <span class="concept-icon">⚡</span>
+          <div class="concept-name" style="color:#f7df1e;">JavaScript</div>
+          <div class="concept-desc">ページの<b>動き</b><br>クリック、アニメーション<br>「どう動かすか」</div>
+        </div>
+      </div>
+
+      <p>たとえて言うと：</p>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🏠</span>
+          <div class="concept-name">HTML = 骨組み</div>
+          <div class="concept-desc">柱、壁、窓の配置</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🖌️</span>
+          <div class="concept-name">CSS = 内装</div>
+          <div class="concept-desc">壁の色、家具の配置</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">💡</span>
+          <div class="concept-name">JS = 電気設備</div>
+          <div class="concept-desc">スイッチ、自動ドア</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 この章ではこの3つの基本を順番に学んでいくよ。<br>
+        全部のエディタでコードを変えて「プレビュー」を押せば、すぐ結果が見える！
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 2: HTMLの基本 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="html">
+    <div class="section-num html">SECTION 02</div>
+    <div class="section-title">🏗️ HTML の基本</div>
+    <div class="section-body">
+      <p>HTMLは<b>タグ</b>で文章を囲んで「これは見出し」「これは段落」と教える言語。</p>
+
+      <div class="live-editor">
+        <div class="live-editor-bar">
+          <div class="live-editor-bar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>basic.html</span>
+          </div>
+          <button class="preview-btn" onclick="preview(this)">👁 プレビュー</button>
+        </div>
+        <textarea class="html-input" spellcheck="false">&lt;h1&gt;大きい見出し&lt;/h1&gt;
+&lt;h2&gt;中くらいの見出し&lt;/h2&gt;
+&lt;h3&gt;小さい見出し&lt;/h3&gt;
+
+&lt;p&gt;これは段落（パラグラフ）です。普通の文章はこれで書く。&lt;/p&gt;
+
+&lt;p&gt;文字を&lt;b&gt;太字&lt;/b&gt;にしたり、&lt;i&gt;斜め&lt;/i&gt;にしたりもできる。&lt;/p&gt;</textarea>
+        <div class="preview-frame-wrap">
+          <div class="preview-label">プレビュー</div>
+          <iframe class="preview-frame"></iframe>
+        </div>
+      </div>
+
+      <h3 class="html">タグの書き方ルール</h3>
+      <p>
+        <code class="html">&lt;タグ名&gt;</code> で始まって <code class="html">&lt;/タグ名&gt;</code> で終わる。<br>
+        この2つでコンテンツを<b>サンドイッチ</b>する。
+      </p>
+
+      <div class="live-editor">
+        <div class="live-editor-bar">
+          <div class="live-editor-bar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>tag_rule.html</span>
+          </div>
+          <button class="preview-btn" onclick="preview(this)">👁 プレビュー</button>
+        </div>
+        <textarea class="html-input" spellcheck="false" style="min-height:100px;">&lt;!-- これはコメント。画面には表示されない --&gt;
+
+&lt;h1&gt;開始タグ → 中身 ← 終了タグ&lt;/h1&gt;
+&lt;p&gt;このように、タグで囲んだ部分がブラウザに表示されるよ。&lt;/p&gt;</textarea>
+        <div class="preview-frame-wrap">
+          <div class="preview-label">プレビュー</div>
+          <iframe class="preview-frame"></iframe>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 いじってみよう</div>
+        <div class="challenge-body">
+          ・<code class="html">&lt;h1&gt;</code>の中を自分の名前に変えてプレビューしてみよう<br>
+          ・<code class="html">&lt;h4&gt;</code> <code class="html">&lt;h5&gt;</code> <code class="html">&lt;h6&gt;</code> も試してみよう（どんどん小さくなる）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 3: よく使うタグ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="tags">
+    <div class="section-num html">SECTION 03</div>
+    <div class="section-title">🏷️ よく使うタグ</div>
+    <div class="section-body">
+
+      <table class="tag-table">
+        <tr><th>タグ</th><th>意味</th><th>使い方</th></tr>
+        <tr><td>&lt;h1&gt;〜&lt;h6&gt;</td><td>見出し</td><td>h1が一番大きい</td></tr>
+        <tr><td>&lt;p&gt;</td><td>段落</td><td>普通の文章</td></tr>
+        <tr><td>&lt;b&gt;</td><td>太字</td><td>強調したい文字</td></tr>
+        <tr><td>&lt;a href="URL"&gt;</td><td>リンク</td><td>クリックで別ページへ</td></tr>
+        <tr><td>&lt;img src="URL"&gt;</td><td>画像</td><td>終了タグ不要</td></tr>
+        <tr><td>&lt;ul&gt; &lt;li&gt;</td><td>リスト</td><td>箇条書き</td></tr>
+        <tr><td>&lt;button&gt;</td><td>ボタン</td><td>クリックできる</td></tr>
+        <tr><td>&lt;div&gt;</td><td>箱</td><td>要素をグループ化</td></tr>
+        <tr><td>&lt;br&gt;</td><td>改行</td><td>終了タグ不要</td></tr>
+      </table>
+
+      <div class="live-editor">
+        <div class="live-editor-bar">
+          <div class="live-editor-bar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>tags.html</span>
+          </div>
+          <button class="preview-btn" onclick="preview(this)">👁 プレビュー</button>
+        </div>
+        <textarea class="html-input" spellcheck="false" style="min-height:220px;">&lt;h2&gt;好きな食べ物ランキング&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;🍣 すし&lt;/li&gt;
+  &lt;li&gt;🍜 ラーメン&lt;/li&gt;
+  &lt;li&gt;🍛 カレー&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;詳しくは&lt;a href="https://ja.wikipedia.org/"&gt;Wikipedia&lt;/a&gt;を見てね。&lt;/p&gt;
+
+&lt;img src="https://placehold.co/200x120/e44d26/white?text=HTML!" alt="サンプル画像"&gt;
+
+&lt;br&gt;
+&lt;button&gt;いいね！&lt;/button&gt;</textarea>
+        <div class="preview-frame-wrap">
+          <div class="preview-label">プレビュー</div>
+          <iframe class="preview-frame"></iframe>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 いじってみよう</div>
+        <div class="challenge-body">
+          ・リストの項目を自分の好きなものに変えてみよう<br>
+          ・リンク先のURLを好きなサイトに変えてみよう<br>
+          ・<code class="html">&lt;ol&gt;</code>（番号付きリスト）に変えてみよう
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 4: CSS -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="css">
+    <div class="section-num css">SECTION 04</div>
+    <div class="section-title">🎨 CSS で見た目を変える</div>
+    <div class="section-body">
+      <p>HTMLだけだとシンプルすぎる。CSSで色やサイズを自由に変えよう！</p>
+
+      <h3 class="css">CSSの書き方</h3>
+      <p>
+        <code class="html">&lt;style&gt;</code>タグの中に、<b>「何を」「どう変えるか」</b>を書く。
+      </p>
+
+      <div class="live-editor">
+        <div class="live-editor-bar">
+          <div class="live-editor-bar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>style.html</span>
+          </div>
+          <button class="preview-btn" onclick="preview(this)">👁 プレビュー</button>
+        </div>
+        <textarea class="html-input" spellcheck="false" style="min-height:260px;">&lt;h1&gt;CSSで変身！&lt;/h1&gt;
+&lt;p&gt;この文字の色やサイズをCSSで変えてるよ。&lt;/p&gt;
+&lt;p class="special"&gt;クラスを使うと特定の要素だけ変えられる。&lt;/p&gt;
+&lt;button&gt;かっこいいボタン&lt;/button&gt;
+
+&lt;style&gt;
+  /* ページ全体 */
+  body {
+    background: #1a1a2e;   /* 背景色 */
+    color: white;           /* 文字色 */
+    font-family: sans-serif;
+    padding: 24px;
+  }
+
+  /* h1タグ全部に適用 */
+  h1 {
+    color: #e44d26;        /* オレンジ色 */
+    font-size: 36px;       /* 文字サイズ */
+  }
+
+  /* class="special" がついた要素だけ */
+  .special {
+    color: #50e6ff;
+    background: rgba(80, 230, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  /* ボタン */
+  button {
+    background: #7c6af5;
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    font-size: 16px;
+    border-radius: 50px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #5a4fcf;   /* マウスを乗せたとき */
+  }
+&lt;/style&gt;</textarea>
+        <div class="preview-frame-wrap">
+          <div class="preview-label">プレビュー</div>
+          <iframe class="preview-frame"></iframe>
+        </div>
+      </div>
+
+      <h3 class="css">よく使うCSSプロパティ</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🎨</span>
+          <div class="concept-name">color</div>
+          <div class="concept-desc">文字の色</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🖼️</span>
+          <div class="concept-name">background</div>
+          <div class="concept-desc">背景色・背景画像</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📏</span>
+          <div class="concept-name">font-size</div>
+          <div class="concept-desc">文字の大きさ</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📐</span>
+          <div class="concept-name">padding</div>
+          <div class="concept-desc">内側の余白</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">📦</span>
+          <div class="concept-name">margin</div>
+          <div class="concept-desc">外側の余白</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">⭕</span>
+          <div class="concept-name">border-radius</div>
+          <div class="concept-desc">角を丸くする</div>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 いじってみよう</div>
+        <div class="challenge-body">
+          ・背景色を <code class="css">#2ecc71</code>（緑）や <code class="css">#e74c3c</code>（赤）に変えてみよう<br>
+          ・<code class="css">font-size</code> を <code class="css">48px</code> にしてみよう<br>
+          ・ボタンの <code class="css">border-radius</code> を <code class="css">0px</code> にしたらどうなる？
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 5: レイアウト -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="layout">
+    <div class="section-num css">SECTION 05</div>
+    <div class="section-title">📐 レイアウトの基本</div>
+    <div class="section-body">
+      <p>要素を横に並べたり、中央に置いたり。CSSで配置をコントロールしよう。</p>
+
+      <div class="live-editor">
+        <div class="live-editor-bar">
+          <div class="live-editor-bar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>layout.html</span>
+          </div>
+          <button class="preview-btn" onclick="preview(this)">👁 プレビュー</button>
+        </div>
+        <textarea class="html-input" spellcheck="false" style="min-height:300px;">&lt;!-- 中央寄せ --&gt;
+&lt;div class="center-box"&gt;
+  &lt;h2&gt;真ん中！&lt;/h2&gt;
+&lt;/div&gt;
+
+&lt;!-- 横並び（Flexbox） --&gt;
+&lt;div class="row"&gt;
+  &lt;div class="card"&gt;🍎 りんご&lt;/div&gt;
+  &lt;div class="card"&gt;🍌 バナナ&lt;/div&gt;
+  &lt;div class="card"&gt;🍇 ぶどう&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  body { background: #1a1a2e; color: white; font-family: sans-serif; padding: 20px; }
+
+  /* text-align: center で中央寄せ */
+  .center-box {
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  /* display: flex で横並び */
+  .row {
+    display: flex;
+    gap: 12px;                /* 要素間の隙間 */
+    justify-content: center;  /* 中央揃え */
+  }
+
+  .card {
+    background: rgba(255,255,255,0.1);
+    padding: 20px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+  }
+&lt;/style&gt;</textarea>
+        <div class="preview-frame-wrap">
+          <div class="preview-label">プレビュー</div>
+          <iframe class="preview-frame"></iframe>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 <b>Flexbox</b> は CSS で横並び・縦並びを作る超便利な仕組み。<br>
+        <code class="css">display: flex</code> を親要素につけると、中の要素が横に並ぶ！<br>
+        <code class="css">flex-direction: column</code> にすると縦並びになるよ。
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 いじってみよう</div>
+        <div class="challenge-body">
+          ・カードを5個に増やしてみよう<br>
+          ・<code class="css">flex-direction: column</code> を追加して縦並びにしてみよう<br>
+          ・カードに好きな背景色をつけてみよう
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 6: JavaScript -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="js">
+    <div class="section-num js">SECTION 06</div>
+    <div class="section-title">⚡ JavaScript で動きをつける</div>
+    <div class="section-body">
+      <p>HTMLとCSSだけだと「静止画」。JavaScriptを使うと、クリックやタイマーで動きが出る！</p>
+
+      <div class="live-editor">
+        <div class="live-editor-bar">
+          <div class="live-editor-bar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>interactive.html</span>
+          </div>
+          <button class="preview-btn" onclick="preview(this)">👁 プレビュー</button>
+        </div>
+        <textarea class="html-input" spellcheck="false" style="min-height:320px;">&lt;div id="app"&gt;
+  &lt;h2 id="title"&gt;色を変えよう！&lt;/h2&gt;
+  &lt;p id="message"&gt;ボタンを押してみて。&lt;/p&gt;
+  &lt;button onclick="changeColor()"&gt;🎨 色チェンジ&lt;/button&gt;
+  &lt;button onclick="addItem()"&gt;➕ 項目を追加&lt;/button&gt;
+  &lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  body { background: #1a1a2e; color: white; font-family: sans-serif; padding: 24px; }
+  button { background: #7c6af5; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 8px; cursor: pointer; margin: 4px; font-weight: 800; }
+  button:hover { opacity: 0.8; }
+  #list { margin-top: 12px; }
+  li { margin: 4px 0; padding: 6px 12px; background: rgba(255,255,255,0.08); border-radius: 6px; list-style: none; }
+&lt;/style&gt;
+
+&lt;script&gt;
+  // ボタンを押すと色が変わる
+  function changeColor() {
+    let colors = ["#e44d26", "#264de4", "#2ecc71", "#f7df1e", "#e74c3c", "#9b59b6"];
+    let random = colors[Math.floor(Math.random() * colors.length)];
+    document.getElementById("title").style.color = random;
+    document.getElementById("message").textContent = "色が " + random + " になった！";
+  }
+
+  // ボタンを押すとリストに追加
+  let count = 0;
+  function addItem() {
+    count++;
+    let li = document.createElement("li");
+    li.textContent = count + "番目の項目！";
+    document.getElementById("list").appendChild(li);
+  }
+&lt;/script&gt;</textarea>
+        <div class="preview-frame-wrap">
+          <div class="preview-label">プレビュー</div>
+          <iframe class="preview-frame"></iframe>
+        </div>
+      </div>
+
+      <h3 class="js">JavaScript の基本パターン</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-icon">🖱️</span>
+          <div class="concept-name">onclick</div>
+          <div class="concept-desc">クリックしたとき<br>何かを実行する</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🔍</span>
+          <div class="concept-name">getElementById</div>
+          <div class="concept-desc">HTML要素を<br>取得して操作する</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">✏️</span>
+          <div class="concept-name">textContent</div>
+          <div class="concept-desc">要素の文字を<br>書き換える</div>
+        </div>
+        <div class="concept-card">
+          <span class="concept-icon">🎨</span>
+          <div class="concept-name">style.〇〇</div>
+          <div class="concept-desc">CSSを<br>JSから変更する</div>
+        </div>
+      </div>
+
+      <div class="point">
+        💡 Python を学んだ人なら、JavaScript はかなり似てるよ！<br>
+        <code class="js">let</code> = 変数、<code class="js">function</code> = 関数、<code class="js">if</code> / <code class="js">for</code> もほぼ同じ。
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 いじってみよう</div>
+        <div class="challenge-body">
+          ・色のリストに好きな色を追加してみよう<br>
+          ・追加される項目のテキストを変えてみよう<br>
+          ・3つ目のボタン「🗑 全部消す」を作ってみよう（<code class="js">list.innerHTML = ""</code> で消える）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 7: 自己紹介ページ -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="project">
+    <div class="section-num html">PROJECT</div>
+    <div class="section-title">👤 自己紹介ページを作ろう</div>
+    <div class="section-body">
+      <p>ここまでの知識を全部使って、自分だけのプロフィールページを作ろう！<br>下のコードを自分用に改造してみて。</p>
+
+      <div class="live-editor">
+        <div class="live-editor-bar">
+          <div class="live-editor-bar-left">
+            <span class="editor-dot dot-r"></span><span class="editor-dot dot-y"></span><span class="editor-dot dot-g"></span>
+            <span>profile.html</span>
+          </div>
+          <button class="preview-btn" onclick="preview(this)">👁 プレビュー</button>
+        </div>
+        <textarea class="html-input" spellcheck="false" style="min-height:440px;">&lt;div class="profile"&gt;
+  &lt;div class="icon"&gt;🐱&lt;/div&gt;
+  &lt;h1&gt;太郎のページ&lt;/h1&gt;
+  &lt;p class="bio"&gt;中学2年生。ゲームとプログラミングが好き！&lt;/p&gt;
+
+  &lt;h2&gt;好きなもの&lt;/h2&gt;
+  &lt;div class="tags"&gt;
+    &lt;span class="tag"&gt;🎮 ゲーム&lt;/span&gt;
+    &lt;span class="tag"&gt;🐍 Python&lt;/span&gt;
+    &lt;span class="tag"&gt;🍣 すし&lt;/span&gt;
+    &lt;span class="tag"&gt;🎵 音楽&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;h2&gt;ひとこと&lt;/h2&gt;
+  &lt;p id="hitokoto"&gt;&lt;/p&gt;
+  &lt;button onclick="changeMessage()"&gt;🔄 ランダム表示&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #0f0c29, #302b63);
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+  }
+  .profile {
+    text-align: center;
+    max-width: 400px;
+  }
+  .icon {
+    font-size: 64px;
+    margin-bottom: 8px;
+  }
+  h1 { color: #f7df1e; margin-bottom: 4px; }
+  .bio { color: #aaa; margin-bottom: 20px; }
+  h2 { font-size: 16px; color: #50e6ff; margin: 20px 0 8px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .tag {
+    background: rgba(255,255,255,0.1);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  #hitokoto {
+    font-size: 16px;
+    min-height: 24px;
+    margin-bottom: 12px;
+  }
+  button {
+    background: #7c6af5;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 800;
+  }
+  button:hover { background: #5a4fcf; }
+&lt;/style&gt;
+
+&lt;script&gt;
+  let messages = [
+    "今日もプログラミング頑張るぞ！",
+    "新しいゲーム作りたい！",
+    "HTMLって楽しい！",
+    "来週テストやばい...",
+    "カレー食べたい",
+  ];
+  function changeMessage() {
+    let i = Math.floor(Math.random() * messages.length);
+    document.getElementById("hitokoto").textContent = messages[i];
+  }
+  changeMessage();
+&lt;/script&gt;</textarea>
+        <div class="preview-frame-wrap">
+          <div class="preview-label">プレビュー</div>
+          <iframe class="preview-frame" style="min-height:360px;"></iframe>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-label">🚀 自分用に改造しよう</div>
+        <div class="challenge-body">
+          ・名前、自己紹介、好きなものを全部自分の情報に変えよう<br>
+          ・アイコンの絵文字を変えよう（🐶🦊🐸🐼 など）<br>
+          ・背景のグラデーションの色を変えてみよう<br>
+          ・ひとことメッセージを増やそう<br>
+          ・新しいセクション（「最近のできごと」など）を追加しよう
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 8: 自分のPCで作る方法 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="section" id="howto">
+    <div class="section-num html">SECTION 08</div>
+    <div class="section-title">💻 自分のPCで作る方法</div>
+    <div class="section-body">
+      <ol>
+        <li>メモ帳やVS Codeを開く</li>
+        <li>コードを書く（または上のコードを貼り付ける）</li>
+        <li><code>.html</code> で保存する（例: <code>profile.html</code>）</li>
+        <li>保存したファイルをダブルクリック → ブラウザで開く！</li>
+      </ol>
+
+      <div class="point">
+        💡 これだけ！<b>保存してダブルクリックするだけ</b>でWebページが完成。<br>
+        編集したら保存 → ブラウザで <code>F5</code>（再読み込み）で反映されるよ。<br><br>
+        基本がわかったら、次は「Webゲームを作ろう」に進んでみよう！
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bottom">
+    <a class="nav-btn secondary" href="../index.html">← トップページ</a>
+    <a class="nav-btn" href="../webgame/webgame-basics.html">🎮 Webゲームを作ろう →</a>
+  </div>
+
+</div>
+
+<script>
+function preview(btn) {
+  const editor = btn.closest('.live-editor');
+  const code = editor.querySelector('.html-input').value;
+  const frame = editor.querySelector('.preview-frame');
+  frame.srcdoc = code;
+}
+document.querySelectorAll('.live-editor').forEach(function(editor) {
+  const code = editor.querySelector('.html-input').value;
+  const frame = editor.querySelector('.preview-frame');
+  frame.srcdoc = code;
+});
+</script>
+</body>
+</html>
