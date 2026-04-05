@@ -541,6 +541,7 @@ function renderQuestion() {
       '<div class="q-number">Q' + (state.current + 1) + '</div>' +
       '<div class="q-text">' + escHtml(q.q).replace(/\n/g,'<br>') + '</div>' +
       '<div class="choices" id="choices">' + choicesHtml + '</div>' +
+      '<div id="nextBtnArea"></div>' +
       '<div id="feedbackArea"></div>' +
     '</div>';
 
@@ -571,6 +572,11 @@ window.selectAnswer = function (btn, idx) {
   var correctText = isCorrect ? '' :
     '<div class="review-answer ng">\u2192 \u6B63\u89E3\uFF1A' + LABELS[order.indexOf(q.answer)] + '. ' + escHtml(q.choices[q.answer]) + '</div>';
 
+  document.getElementById('nextBtnArea').innerHTML =
+    '<button class="next-btn" onclick="nextQuestion()" style="margin-top:20px">' +
+      (state.current < NUM_QUESTIONS - 1 ? '\u6B21\u306E\u554F\u984C\u3078 \u2192' : '\u7D50\u679C\u3092\u898B\u308B \uD83C\uDFC6') +
+    '</button>';
+
   document.getElementById('feedbackArea').innerHTML =
     '<div class="feedback ' + fbClass + '">' +
       '<span class="feedback-icon">' + fbIcon + '</span>' +
@@ -582,12 +588,9 @@ window.selectAnswer = function (btn, idx) {
         '<div class="keyword-box-body">' + q.keyword + '</div>' +
       '</div>' +
       '<button class="ai-btn" onclick="openAI(' + state.current + ')">\uD83E\uDD16 AI\u306B\u3082\u3063\u3068\u8A73\u3057\u304F\u805E\u304F</button>' +
-    '</div>' +
-    '<button class="next-btn" onclick="nextQuestion()">' +
-      (state.current < NUM_QUESTIONS - 1 ? '\u6B21\u306E\u554F\u984C\u3078 \u2192' : '\u7D50\u679C\u3092\u898B\u308B \uD83C\uDFC6') +
-    '</button>';
+    '</div>';
 
-  document.querySelector('.feedback').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.querySelector('.next-btn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 };
 
 window.nextQuestion = function () {
