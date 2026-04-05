@@ -1,0 +1,114 @@
+/* ── 共通ヘッダー ── */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(15, 12, 41, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 0 20px;
+  font-family: 'M PLUS Rounded 1c', 'Meiryo', sans-serif;
+}
+
+.site-header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.site-header-logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  background: linear-gradient(90deg, #7c6af5, #50e6ff, #f9ca24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ── Desktop nav ── */
+.site-header-nav {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-header-nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: rgba(240,240,255,0.65);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.site-header-nav a:hover {
+  background: rgba(255,255,255,0.08);
+  color: #f0f0ff;
+}
+.site-header-nav a.active {
+  background: rgba(124,106,245,0.18);
+  color: #b0a4ff;
+}
+
+.nav-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Hamburger (mobile) ── */
+.site-header-burger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: rgba(240,240,255,0.8);
+}
+.site-header-burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.25s, opacity 0.25s;
+}
+.site-header-burger span + span { margin-top: 6px; }
+
+.site-header-burger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.site-header-burger.open span:nth-child(2) { opacity: 0; }
+.site-header-burger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* ── Mobile drawer ── */
+@media (max-width: 640px) {
+  .site-header-burger { display: block; }
+  .site-header-nav {
+    display: none;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(15, 12, 41, 0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 8px 16px 16px;
+    gap: 2px;
+  }
+  .site-header-nav.open { display: flex; }
+}
+
+/* ── body padding to not hide content behind sticky header ── */
+body.has-site-header { padding-top: 56px; }

@@ -10,6 +10,7 @@
 <meta property="og:title" content="PC きほん道場">
 <meta property="og:description" content="パソコンの基本操作を楽しく学べる練習サイト">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/header.css">
 <style>
 :root {
   --outer-bg: #1a1a2e;
@@ -31,9 +32,9 @@ body {
 
 .outer { max-width: 860px; margin: 0 auto; padding: 48px 20px 80px; }
 
-/* ── HEADER ── */
-.header { text-align: center; margin-bottom: 48px; }
-.logo {
+/* ── HERO ── */
+.hero { text-align: center; margin-bottom: 56px; }
+.hero-title {
   font-family: 'Press Start 2P', monospace;
   font-size: clamp(16px, 3.5vw, 24px);
   background: linear-gradient(90deg, #7c6af5, #50e6ff, #f9ca24);
@@ -43,11 +44,34 @@ body {
   display: inline-block;
   margin-bottom: 12px;
 }
-.sub {
+.hero-sub {
   color: var(--text-muted);
   font-size: 15px;
   font-weight: 700;
   line-height: 1.8;
+}
+
+/* ── SECTION ── */
+.section { margin-bottom: 48px; }
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.section-icon { font-size: 28px; line-height: 1; }
+.section-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+}
+.section-count {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin-left: auto;
 }
 
 /* ── LESSON GRID ── */
@@ -110,73 +134,143 @@ body {
 </style>
 <link rel="stylesheet" href="shared/icons.css">
 </head>
-<body>
+<body class="has-site-header">
+
+<script src="shared/header.js"></script>
+
 <div class="outer">
 
-  <div class="header">
-    <div class="logo">🖥️ PC きほん道場</div>
-    <div class="sub">パソコンの基本を楽しく学ぼう！<br>実際に手を動かして覚える練習サイト</div>
+  <div class="hero">
+    <div class="hero-title">PC きほん道場</div>
+    <div class="hero-sub">パソコンの基本を楽しく学ぼう！<br>実際に手を動かして覚える練習サイト</div>
   </div>
 
-  <div class="lessons">
+  <!-- ══════════ 学ぶ ══════════ -->
+  <section class="section" id="learn">
+    <div class="section-heading">
+      <span class="section-icon">📖</span>
+      <span class="section-title">学ぶ</span>
+      <span class="section-count">7レッスン</span>
+    </div>
+    <div class="lessons">
 
-    <!-- ショートカットキー -->
-    <a class="lesson-card" href="shortcut/shortcut-practice.html">
-      <span class="card-icon">⌨️</span>
-      <div class="card-title">ショートカットキー</div>
-      <div class="card-desc">コピー・貼り付け・元に戻すなど、パソコンを素早く操作できるキーボードの技を練習しよう！</div>
-      <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
-    </a>
+      <a class="lesson-card" href="shortcut/shortcut-practice.html">
+        <span class="card-icon">⌨️</span>
+        <div class="card-title">ショートカットキー</div>
+        <div class="card-desc">コピー・貼り付け・元に戻すなど、パソコンを素早く操作できるキーボードの技を練習しよう！</div>
+        <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
+      </a>
 
-    <!-- Python基礎 -->
-    <a class="lesson-card" href="python/python-basics.html">
-      <span class="card-icon">🐍</span>
-      <div class="card-title">Python 入門</div>
-      <div class="card-desc">Windows 11 での環境構築から、プログラミングの基礎概念まで丁寧に解説。コードを動かしながら学べる！</div>
-      <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
-    </a>
+      <a class="lesson-card" href="python/python-basics.html">
+        <span class="card-icon">🐍</span>
+        <div class="card-title">Python 入門</div>
+        <div class="card-desc">Windows 11 での環境構築から、プログラミングの基礎概念まで丁寧に解説。コードを動かしながら学べる！</div>
+        <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
+      </a>
 
-    <!-- Python その2 -->
-    <a class="lesson-card" href="python2/python-projects.html">
-      <span class="card-icon">🎮</span>
-      <div class="card-title">Python 入門 その2</div>
-      <div class="card-desc">ミニゲームを作ろう！数当て・じゃんけん・クイズを自作。AIチャットの上手な使い方も学べる。</div>
-      <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
-    </a>
+      <a class="lesson-card" href="python2/python-projects.html">
+        <span class="card-icon">🎮</span>
+        <div class="card-title">Python 入門 その2</div>
+        <div class="card-desc">ミニゲームを作ろう！数当て・じゃんけん・クイズを自作。AIチャットの上手な使い方も学べる。</div>
+        <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
+      </a>
 
-    <!-- PowerShell -->
-    <a class="lesson-card" href="powershell/powershell-basics.html">
-      <span class="card-icon">⬛</span>
-      <div class="card-title">PowerShell 入門</div>
-      <div class="card-desc">コマンド操作（CLI）の基本を学ぼう！プログラミングに必須のターミナル操作を身につける。</div>
-      <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
-    </a>
+      <a class="lesson-card" href="powershell/powershell-basics.html">
+        <span class="card-icon">⬛</span>
+        <div class="card-title">PowerShell 入門</div>
+        <div class="card-desc">コマンド操作（CLI）の基本を学ぼう！プログラミングに必須のターミナル操作を身につける。</div>
+        <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
+      </a>
 
-    <!-- Web基礎 -->
-    <a class="lesson-card" href="web/web-basics.html">
-      <span class="card-icon">🌐</span>
-      <div class="card-title">Webページを作ろう</div>
-      <div class="card-desc">HTML/CSS/JavaScript の基本を学んで、自分だけのWebページを作ろう！ゲーム制作の前提知識に。</div>
-      <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
-    </a>
+      <a class="lesson-card" href="web/web-basics.html">
+        <span class="card-icon">🌐</span>
+        <div class="card-title">Webページを作ろう</div>
+        <div class="card-desc">HTML/CSS/JavaScript の基本を学んで、自分だけのWebページを作ろう！ゲーム制作の前提知識に。</div>
+        <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
+      </a>
 
-    <!-- Webゲーム -->
-    <a class="lesson-card" href="webgame/webgame-basics.html">
-      <span class="card-icon">🎮</span>
-      <div class="card-title">Webゲームを作ろう</div>
-      <div class="card-desc">HTML/CSS/JavaScript でブラウザゲームを作る！もぐらたたき・反射神経テストなど4作品。</div>
-      <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
-    </a>
+      <a class="lesson-card" href="webgame/webgame-basics.html">
+        <span class="card-icon">🎮</span>
+        <div class="card-title">Webゲームを作ろう</div>
+        <div class="card-desc">HTML/CSS/JavaScript でブラウザゲームを作る！もぐらたたき・反射神経テストなど4作品。</div>
+        <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
+      </a>
 
-    <!-- ファイル操作 -->
-    <a class="lesson-card" href="files/file-basics.html">
-      <span class="card-icon">📁</span>
-      <div class="card-title">ファイル操作</div>
-      <div class="card-desc">フォルダの作り方、コピー・移動、拡張子の知識、整理術まで。パソコン整理整頓の基本！</div>
-      <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
-    </a>
+      <a class="lesson-card" href="files/file-basics.html">
+        <span class="card-icon">📁</span>
+        <div class="card-title">ファイル操作</div>
+        <div class="card-desc">フォルダの作り方、コピー・移動、拡張子の知識、整理術まで。パソコン整理整頓の基本！</div>
+        <div class="card-tag tag-ready"><span class="badge-ready"></span> プレイ可能</div>
+      </a>
 
-  </div>
+    </div>
+  </section>
+
+  <!-- ══════════ クイズ ══════════ -->
+  <section class="section" id="quiz">
+    <div class="section-heading">
+      <span class="section-icon">✅</span>
+      <span class="section-title">クイズ</span>
+      <span class="section-count">準備中</span>
+    </div>
+    <div class="lessons">
+
+      <div class="lesson-card soon">
+        <span class="card-icon">🐍</span>
+        <div class="card-title">Python 理解度チェック</div>
+        <div class="card-desc">変数・関数・ループなど、Python入門の内容をクイズで確認しよう。</div>
+        <div class="card-tag tag-soon">COMING SOON</div>
+      </div>
+
+      <div class="lesson-card soon">
+        <span class="card-icon">🌐</span>
+        <div class="card-title">Web 理解度チェック</div>
+        <div class="card-desc">HTML/CSS/JavaScriptの基本をどれだけ覚えたかテストしよう。</div>
+        <div class="card-tag tag-soon">COMING SOON</div>
+      </div>
+
+      <div class="lesson-card soon">
+        <span class="card-icon">⬛</span>
+        <div class="card-title">PowerShell 理解度チェック</div>
+        <div class="card-desc">コマンド操作の知識をクイズ形式で確認。実際のコマンドを選ぶ問題も！</div>
+        <div class="card-tag tag-soon">COMING SOON</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ ゲーム ══════════ -->
+  <section class="section" id="game">
+    <div class="section-heading">
+      <span class="section-icon">🎮</span>
+      <span class="section-title">ゲーム</span>
+      <span class="section-count">準備中</span>
+    </div>
+    <div class="lessons">
+
+      <div class="lesson-card soon">
+        <span class="card-icon">⌨️</span>
+        <div class="card-title">ショートカット早押し</div>
+        <div class="card-desc">制限時間内にできるだけ多くのショートカットキーを正しく入力しよう！</div>
+        <div class="card-tag tag-soon">COMING SOON</div>
+      </div>
+
+      <div class="lesson-card soon">
+        <span class="card-icon">💻</span>
+        <div class="card-title">タイピングバトル</div>
+        <div class="card-desc">プログラミングでよく使う単語をタイピングで練習。スピードと正確さを競え！</div>
+        <div class="card-tag tag-soon">COMING SOON</div>
+      </div>
+
+      <div class="lesson-card soon">
+        <span class="card-icon">🔧</span>
+        <div class="card-title">コード修正チャレンジ</div>
+        <div class="card-desc">バグのあるコードを見つけて直そう！デバッグ力が試される。</div>
+        <div class="card-tag tag-soon">COMING SOON</div>
+      </div>
+
+    </div>
+  </section>
 
   <div class="footer">PC きほん道場 — つくって学ぶパソコン教室</div>
 
