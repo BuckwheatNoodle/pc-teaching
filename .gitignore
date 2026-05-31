@@ -1,0 +1,17 @@
+# 依存パッケージ（CDN利用のため公開不要）
+node_modules/
+
+# テスト成果物・ツール出力
+test-results/
+playwright-report/
+.playwright-mcp/
+
+# 作業用スクリーンショット
+*.png
+
+# エディタ・OS
+.DS_Store
+Thumbs.db
+
+# Claude Code のローカル設定（個人のパス・許可リストを含む）
+.claude/
